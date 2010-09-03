@@ -1,0 +1,165 @@
+{% extends 'page_base.html' %}
+{% load helper_tags page_tags tab_tags humanize %}
+
+{% block html_head %}
+<link href="{{MEDIA_URL}}/yui/build/container/assets/skins/sam/container.css" type="text/css" media="all" rel="stylesheet" />
+<link href="{{MEDIA_URL}}/yui/build/calendar/assets/skins/sam/calendar.css" type="text/css" media="all" rel="stylesheet" />
+
+<link href="{{MEDIA_URL}}/css/yui.calendar.widget.css" type="text/css" media="all" rel="stylesheet" />
+<script type="text/javascript" src="{{MEDIA_URL}}/yui/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+<script type="text/javascript" src="{{MEDIA_URL}}/yui/build/element/element-min.js"></script>
+<script type="text/javascript" src="{{MEDIA_URL}}/yui/build/container/container-min.js"></script>
+<script type="text/javascript" src="{{MEDIA_URL}}/yui/build/calendar/calendar-min.js"></script>
+<script type="text/javascript" src="{{MEDIA_URL}}/scripts/yui.calendar.widget.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    $(".new-schedule").click(function(e) {
+        e.preventDefault();
+        var uid = new Date().getTime();
+        var new_row = $('<tr class="schedule"><td class="actions"><a href="#" class="remove-schedule">ลบ</a></td><td class="grant_column"><input type="text" /> บาท</td><td class="schedule_on_column"><span class="yui_date_picker_panel"><input type="hidden" name="schedule_on" value="" id="id_schedule_on_' + uid + '_value"/><input type="text" value="" id="id_schedule_on_' + uid + '_display" readonly="readonly" class="yui_date_picker_textbox"/> <img src="/m/images/icons/date_picker.png" id="id_schedule_on_' + uid + '" class="yui_date_picker"/></span></td><td></td></tr>');
+        initializeRowEvents(new_row);
+        new_row.insertBefore($(this).closest('tr'));
+    });
+    
+    $("table tr.schedule").each(function(e) {
+        initializeRowEvents($(this));
+    });
+    
+    $("form button[type='submit']").click(function() {
+        var is_valid = true;
+        $(".error_message.invalid_input").hide();
+        
+        $("table tr.schedule").each(function() {
+            // Schedule ID
+            var schedule_id = $(this).attr("id");
+            if(schedule_id) {
+                schedule_id = schedule_id.split("-")[1];
+            } else {
+                schedule_id = 'none';
+            }
+            
+            // Grant
+            var target = $(this).find(".grant_column input").val();
+            if(target == "") {
+                is_valid = false;
+                $(this).find(".grant_column input").addClass("invalid");
+                $(".error_message.invalid_input").show();
+            } else {
+                target = to_number(target);
+                if(target == null) {
+                    is_valid = false;
+                    $(this).find(".grant_column input").addClass("invalid");
+                    $(".error_message.invalid_input").show();
+                } else {
+                    $(this).find(".grant_column input").removeClass("invalid");
+                }
+            }
+            
+            // Schedule On
+            var schedule_on = $(this).find("input[name='schedule_on']").val();
+            if(schedule_on == "") {
+                is_valid = false;
+                $(this).find("input[name='schedule_on']").addClass("invalid");
+            } else {
+                $(this).find("input[name='schedule_on']").removeClass("invalid");
+            }
+            
+            if(is_valid) {
+                var schedule_text = schedule_id + "," + target + "," + schedule_on;
+                $("form").append('<input type="hidden" name="schedule" value="' + schedule_text + '" />');
+            }
+        });
+        
+        return is_valid;
+    });
+});
+
+function initializeRowEvents(row_obj) {
+    row_obj.find(".grant_column input").digits()
+    
+    row_obj.find(".remove-schedule").click(function(e) {
+        e.preventDefault();
+        if(window.confirm("ยืนยันการลบ?")) {
+            $(this).closest("tr").remove();
+        }
+    });
+    
+    row_obj.find(".yui_date_picker").click(function(e) {
+        activeCalendarInputID = e.target.id;
+        triggerYUICalendar();
+    });
+        
+    // Open Date Picker calendar when click at textbox
+    row_obj.find(".yui_date_picker_textbox").click(function(e) {
+        activeCalendarInputID = $(this).parent().find(".yui_date_picker").attr('id');
+        triggerYUICalendar();
+    });
+}
+</script>
+{% endblock %}
+
+{% block body_title %}{% display_master_plan_management_header user master_plan %}{% endblock %}
+{% block body_tabs %}{% tabs_for_manage_master_plan page master_plan %}{% endblock %}
+
+{% block body_content %}
+<div class="ss_breadcrumbs">
+    <div class="breadcrumbs"><a href="{% url view_master_plan_manage_organization master_plan.ref_no %}">หน้าแผนงาน/โครงการ</a> &#187;</div>
+    <div class="supertitle">({{program.ref_no}}) {{program.name}}</div>
+	<h2>จัดการแผนการเงิน</h2>
+</div>
+
+<div class="master_plan_manage">
+    <div class="error_message invalid_input" style="display:none;">ข้อมูลไม่ครบถ้วนหรือไม่อยู่ในรูปแบบที่ถูกต้อง</div>
+    
+    <div class="manage_program_budget">
+        <table class="ss_table">
+            <tr>
+                <th class="controls"></th>
+                <th class="grant_column">ตัวเลขคาดการณ์</th>
+                <th class="schedule_on_column">วันที่เบิกจ่าย</th>
+                <th></th>
+            </tr>
+            {% if schedules %}
+                {% for schedule in schedules %}
+                <tr class="schedule" id="schedule-{{schedule.id}}">
+                    <td class="controls"><a href="#" class="remove-schedule">ลบ</a></td>
+                    <td class="grant_column"><input type="text" value="{{schedule.grant_budget|intcomma}}"/> บาท</td>
+                    <td class="schedule_on_column">
+                        <span class="yui_date_picker_panel">
+                            <input type="hidden" name="schedule_on" value="{{schedule.schedule_on|date:"Y-n-j"}}" id="id_schedule_on_{{schedule.id}}_value"/>
+                            <input type="text" value="{{schedule.schedule_on|date:"j F"}} {{schedule.schedule_on.year|add:543}}" id="id_schedule_on_{{schedule.id}}_display" readonly="readonly" class="yui_date_picker_textbox"/>
+                            <img src="/m/images/icons/date_picker.png" id="id_schedule_on_{{schedule.id}}" class="yui_date_picker"/>
+                        </span>
+                    </td>
+                    <td>&nbsp;</td>
+                </tr>
+                {% endfor %}
+            {% else %}
+            <tr class="schedule">
+                <td class="actions"><a href="#" class="remove-schedule">ลบ</a></td>
+                <td class="grant_column"><input type="text" /> บาท</td>
+                <td class="schedule_on_column">
+                    <span class="yui_date_picker_panel">
+                        <input type="hidden" name="schedule_on" value="" id="id_schedule_on_starter_value"/>
+                        <input type="text" value="" id="id_schedule_on_starter_display" readonly="readonly" class="yui_date_picker_textbox"/>
+                        <img src="/m/images/icons/date_picker.png" id="id_schedule_on_starter" class="yui_date_picker"/>
+                    </span>
+                </td>
+                <td>&nbsp;</td>
+            </tr>
+            {% endif %}
+            <tr>
+                <td></td>
+                <td colspan="3"><img src="{{MEDIA_URL}}/images/icons/create.png" class="icon"/> <a href="#" class="new-schedule">เพิ่มรายการ</a></td>
+            </tr>
+        </table>
+        
+        <form action="." method="POST" class="ss_form">
+        	{% csrf_token %}
+			{% back_form request %}
+            <div class="button_panel"><button type="submit">บันทึกการแก้ไข</button></div>
+        </form>
+    </div>
+</div>
+{% endblock %}

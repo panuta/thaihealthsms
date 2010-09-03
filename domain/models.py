@@ -21,7 +21,6 @@ class Plan(models.Model):
 class Program(models.Model):
     plan = models.ForeignKey('Plan')
     ref_no = models.CharField(max_length=100)
-    contract_no = models.CharField(max_length=100, blank=True)
     name = models.CharField(max_length=500)
     abbr_name = models.CharField(max_length=200, blank=True)
     manager_name = models.CharField(max_length=300, blank=True)

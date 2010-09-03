@@ -1,0 +1,20 @@
+html, body {background-color:#EEE;}
+
+.logo {margin:20px auto;text-align:center;}
+h1 {text-align:center;font-size:182%;margin:20px 0px;color:#017c54;font-weight:bold;}
+h2 {font-size:123.1%;margin:10px 30px 20px;color:#2D8659;padding:5px 0px;border-bottom:1px solid #999;}
+p {margin:0px 10px 10px 30px;}
+.instruction {background-color:#FFC;padding:5px 10px;margin:10px 30px;border:1px solid #CCC;}
+
+#body-content {margin:0px auto;width:450px;border:1px solid #CCC;padding:10px 15px;background-color:#FFF;}
+form ul {margin:0px;padding:0px 20px;}
+form li {margin:15px;list-style:none;}
+form li label {display:block;margin:0px 0px 4px;}
+form li input {width:350px;}
+form .button_panel {margin:20px 0px 20px 35px;}
+form .button_panel button {padding:5px 15px;border:1px solid #999;background-color:#666;color:#FFF;}
+form .button_panel span {margin-left:25px;}
+form .button_panel a {margin:0px 5px;}
+form .errors {margin:15px 0px;color:#C30;}
+form .errorlist {margin:0px;padding:0px;color:#C30;}
+form .errorlist li {margin:3px 0px 0px 0px;padding:0px;}

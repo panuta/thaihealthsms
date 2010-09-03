@@ -1,0 +1,65 @@
+{% extends 'page_base.html' %}
+{% load helper_tags tab_tags page_tags %}
+
+{% block html_head %}
+{% endblock %}
+
+{% block body_title %}<h1>จัดการระบบ</h1>{% endblock %}
+
+{% block body_tabs %}{% tabs_for_administration page %}{% endblock %}
+
+{% block body_content %}
+<div class="ss_control_panel">
+    <ul>
+        <li><img src="{{MEDIA_URL}}/images/icons/create.png" class="icon"/><a href="{% url view_administration_users_add %}">สร้างบัญชีผู้ใช้</a></li>
+    </ul>
+</div>
+
+<div class="admin_users_page">
+	{% if user_accounts.object_list %}
+	{% display_pagination user_accounts 'view_administration_users' %}
+	
+	<table class="ss_table">
+        <tr>
+            <th class="controls"></th>
+            <th class="fullname">ชื่อ-นามสกุล</th>
+			<th class="username">ชื่อบัญชี</th>
+            <th class="status">สถานะบัญชีผู้ใช้</th>
+			<th class="role">ตำแหน่ง</th>
+        </tr>
+		
+		{% for user_account in user_accounts.object_list %}
+		<tr>
+			<td class="controls">
+				<a href="{% url view_administration_users_edit user_account.user.id %}" title="แก้ไขข้อมูลผู้ใช้"><img src="{{MEDIA_URL}}/images/icons/edit.png" class="icon" /></a>
+				{% if user_account.random_password %}
+				<img src="{{MEDIA_URL}}/images/icons/password_disabled.png" class="icon" />
+				{% else %}
+				<a href="{% url view_administration_users_change_password user_account.user.id %}" title="เปลี่ยนรหัสผ่าน"><img src="{{MEDIA_URL}}/images/icons/password.png" class="icon" /></a>
+				{% endif %}
+			</td>
+			<td class="fullname">{{user_account.firstname}} {{user_account.lastname}}</td>
+			<td class="username">{{user_account.user.username}}</td>
+			<td class="status">
+                {% if user_account.random_password %}
+                    ยังไม่เข้าใช้งาน (<a href="{% url view_administration_users_password user_account.user.id %}">ดูรหัสผ่าน</a>)
+                {% else %}
+                    {% if user_account.user.is_active %}ปกติ{% else %}ระงับการใช้งาน{% endif %}
+                {% endif %}
+            </td>
+			<td class="role">
+				<ul>
+					{% list_user_roles user_account %}
+                </ul>
+			</td>
+		</tr>
+		{% endfor %}
+		
+	</table>
+	
+	{% display_pagination user_accounts 'view_administration_users' %}
+    {% else %}
+    <div class="ss_no_information">ไม่มีผู้ใช้</div>
+    {% endif %}
+</div>
+{% endblock %}

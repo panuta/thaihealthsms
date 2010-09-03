@@ -1,0 +1,17 @@
+{% extends 'front_base.html' %}
+
+{% block title %}{{block.super}} - ตั้งรหัสผ่านใหม่{% endblock %}
+
+{% block front_content %}
+<h2>ตั้งรหัสผ่านใหม่</h2>
+<div class="instruction">ยินดีต้อนรับเข้าสู่ระบบ เนื่องจากคุณเข้าสู่ระบบครั้งแรก กรุณาตั้งรหัสผ่านใหม่ที่เป็นของคุณเอง</div>
+<form action="." method="post">
+	{% csrf_token %}
+	<ul>
+		<li><label for="id_password1">รหัสผ่าน:</label> {{form.password1}}{{form.password1.errors}}</li>
+		<li><label for="id_password2">ยืนยันรหัสผ่าน:</label> {{form.password2}}{{form.password2.errors}}</li>
+	</ul>
+	<div class="button_panel"><button type="submit">ตกลง</button></div>
+	{% if next %}<input type="hidden" name="next" value="{{next}}" />{% else %}<input type="hidden" name="next" value="" />{% endif %}
+</form>
+{% endblock %}

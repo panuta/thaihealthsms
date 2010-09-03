@@ -1,0 +1,25 @@
+{% extends 'page_base.html' %}
+{% load helper_tags %}
+
+{% block html_head %}
+{% endblock %}
+
+{% block body_title %}<h1>แผนผังองค์กร</h1>{% endblock %}
+
+{% block body_content %}
+<div class="organization_page">
+    <h3>แผนหลัก</h3>
+    <ul>
+        {% for master_plan in master_plans %}
+        <li><a href="{% url view_master_plan_overview master_plan.ref_no %}">แผนหลัก {{master_plan.ref_no}} {{master_plan.name}}</a></li>
+        {% endfor %}
+    </ul>
+    
+    <h3>สำนัก</h3>
+    <ul>
+        {% for sector in sectors %}
+        <li><a href="{% url view_sector_overview sector.ref_no %}">สำนัก {{sector.ref_no}} {{sector.name}}</a></li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

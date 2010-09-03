@@ -1,0 +1,156 @@
+
+/*
+ * ADMINISTRATION PAGE
+ */
+
+/* Manage Organization */
+.admin_org_page h2 {font-size:138.5%;margin-bottom:10px;color:#C60;}
+
+.admin_org_page table {margin-bottom:20px;}
+.admin_org_page table .sector_number {width:80px;text-align:center;}
+.admin_org_page table .manage {width:140px;text-align:center;}
+
+.admin_org_page table .ref_no {width:80px;text-align:center;}
+.admin_org_page table .sector {width:100px;text-align:center;}
+.admin_org_page table .year {width:150px;text-align:center;}
+
+.admin_org_page .master_plan_sectors {margin-top:15px;}
+
+/* Manage Users */
+.admin_users_page table {margin:10px 0px 20px;}
+.admin_users_page table td {vertical-align:top;}
+.admin_users_page table .fullname {width:250px;}
+.admin_users_page table .username {width:140px;}
+.admin_users_page table .status {width:180px;text-align:center;}
+.admin_users_page table .role {}
+.admin_users_page table .role li {list-style:disc;margin-left:20px;}
+
+.admin_users_page form li.responsible .list {margin-bottom:10px;}
+.admin_users_page form li.responsible .list_comment {color:#666;margin-left:15px;}
+.admin_users_page #responsible_selected_programs {margin:10px 0px 20px 0px;}
+.admin_users_page #responsible_selected_programs li {border:1px dashed #999;padding:8px 10px;margin-bottom:10px;font-size:108%;}
+.admin_users_page #responsible_selected_programs li a {margin-right:10px;}
+.admin_users_page #responsible_selected_programs li a:hover {background:none;}
+
+.admin_users_page .user_password .name {font-size:116%;margin:10px 0px;}
+.admin_users_page .user_password .password {font-size:116%;margin:10px 0px;}
+.admin_users_page .user_password .note {color:#555;margin:10px 0px;}
+.admin_users_page .user_password .warning {font-size:108%;margin:15px 0px;}
+
+.admin_users_page .random_password_panel {font-size:116%;border:1px solid #CCC;padding:10px;margin-bottom:15px;}
+.admin_users_page .random_password_panel .label {margin-bottom:5px;color:#666;}
+
+/*
+ * ORGANIZATION PAGE
+ */
+
+.organization_page h3 {font-size:138.5%;margin:5px 0px 10px;color:#C60;}
+.organization_page ul {margin:0px 0px 25px;border-bottom:1px dashed #999;padding-bottom:10px;}
+.organization_page ul li {list-style:disc;margin:5px 0px 10px 25px;}
+.organization_page li a {font-size:108%;}
+
+/*
+ * USER PAGE
+ */
+.user_page .setting_panel {margin-bottom:40px;}
+.user_page h2 {font-size:138.5%;color:#666;border-bottom:1px solid #CCC;margin:0px 0px 10px;padding-bottom:5px;}
+.user_page ul.responsibilities {margin:0px 0px 20px 30px;}
+.user_page ul.responsibilities li.dept {list-style:disc;margin-bottom:10px;}
+.user_page ul.responsibilities li.dept h3 {margin-bottom:5px;}
+.user_page ul.responsibilities li.dept h3 a {font-size:123.1%;}
+.user_page ul.responsibilities ul.sections li {display:inline;margin-right:10px;}
+.user_page ul.responsibilities ul.sections li a {color:#666;}
+.user_page ul.responsibilities ul.sections li a:hover {color:#FFF;}
+
+.user_page li.comment {margin-bottom:20px;}
+.user_page li.comment .source a {font-style:italic;font-size:108%;}
+.user_page li.comment .metadata {margin-bottom:10px;font-weight:bold;}
+.user_page li.comment .message {margin:10px 0px;padding:10px;border:1px solid #CCC;border-radius:8px;-moz-border-radius:8px;-webkit-border-radius:8px;}
+.user_page li.comment .new {background-color:#FFC;}
+.user_page li.comment .actions {margin-top:10px;}
+.user_page li.comment .actions a {font-size:95%;}
+.user_page li.comment ol.replies {margin-left:20px;}
+
+/*
+ * SECTOR
+ */
+
+.sector_overview_page {}
+
+
+/*
+ * MASTER PLAN
+ */
+
+/* Master Plan Overview Page */
+
+/* Master Plan Programs Page */
+.master_plan_programs_page {}
+.master_plan_programs_page h2 {font-size:138.5%;color:#333;border-bottom:1px solid #999;margin:5px 0px 10px;padding-bottom:5px;}
+.master_plan_programs_page .programs {margin:0px 0px 20px 25px;}
+.master_plan_programs_page .program {margin:5px 0px 10px;font-size:108%;list-style:disc;}
+
+.master_plan_programs_page .program .program_overview {margin:4px 0px 10px;}
+.master_plan_programs_page .program .program_overview span {color:#999;margin-right:20px;}
+.master_plan_programs_page .program .program_overview span em {color:#555;}
+
+
+/* Master Plan Progress Page */
+
+/* Master Plan KPI Page */
+
+/* Master Plan Budget Page */
+.master_plan_budget_page .ss_table td {font-size:100%;}
+.master_plan_budget_page .ss_table th {font-size:100%;text-align:center;}
+
+.master_plan_budget_page .ss_table td.plan {font-weight:bold;padding:10px;background-color:#FFD;}
+.master_plan_budget_page .ss_table td.program {width:270px;vertical-align:top;padding:10px;}
+
+.master_plan_budget_page .ss_table td.program .abbr_name {margin-top:6px;color:#555;}
+
+.master_plan_budget_page .ss_table td.grant_budget {background-color:#EEE;text-align:center;vertical-align:top;}
+.master_plan_budget_page .ss_table td.claim_budget {text-align:center;vertical-align:top;}
+
+.master_plan_budget_page .ss_table td.na {color:#CCC;}
+.master_plan_budget_page .ss_table td .number {margin-bottom:5px;}
+.master_plan_budget_page .ss_table td .unit {}
+
+/* Master Plan Management Page */
+.master_plan_manage .ss_table .plan {background-color:#FFD;}
+.master_plan_manage .ss_table .date_span {width:180px;text-align:center;}
+.master_plan_manage .ss_table .date_span .to {margin:5px 0px;color:#666;}
+
+.master_plan_manage .ss_table .title {color:#666;font-size:93%;margin-bottom:5px;}
+
+.master_plan_manage .ss_table .subcontrols {font-size:85%;margin:15px 0px 5px;}
+.master_plan_manage .ss_table .subcontrols a {color:#666;}
+.master_plan_manage .ss_table .subcontrols a.delete-program {color:#C30 !important;}
+.master_plan_manage .ss_table .subcontrols a:hover {color:#FFF;}
+.master_plan_manage .ss_table .subcontrols a.delete-program:hover {color:#FFF !important;}
+.master_plan_manage .ss_table .subcontrols span {margin:0px 5px;}
+
+.master_plan_manage .manage_program_budget .ss_table .grant_column {width:200px;}
+.master_plan_manage .manage_program_budget .ss_table .grant_column input {width:160px;text-align:right;margin-right:5px;}
+.master_plan_manage .manage_program_budget .ss_table .grant_column input.invalid {background-color:#FCC;}
+.master_plan_manage .manage_program_budget .ss_table .schedule_on_column {width:210px;}
+.master_plan_manage .manage_program_budget .ss_table .schedule_on_column input.invalid {background-color:#FCC;}
+.master_plan_manage .manage_program_budget .button_panel {margin-left:0px !important;}
+
+/*
+ * PROGRAM
+ */
+.program_budget_page {}
+
+.program_budget_page .ss_table .link_column {width:110px;text-align:center;font-size:100%;}
+.program_budget_page .ss_table .schedule_on_column {width:110px;text-align:center;}
+.program_budget_page .ss_table .grant_column {width:130px;text-align:center;}
+.program_budget_page .ss_table .claim_column {width:130px;text-align:center;}
+.program_budget_page .ss_table .status_column {width:180px;text-align:center;}
+
+.program_projects_page .ss_table .ref_no {width:110px;}
+.program_projects_page .ss_table .contract_no {width:130px;}
+.program_projects_page .ss_table .name {}
+.program_projects_page .ss_table .start_date {width:120px;text-align:center;}
+.program_projects_page .ss_table .end_date {width:120px;text-align:center;}
+
+

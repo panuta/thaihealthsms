@@ -1,0 +1,15 @@
+{% extends 'page_base.html' %}
+
+{% block html_head %}
+
+{% endblock %}
+
+{% block body_title %}<h1>การเข้าถึงข้อมูล</h1>{% endblock %}
+
+{% block body_content %}
+<div class="ss_page_error_message">
+	<img src="{{MEDIA_URL}}/images/icons/access_denied.png" />
+	<div>คุณไม่สามารถเปิดหน้านี้ได้ เนื่องจากระบบป้องกันการเข้าถึงไว้</div><br/>
+	<div><a href="/">กลับสู่หน้าแรก</a></div>
+</div>
+{% endblock %}

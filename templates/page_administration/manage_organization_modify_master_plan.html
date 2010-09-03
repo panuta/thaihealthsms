@@ -1,0 +1,46 @@
+{% extends 'page_base.html' %}
+{% load helper_tags tab_tags %}
+
+{% block html_head %}
+{% endblock %}
+
+{% block body_title %}<h1>จัดการระบบ</h1>{% endblock %}
+
+{% block body_tabs %}{% tabs_for_administration page %}{% endblock %}
+
+{% block body_content %}
+<div class="ss_breadcrumbs">
+	<div class="breadcrumbs"><a href="{% url view_administration_organization %}">หน้าโครงสร้างองค์กร</a> &#187;</div>
+    <h2>{% if master_plan %}แก้ไขแผนหลัก{% else %}เพิ่มแผนหลัก{% endif %}</h2>
+</div>
+
+<form action="." method="post" class="ss_form">
+	{% csrf_token %}
+	
+    {% if has_sectors %}
+    <ul>
+        <li>
+            <label for="id_ref_no" class="caption">{{form.ref_no.label}}{% display_required %}</label>
+            <div class="input SHORT">{{form.ref_no}}</div>
+            <div class="comment">{{form.ref_no.label}}ต้องประกอบด้วยตัวเลขเท่านั้น</div>
+            {{form.ref_no.errors}}
+            
+        </li>
+        <li>
+            <label for="id_name" class="caption">{{form.name.label}}{% display_required %}</label>
+            <div class="input LONG">{{form.name}}</div>
+            {{form.name.errors}}
+        </li>
+        <li>
+            <label for="id_sectors" class="caption">{{form.sectors.label}}{% display_required %}</label>
+            <div class="input master_plan_sectors">{{form.sectors}}</div>
+            {{form.sectors.errors}}
+        </li>
+    </ul>
+    {{form.master_plan_id}}
+    <div class="button_panel"><button>{% if master_plan %}แก้ไขแผนหลัก{% else %}เพิ่มแผนหลัก{% endif %}</button></div>
+    {% else %}
+    <div class="prerequisute">ยังไม่มีข้อมูลสำนัก กรุณาเพิ่มสำนักก่อนที่หน้า <a href="{% url view_administer_organization_add_sector %}">เพิ่มสำนัก</a></div>
+    {% endif %}
+</form>
+{% endblock %}

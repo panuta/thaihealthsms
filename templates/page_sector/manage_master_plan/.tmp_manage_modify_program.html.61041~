@@ -1,0 +1,60 @@
+{% extends 'page_base.html' %}
+{% load helper_tags page_tags tab_tags %}
+
+{% block html_head %}
+{{form.media}}
+{% endblock %}
+
+{% block body_title %}{% display_master_plan_management_header user master_plan %}{% endblock %}
+{% block body_tabs %}{% tabs_for_manage_master_plan page master_plan %}{% endblock %}
+
+{% block body_content %}
+<div class="ss_breadcrumbs">
+    <div class="breadcrumbs"><a href="{% url view_master_plan_manage_organization master_plan.ref_no %}">หน้าแผนงาน/โครงการ</a> &#187;</div>
+    {% if program %}<div class="supertitle">({{program.ref_no}}) {{program.name}}</div>{% endif %}
+	<h2>{% if not program %}เพิ่มแผนงาน/โครงการ{% else %}แก้ไขแผนงาน/โครงการ{% endif %}</h2>
+</div>
+
+<form action="" method="POST" class="ss_form">
+	{% csrf_token %}
+	
+    <ul>
+        <li>
+            <label for="id_plan" class="caption">{{form.plan.label}}{% display_required %}</label>
+            <div class="input">{{form.plan}}</div>
+            {{form.plan.errors}}
+        </li>
+        <li>
+            <label for="id_ref_no" class="caption">{{form.ref_no.label}}{% display_required %}</label>
+            <div class="input SHORT">{{form.ref_no}}</div>
+            <div class="comment">ประกอบด้วยตัวเลขหรือตัวหนังสือ ความยาวไม่เกิน 64 ตัวอักษร</div>
+            {{form.ref_no.errors}}
+        </li>
+        <li>
+            <label for="id_name" class="caption">{{form.name.label}}{% display_required %}</label>
+            <div class="input LONG">{{form.name}}</div>
+            {{form.name.errors}}
+        </li>
+		<li>
+            <label for="id_abbr_name" class="caption">{{form.abbr_name.label}}</label>
+            <div class="input MEDIUM">{{form.abbr_name}}</div>
+            {{form.abbr_name.errors}}
+        </li>
+        <li class="date_period">
+            <label class="caption">{{form.start_date.label}}</label>
+            <div class="input">{{form.start_date}} <span class="to">{{form.end_date.label}}</span> {{form.end_date}}</div>
+            {{form.start_date.errors}}
+            {{form.end_date.errors}}
+        </li>
+		<li>
+            <label for="id_manager_name" class="caption">{{form.manager_name.label}}</label>
+            <div class="input MEDIUM">{{form.manager_name}}</div>
+            {{form.manager_name.errors}}
+        </li>
+    </ul>
+    {{form.program_id}}
+    <div class="button_panel">
+    	<button type="submit">{% if not program %}เพิ่มแผนงาน/โครงการ{% else %}แก้ไขแผนงาน/โครงการ{% endif %}</button>
+	</div>
+</form>
+{% endblock %}

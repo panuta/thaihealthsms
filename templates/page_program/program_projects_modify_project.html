@@ -1,0 +1,18 @@
+{% extends 'page_base.html' %}
+{% load helper_tags page_tags tab_tags %}
+
+{% block html_head %}
+
+{% endblock %}
+
+{% block body_title %}{% display_program_header user program %}{% endblock %}
+{% block body_tabs %}{% tabs_for_program page user program %}{% endblock %}
+
+{% block body_content %}
+<div class="ss_breadcrumbs">
+    <div class="breadcrumbs"><a href="{% url view_program_projects program.id %}">โครงการของแผนงาน</a> &#187;</div>
+    <h2>{% if project %}แก้ไขโครงการ{% else %}เพิ่มโครงการ{% endif %}</h2>
+</div>
+{% include 'page_program/components/component_modify_project.html' %}
+
+{% endblock %}

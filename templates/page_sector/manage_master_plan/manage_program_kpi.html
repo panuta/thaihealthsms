@@ -1,0 +1,25 @@
+{% extends 'page_base.html' %}
+{% load helper_tags page_tags tab_tags humanize %}
+
+{% block html_head %}
+<script type="text/javascript">
+$(document).ready(function() {
+    
+});
+</script>
+{% endblock %}
+
+{% block body_title %}{% display_master_plan_management_header user master_plan %}{% endblock %}
+{% block body_tabs %}{% tabs_for_manage_master_plan page master_plan %}{% endblock %}
+
+{% block body_content %}
+<div class="ss_breadcrumbs">
+    <div class="breadcrumbs"><a href="{% url view_master_plan_manage_organization master_plan.ref_no %}">หน้าแผนงาน</a> &#187;</div>
+    <div class="supertitle">({{program.ref_no}}) {{program.name}}</div>
+    <h2>จัดการแผนผลลัพธ์</h2>
+</div>
+
+<div class="master_plan_manage">
+
+</div>
+{% endblock %}

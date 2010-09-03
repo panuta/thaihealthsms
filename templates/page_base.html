@@ -1,0 +1,44 @@
+{% load helper_tags page_tags %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+    <title>Strategy Management Systems</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" >
+    
+    <script type="text/javascript" src="{{MEDIA_URL}}/scripts/jquery-1.4.2.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}/yui/build/reset-fonts/reset-fonts.css">
+    
+    <link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}/css/styles.global.css">
+    <link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}/css/styles.page.css">
+    
+    <script type="text/javascript" src="{{MEDIA_URL}}/scripts/scripts.js"></script>
+    <script type="text/javascript">var MEDIA_URL = '{{MEDIA_URL}}';</script>
+    
+    {% block html_head %}{% endblock %}
+</head>
+<body class="yui-skin-sam">
+<div id="body-header">
+    <div class="logo">
+        <a href="/"><img src="{{MEDIA_URL}}/images/base/thaihealth_color_small.png" /></a>
+        <div class="subname">สำนักงานกองทุนสนับสนุนการสร้างเสริมสุขภาพ (สสส.)</div>
+        <div class="name">Strategy Management Systems</div>
+    </div>
+    <div class="right_panel">
+        <div class="account">
+            <span class="username">{{user.get_profile.firstname}} {{user.get_profile.lastname}} {% if user.is_superuser %}(ผู้ดูแลระบบ){% endif %}</span>
+            <a href="{% url view_user_settings %}">ตั้งค่าผู้ใช้</a> | <a href="/accounts/logout/">ออกจากระบบ</a> |
+        </div>
+        <div class="navigation">
+            {% display_header_navigation user %}
+        </div>
+    </div>
+</div>
+<div id="body-title">{% block body_title %}{% endblock %}</div>
+{% block body_tabs %}{% endblock %}
+{% display_messages messages %}
+<div id="body-content">
+    {% block body_content %}{% endblock %}
+</div>  
+</body>
+</html>

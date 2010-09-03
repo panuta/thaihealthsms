@@ -1,11 +1,17 @@
 from django.db import models
 
+class DomainKPIType(models.Model):
+    of_master_plan = models.ForeignKey('domain.MasterPlan', null=True)
+    of_program = models.ForeignKey('domain.Program', null=True)
+    name = models.CharField(max_length=300)
+
 class DomainKPI(models.Model):
     ref_no = models.CharField(max_length=100)
     name = models.CharField(max_length=1000)
     abbr_name = models.CharField(max_length=200, default='')
     year = models.CharField(max_length=30, default='')
     unit_name = models.CharField(max_length=300)
+    type = models.ForeignKey('DomainKPIType', null=True)
     of_master_plan = models.ForeignKey('domain.MasterPlan', null=True)
     of_plan = models.ForeignKey('domain.Plan', null=True)
     of_program = models.ForeignKey('domain.Program', null=True)

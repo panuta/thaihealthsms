@@ -1,0 +1,94 @@
+{% extends 'page_base.html' %}
+{% load helper_tags page_tags tab_tags %}
+
+{% block html_head %}
+<script type="text/javascript">
+$(document).ready(function() {
+    $(".delete-plan").click(function(e) {
+        if(!window.confirm("ยืนยันการลบกลุ่มแผนงาน?")) {
+            e.preventDefault();
+        }
+    });
+    
+    $(".delete-program").click(function(e) {
+        if(!window.confirm("ยืนยันการลบแผนงาน?")) {
+            e.preventDefault();
+        }
+    });
+});
+</script>
+{% endblock %}
+
+{% block body_title %}{% display_master_plan_management_header user master_plan %}{% endblock %}
+{% block body_tabs %}{% tabs_for_manage_master_plan page master_plan %}{% endblock %}
+
+{% block body_content %}
+<div class="ss_control_panel">
+    <ul>
+        <li><img src="{{MEDIA_URL}}/images/icons/create.png" class="icon"/><a href="{% url view_master_plan_add_plan master_plan.ref_no %}">เพิ่มกลุ่มแผนงาน</a></li>
+        {% if plans %}<li><img src="{{MEDIA_URL}}/images/icons/create.png" class="icon"/><a href="{% url view_master_plan_add_program master_plan.ref_no %}">เพิ่มแผนงาน/โครงการ</a></li>{% endif %}
+    </ul>
+</div>
+
+<div class="master_plan_manage">
+    {% if plans %}
+    <table class="ss_table">
+        <tr>
+        	<th></th>
+			<th class="name">แผนงาน/โครงการ</th>
+			<th class="date_span">ระยะเวลา</th>
+        </tr>
+        {% for plan in plans %}
+            <tr class="plan">
+            	
+                <td class="controls">
+                    <a href="{% url view_master_plan_edit_plan plan.id %}" title="แก้ไขกลุ่มแผนงาน"><img src="{{MEDIA_URL}}/images/icons/edit.png" class="icon" /></a>
+                    {% if plan.programs %}
+                    <img src="{{MEDIA_URL}}/images/icons/delete_disabled.png" class="icon" title="ไม่สามารถลบกลุ่มแผนงานที่มีแผนงานได้"/>
+                    {% else %}
+                    <a href="{% url view_master_plan_delete_plan plan.id %}" title="ลบกลุ่มแผนงาน" class="delete-plan"><img src="{{MEDIA_URL}}/images/icons/delete.png" class="icon" /></a>
+                    {% endif %}
+                </td>
+				<td colspan="2">กลุ่มแผนงาน: ({{plan.ref_no}}) {{plan.name}}</td>
+            </tr>
+            {% if plan.programs %}
+            {% for program in plan.programs %}
+                <tr>
+                	<td></td>
+                    <td class="name">
+                    	<div class="title">รหัสแผนงาน/โครงการ: {{program.ref_no}}</div>
+                    	<a href="{% url view_program_overview program.id %}">{{program.name}}</a>
+						<div class="subcontrols">
+							<img src="{{MEDIA_URL}}/images/icons/row_edit.png" class="icon" /> <a href="{% url view_master_plan_edit_program program.id %}">แก้ไข</a>
+							<span>|</span>
+							<a href="{% url view_master_plan_program_kpi program.id %}">จัดการแผนผลลัพธ์</a>
+							<span>|</span>
+							<a href="{% url view_master_plan_program_budget program.id %}">จัดการแผนการเงิน</a>
+							{% if program.removable %}
+							<span>|</span>
+							<a href="{% url view_master_plan_delete_program program.id %}" class="delete-program">ลบแผนงาน</a>
+							{% endif %}
+						</div>
+					</td>
+					<td class="date_span">
+						{% if program.start_date and program.end_date %}
+							<div>{{program.start_date|full_date}}</div>
+							<div class="to">ถึง</div>
+							<div>{{program.end_date|full_date}}</div>
+						{% else %}ยังไม่กำหนด{% endif %}
+					</td>
+                </tr>
+            {% endfor %}
+            {% else %}
+            <tr>
+            	<td></td>
+                <td colspan="2" class="table_no_information">ไม่มีแผนงานภายใต้กลุ่มแผนงานนี้</td>
+            </tr>
+            {% endif %}
+        {% endfor %}
+    </table>
+    {% else %}
+    <div class="ss_no_information">ไม่มีข้อมูลกลุ่มแผนงาน</div>
+    {% endif %}
+</div>
+{% endblock %}

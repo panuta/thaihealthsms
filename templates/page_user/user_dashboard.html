@@ -1,0 +1,70 @@
+{% extends 'page_base.html' %}
+{% load helper_tags %}
+
+{% block html_head %}
+
+{% endblock %}
+
+{% block body_title %}<h1>หน้าผู้ใช้</h1>{% endblock %}
+
+{% block body_content %}
+<div class="user_page">
+<h2>หน่วยงานที่รับผิดชอบ</h2>
+<ul class="responsibilities">
+	<li class="dept">
+		<h3><a href="#">Sector 1</a></h3>
+		<ul class="sections">
+			<li class="section"><a href="#">Overview</a></li>
+			<li class="section"><a href="#">Overview</a></li>
+			<li class="section"><a href="#">Overview</a></li>
+		</ul>
+	</li>
+	
+	<li class="dept">
+        <h3><a href="#">Sector 1</a></h3>
+        <ul class="sections">
+            <li class="section"><a href="#">Overview</a></li>
+            <li class="section"><a href="#">Overview</a></li>
+            <li class="section"><a href="#">Overview</a></li>
+        </ul>
+    </li>
+</ul>
+
+<h2>ความคิดเห็นใหม่</h2>
+<ol class="comments">
+	<li class="comment">
+		<div class="source"><a href="#">Project 111</a></div>
+		<div class="message new">
+			<div class="metadata">today from anonymous</div>
+			<p>Message body content</p>
+			<div class="actions"><a href="#">Mark as read</a></div>
+		</div>
+	</li>
+	
+	<li class="comment">
+        <div class="source"><a href="#">Project 111</a></div>
+        <div class="message">
+        	<div class="metadata">จาก <span class="name">Panu Tangchalermkul</span> เมื่อวันที่ 12 ส.ค. 2553 เวลา 10.00 น. &#187;</div>
+            <p>Message body content</p>
+        </div>
+        <ol class="replies">
+            <li class="reply">
+            	<div class="message new">
+            		<div class="metadata">today from anonymous</div>
+            		<p>Message body content</p>
+            	</div>
+            </li>
+            <li class="reply">
+                <div class="message new">
+                	<div class="metadata">today from anonymous</div>
+                    <p>Message body content</p>
+                </div>
+            </li>
+        </ol>
+    </li>
+</ol>
+</div>
+
+
+
+{% endblock %}

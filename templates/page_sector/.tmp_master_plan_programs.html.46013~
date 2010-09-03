@@ -1,0 +1,31 @@
+{% extends 'page_base.html' %}
+{% load helper_tags page_tags tab_tags %}
+
+{% block html_head %}
+{% endblock %}
+
+{% block body_title %}{% display_master_plan_header user master_plan %}{% endblock %}
+{% block body_tabs %}{% tabs_for_master_plan page user master_plan %}{% endblock %}
+
+{% block body_content %}
+<div class="ss_control_panel">
+    <ul>
+        <li><img src="{{MEDIA_URL}}/images/icons/manage.png" class="icon"/><a href="{% url view_master_plan_manage_organization master_plan.ref_no %}">จัดการแผนงาน/โครงการ</a></li>
+    </ul>
+</div>
+
+<div class="master_plan_programs_page">
+	<ul class="plans">
+		{% for plan in plans %}
+		<li class="plan">
+			<h2>{{plan.name}}</h2>
+			<ul class="programs">
+				{% for program in plan.programs %}
+				<li class="program"><a href="{% url view_program_overview program.id %}">แผนงาน ({{program.ref_no}}) {{program.name}}</a></li>
+				{% endfor %}
+			</ul>
+		</li>
+		{% endfor %}
+	</ul>
+</div>
+{% endblock %}

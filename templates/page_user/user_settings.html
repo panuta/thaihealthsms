@@ -1,0 +1,51 @@
+{% extends 'page_base.html' %}
+{% load helper_tags tab_tags %}
+
+{% block html_head %}
+{% endblock %}
+
+{% block body_title %}<h1>ตั้งค่าผู้ใช้</h1>{% endblock %}
+
+{% block body_content %}
+<div class="user_page">
+	<div class="setting_panel">
+		<h2>ข้อมูลผู้ใช้</h2>
+		<form action='.' method='POST' class="ss_form">
+			{% csrf_token %}
+            <ul>
+                <li>
+                    <label for="id_firstname" class="caption">{{form_profile.firstname.label}}{% display_required %}</label>
+                    <div class="input MEDIUM">{{form_profile.firstname}}</div>
+                    {{form_profile.firstname.errors}}
+                </li>
+                <li>
+                    <label for="id_lastname" class="caption">{{form_profile.lastname.label}}{% display_required %}</label>
+                    <div class="input MEDIUM">{{form_profile.lastname}}</div>
+                    {{form_profile.lastname.errors}}
+                </li>
+            </ul>
+            <div class="button_panel"><button name="profile_button" value="submit">เปลี่ยนข้อมูลผู้ใช้</button></div>
+        </form>
+	</div>
+	
+	<div class="setting_panel">
+		<h2>เปลี่ยนรหัสผ่าน</h2>
+	    <form action='.' method='POST' class="ss_form">
+	    	{% csrf_token %}
+	        <ul>
+	            <li>
+	                <label for="id_password1" class="caption">{{form_password.password1.label}}{% display_required %}</label>
+	                <div class="input MEDIUM">{{form_password.password1}}</div>
+	                {{form_password.password1.errors}}
+	            </li>
+	            <li>
+	                <label for="id_password2" class="caption">{{form_password.password2.label}}{% display_required %}</label>
+	                <div class="input MEDIUM">{{form_password.password2}}</div>
+	                {{form_password.password2.errors}}
+	            </li>
+	        </ul>
+	        <div class="button_panel"><button name="password_button" value="submit">เปลี่ยนรหัสผ่าน</button></div>
+	    </form>
+	</div>
+</div>
+{% endblock %}

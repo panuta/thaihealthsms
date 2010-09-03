@@ -1,17 +1,31 @@
-from django.conf.urls.defaults import *
+import os
 
-# Uncomment the next two lines to enable the admin:
-# from django.contrib import admin
-# admin.autodiscover()
+from django.conf.urls.defaults import *
+from django.conf import settings
+from django.views.static import serve
+
+from django.contrib import admin
+admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Example:
-    # (r'^thaihealthsms/', include('thaihealthsms.foo.urls')),
-
-    # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
-    # to INSTALLED_APPS to enable admin documentation:
-    # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
-    # Uncomment the next line to enable the admin:
-    # (r'^admin/', include(admin.site.urls)),
+    (r'^', include('thaihealthsms.accounts.urls')),
+    (r'^', include('thaihealthsms.administration.urls')),
+    (r'^', include('thaihealthsms.comment.urls')),
+    (r'^', include('thaihealthsms.domain.urls')),
+    (r'^', include('thaihealthsms.budget.urls')),
+    (r'^', include('thaihealthsms.kpi.urls')),
+    (r'^', include('thaihealthsms.report.urls')),
+    
+    (r'^accounts/', include('registration.backends.default.urls')),
+    
+    (r'^admin/(.*)', admin.site.root),
+    
+    url(r'^$', 'homepage.views.view_homepage', name='view_homepage'),
 )
+
+if settings.DEBUG:
+    urlpatterns += patterns('', 
+        (r'^m/(?P<path>.*)$', serve, {
+            'document_root' : os.path.join(os.path.dirname(__file__), "media")
+        })
+    )

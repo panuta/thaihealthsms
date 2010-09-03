@@ -1,0 +1,12 @@
+{% extends 'page_base.html' %}
+{% load helper_tags %}
+
+{% block html_head %}
+
+{% endblock %}
+
+{% block body_title %}<h1>หน้าผู้ใช้</h1>{% endblock %}
+
+{% block body_content %}
+
+{% endblock %}

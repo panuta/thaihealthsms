@@ -15,12 +15,12 @@ class UserRoleResponsibility(models.Model):
 
 class RoleDetails(models.Model):
     NO_LEVEL = 0
-    SECTOR_LEVEL = 1
-    PROGRAM_LEVEL = 2
+    SECTOR_LEVEL = 1 # e.g. Sector Manager, Sector Manager Assistant
+    PROGRAM_LEVEL = 2 # e.g. Program Manager, Program Manager Assistant
     
     role = models.ForeignKey(Group, unique=True)
     name = models.CharField(max_length=512)
-    level = models.IntegerField(default=SECTOR_LEVEL) # Use to determine role responsibility either sectors or programs
+    level = models.IntegerField(default=SECTOR_LEVEL) # Use to determine usre's role either in sector layer or program layer
 
 class AdminPermission(models.Model):
     permission = models.CharField(max_length=300)

@@ -5,7 +5,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    ('Panu Tangchalermkul', 'panuta@gmail.com'),
+    ('panuta', 'panuta@gmail.com'),
 )
 
 MANAGERS = ADMINS
@@ -36,7 +36,7 @@ ADMIN_MEDIA_PREFIX = '/media/'
 
 AUTH_PROFILE_MODULE = 'accounts.UserAccount'
 ACCOUNT_ACTIVATION_DAYS = 3
-LOGIN_REDIRECT_URL = '/home/'
+LOGIN_REDIRECT_URL = '/'
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
@@ -94,11 +94,25 @@ INSTALLED_APPS = (
     
     'thaihealthsms.accounts',
     'thaihealthsms.administration',
+    'thaihealthsms.budget',
+    'thaihealthsms.comment',
     'thaihealthsms.domain',
     'thaihealthsms.helper',
-    'thaihealthsms.budget',
-    # 'thaihealthsms.progress',
+    'thaihealthsms.homepage',
     'thaihealthsms.kpi',
+    'thaihealthsms.report',
     
     'registration',
 )
+
+# ================================================================ #
+# ========================= SMS Settings ========================= #
+
+QUARTER_START_MONTH = 10 # (1 is for January)
+# IMPORTANT NOTE! Not support quarter which start and end of quarter is in different year
+
+QUARTER_LOWER_YEAR_NUMBER = False # Use lower year number to represent if QUARTER_START_MONTH is not 1
+QUARTER_INPUT_YEAR_SPAN = 5
+
+# PAGINATION
+ADMIN_MANAGE_USERS_PER_PAGE = 25

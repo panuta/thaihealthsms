@@ -1,0 +1,4 @@
+ชื่อผู้ใช้: {{username}}
+รหัสผ่าน: {{password}}
+
+เข้าสู่ระบบ {{settings.SYSTEM_NAME}} ได้ที่ http://{{site.name}}/

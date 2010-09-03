@@ -1,0 +1,13 @@
+{% extends 'page_base.html' %}
+{% load helper_tags page_tags tab_tags %}
+
+{% block html_head %}
+
+{% endblock %}
+
+{% block body_title %}{% display_project_header user project %}{% endblock %}
+{% block body_tabs %}{% tabs_for_project page user project %}{% endblock %}
+
+{% block body_content %}
+
+{% endblock %}
