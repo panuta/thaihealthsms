@@ -2,7 +2,16 @@
 {% load helper_tags page_tags tab_tags %}
 
 {% block html_head %}
-
+{{form.media}}
+<script type="text/javascript">
+$(document).ready(function() {
+    $(".delete-project").click(function(e) {
+        if(!window.confirm("ยืนยันการลบโครงการ?")) {
+            e.preventDefault();
+        }
+    });
+});
+</script>
 {% endblock %}
 
 {% block body_title %}{% display_program_header user program %}{% endblock %}

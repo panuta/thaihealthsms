@@ -21,7 +21,7 @@ a:hover {color:#FFF;background-color:#369;}
 
 #body-title {background-color:#EEE;padding:5px 15px;border-top:1px solid #CCC;border-bottom:1px solid #BBB;}
 #body-title h1 {margin-top:4px;margin-bottom:5px;font-size:138.5%;font-weight:bold;color:#333;}
-#body-title .supertitle {font-size:108%;color:#DDD;margin:4px 0px 6px;}
+#body-title .supertitle {font-size:108%;color:#666;margin:4px 0px 6px;}
 #body-title .supertitle a {color:#666;}
 #body-title .supertitle a:hover {color:#FFF;}
 #body-title .subtitle {padding:5px 0px 5px;}
@@ -47,6 +47,7 @@ a:hover {color:#FFF;background-color:#369;}
 .ss_breadcrumbs h2 {font-size:146.5%;margin-bottom:20px;padding-bottom:5px;border-bottom:5px solid #CCC;}
 .ss_breadcrumbs .supertitle {margin:5px 0px;font-size:108%;color:#555;}
 .ss_breadcrumbs .subtitle {margin:10px 0px 5px;color:#444;}
+.ss_breadcrumbs .link_backward {margin:0px 0px 20px;}
 
 /* Messages */
 .ss_messages {margin:15px 0px 0px;}
@@ -111,7 +112,11 @@ a:hover {color:#FFF;background-color:#369;}
 .yui_date_picker_panel input {color:#333;width:160px;}
 .yui_date_picker_panel img {vertical-align:middle;cursor:pointer;margin-left:5px;}
 
-
+.ss_form .delete_link {margin:10px 30px 20px;border:1px dashed #CCC;padding:10px;}
+.ss_form .delete_link a {color:#C30;}
+.ss_form .delete_link a:hover {color:#FFF;}
+.ss_form .delete_link span {color:#666;}
+.ss_form .delete_link .note {margin-top:5px;color:#666;}
 
 /*
 .ss_form ul {margin-left:30px;}

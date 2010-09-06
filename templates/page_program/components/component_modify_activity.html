@@ -1,0 +1,46 @@
+{% load helper_tags page_tags %}
+<form action="." method="post" class="ss_form">
+    {% csrf_token %}
+    <ul>
+    	<li>
+            <label for="id_name" class="caption">{{form.name.label}}{% display_required %}</label>
+            <div class="input MAX">{{form.name}}</div>
+            {{form.name.errors}}
+        </li>
+        <li>
+            <label for="id_location" class="caption">{{form.location.label}}</label>
+            <div class="input LONG">{{form.location}}</div>
+            {{form.location.errors}}
+        </li>
+        <li class="date_period">
+            <label class="caption">{{form.start_date.label}}</label>
+            <div class="input">{{form.start_date}} <span class="to">{{form.end_date.label}}</span> {{form.end_date}}</div>
+            {{form.start_date.errors}}
+            {{form.end_date.errors}}
+        </li>
+        <li>
+            <label for="id_description" class="caption">{{form.description.label}}</label>
+            <div class="input AREA_MEDIUM">{{form.description}}</div>
+            {{form.description.errors}}
+        </li>
+        <li>
+            <label for="id_result_goal" class="caption">{{form.result_goal.label}}</label>
+            <div class="input AREA_MEDIUM">{{form.result_goal}}</div>
+            {{form.result_goal.errors}}
+        </li>
+        <li>
+            <label for="id_result_real" class="caption">{{form.result_real.label}}</label>
+            <div class="input AREA_MEDIUM">{{form.result_real}}</div>
+            {{form.result_real.errors}}
+        </li>
+    </ul>
+    {{form.activity_id}}
+    <div class="button_panel"><button type="submit">ตกลง</button></div>
+    
+    {% if activity %}
+    <div class="delete_link">
+        <img src="{{MEDIA_URL}}/images/icons/delete.png" class="icon"/>
+        <a href="{% url view_activity_delete_activity activity.id %}" title="ลบกิจกรรม" class="delete-activity">ลบกิจกรรม</a>
+    </div>
+    {% endif %}
+</form>

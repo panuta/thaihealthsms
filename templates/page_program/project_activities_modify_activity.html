@@ -1,0 +1,27 @@
+{% extends 'page_base.html' %}
+{% load helper_tags page_tags tab_tags %}
+
+{% block html_head %}
+{{form.media}}
+<script type="text/javascript">
+$(document).ready(function() {
+    $(".delete-activity").click(function(e) {
+        if(!window.confirm("ยืนยันการลบกิจกรรม?")) {
+            e.preventDefault();
+        }
+    });
+});
+</script>
+{% endblock %}
+
+{% block body_title %}{% display_project_header user project %}{% endblock %}
+{% block body_tabs %}{% tabs_for_project page user project %}{% endblock %}
+
+{% block body_content %}
+<div class="ss_breadcrumbs">
+    <div class="breadcrumbs"><a href="{% url view_project_activities project.id %}">กิจกรรมของโครงการ</a> &#187;</div>
+    <h2>{% if project %}แก้ไขกิจกรรม{% else %}เพิ่มกิจกรรม{% endif %}</h2>
+</div>
+{% include 'page_program/components/component_modify_activity.html' %}
+
+{% endblock %}

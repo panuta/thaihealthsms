@@ -21,24 +21,24 @@ urlpatterns = patterns('domain.views',
     # Program
     url(r'^program/(?P<program_id>\d+)/$', 'view_program_overview', name='view_program_overview'),
     url(r'^program/(?P<program_id>\d+)/projects/$', 'view_program_projects', name='view_program_projects'),
-    url(r'^project/(?P<program_id>\d+)/projects/add/$', 'view_program_add_project', name='view_program_add_project'),
+    url(r'^program/(?P<program_id>\d+)/projects/add/$', 'view_program_add_project', name='view_program_add_project'),
+    
+    url(r'^program/projects/(?P<project_id>\d+)/edit/$', 'view_program_edit_project', name='view_program_edit_project'),
     
     # Project
     url(r'^project/(?P<project_id>\d+)/$', 'view_project_overview', name='view_project_overview'),
+    url(r'^project/(?P<project_id>\d+)/edit/$', 'view_project_edit_project', name='view_project_edit_project'),
+    url(r'^project/(?P<project_id>\d+)/delete/$', 'view_project_delete_project', name='view_project_delete_project'),
+    
     url(r'^project/(?P<project_id>\d+)/activities/$', 'view_project_activities', name='view_project_activities'),
+    url(r'^project/(?P<project_id>\d+)/activities/add/$', 'view_project_add_activity', name='view_project_add_activity'),
     
+    url(r'^project/activities/(?P<activity_id>\d+)/edit/$', 'view_project_edit_activity', name='view_project_edit_activity'),
     
-    #url(r'^project/(?P<project_id>\d+)/projects/$', 'view_project_projects', name='view_project_projects'),
-    #url(r'^project/(?P<project_id>\d+)/projects/add/$', 'view_project_add', name='view_project_add'),
-    #url(r'^project/(?P<project_id>\d+)/delete/$', 'view_project_delete', name='view_project_delete'),
-    #url(r'^project/(?P<project_id>\d+)/edit/$', 'view_project_edit', name='view_project_edit'),
-    
-    #url(r'^project/(?P<project_id>\d+)/activities/add/$', 'view_activity_add', name='view_activity_add'),
-
     # Activity
     url(r'^activity/(?P<activity_id>\d+)/$', 'view_activity_overview', name="view_activity_overview"),
-    #url(r'^activity/(?P<activity_id>\d+)/edit/$', 'view_activity_edit', name="view_activity_edit"),
-    #url(r'^activity/(?P<activity_id>\d+)/delete/$', 'view_activity_delete', name="view_activity_delete"),
+    url(r'^activity/(?P<activity_id>\d+)/edit/$', 'view_activity_edit_activity', name="view_activity_edit_activity"),
+    url(r'^activity/(?P<activity_id>\d+)/delete/$', 'view_activity_delete_activity', name="view_activity_delete_activity"),
 )
 
 #urlpatterns += patterns('domain.ajax',

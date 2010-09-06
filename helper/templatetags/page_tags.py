@@ -50,11 +50,19 @@ def display_program_header(user, program):
 
 @register.simple_tag
 def display_project_header(user, project):
-    return unicode('<div class="supertitle"><a href="%s">แผนงาน %s - %s</a></div><h1>โครงการ (%s) %s</h1>', 'utf-8') % (reverse('view_program_overview', args=[project.program.id]), project.program.ref_no, project.program.name, project.ref_no, project.name)
+    return unicode('<div class="supertitle"><a href="%s">แผนงาน %s - %s</a></div><h1>โครงการ (%s) %s</h1><div class="subtitle"><img src="%s/images/icons/edit.png" class="icon"/> <a href="%s">แก้ไขโครงการ</a></div>', 'utf-8') % (reverse('view_program_overview', args=[project.program.id]), project.program.ref_no, project.program.name, project.ref_no, project.name, settings.MEDIA_URL, reverse('view_project_edit_project', args=[project.id]))
+
+@register.simple_tag
+def display_project_edit_header(user, project):
+    return unicode('<div class="supertitle"><a href="%s">โครงการ (%s) %s</a></div><h1>แก้ไขโครงการ</h1>', 'utf-8') % (reverse('view_project_overview', args=[project.id]), project.ref_no, project.name)
 
 @register.simple_tag
 def display_activity_header(user, activity):
-    pass
+    return unicode('<div class="supertitle"><a href="%s">แผนงาน %s</a> &#187; <a href="%s">โครงการ %s - %s</a></div><h1>กิจกรรม %s</h1><div class="subtitle"><img src="%s/images/icons/edit.png" class="icon"/> <a href="%s">แก้ไขกิจกรรม</a></div>', 'utf-8') % (reverse('view_program_overview', args=[activity.project.program.id]), activity.project.program.ref_no, reverse('view_project_overview', args=[activity.project.id]), activity.project.ref_no, activity.project.name, activity.name, settings.MEDIA_URL, reverse('view_activity_edit_activity', args=[activity.id]))
+
+@register.simple_tag
+def display_activity_edit_header(user, activity):
+    return unicode('<div class="supertitle"><a href="%s">กิจกรรม %s</a></div><h1>แก้ไขกิจกรรม</h1>', 'utf-8') % (reverse('view_activity_overview', args=[activity.id]), activity.name)
 
 # ADMIN PAGE
 

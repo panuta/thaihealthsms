@@ -2,14 +2,26 @@
 {% load helper_tags page_tags tab_tags %}
 
 {% block html_head %}
-
+{{form.media}}
+<script type="text/javascript">
+$(document).ready(function() {
+    $(".delete-project").click(function(e) {
+        if(!window.confirm("ยืนยันการลบโครงการ?")) {
+            e.preventDefault();
+        }
+    });
+});
+</script>
 {% endblock %}
 
-{% block body_title %}{% display_project_header user project %}{% endblock %}
+{% block body_title %}{% display_project_edit_header user project %}{% endblock %}
 {% block body_tabs %}{% tabs_for_project page user project %}{% endblock %}
 
 {% block body_content %}
-<a href="#">Back to project page</a>
+<div class="ss_breadcrumbs">
+	<div class="link_backward"><a href="{% url view_project_overview project.id %}">กลับไปหน้าโครงการ</a> &#187;</div>
+</div>
 
+{% include 'page_program/components/component_modify_project.html' %}
 
 {% endblock %}

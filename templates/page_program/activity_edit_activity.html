@@ -1,0 +1,27 @@
+{% extends 'page_base.html' %}
+{% load helper_tags page_tags tab_tags %}
+
+{% block html_head %}
+{{form.media}}
+<script type="text/javascript">
+$(document).ready(function() {
+    $(".delete-activity").click(function(e) {
+        if(!window.confirm("ยืนยันการลบกิจกรรม?")) {
+            e.preventDefault();
+        }
+    });
+});
+</script>
+{% endblock %}
+
+{% block body_title %}{% display_activity_edit_header user activity %}{% endblock %}
+{% block body_tabs %}{% tabs_for_activity page user activity %}{% endblock %}
+
+{% block body_content %}
+<div class="ss_breadcrumbs">
+    <div class="link_backward"><a href="{% url view_activity_overview activity.id %}">กลับไปหน้ากิจกรรม</a> &#187;</div>
+</div>
+
+{% include 'page_program/components/component_modify_activity.html' %}
+
+{% endblock %}

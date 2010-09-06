@@ -54,8 +54,8 @@ class ModifyPlanForm(forms.Form):
 		forms.Form.__init__(self, *args, **kwargs)
 	
 	plan_id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
-	ref_no = forms.CharField(max_length=512, label='รหัส')
-	name = forms.CharField(max_length=512, label='ชื่อกลุ่มแผนงาน')
+	ref_no = forms.CharField(max_length=100, label='รหัส')
+	name = forms.CharField(max_length=500, label='ชื่อกลุ่มแผนงาน')
 	
 	def clean(self):
 		cleaned_data = self.cleaned_data
@@ -83,7 +83,7 @@ class MasterPlanProgramForm(forms.Form):
 	program_id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
 	plan = PlanChoiceField(label="กลุ่มแผนงาน")
 	ref_no = forms.CharField(max_length=64, label='รหัสแผนงาน')
-	name = forms.CharField(max_length=1024, label='ชื่อแผนงาน')
+	name = forms.CharField(max_length=500, label='ชื่อแผนงาน')
 	abbr_name = forms.CharField(max_length=200, label='ชื่อย่อแผนงาน', required=False)
 	manager_name = forms.CharField(max_length=300, label='ผู้ดูแลแผนงาน', required=False)
 	start_date = forms.DateField(widget=YUICalendar(attrs={'id':'id_start_date'}), label='ระยะเวลา', required=False)
@@ -115,10 +115,11 @@ class ModifyProjectForm(forms.Form):
 	project_id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
 	ref_no = forms.CharField(required=False, max_length=64, label='รหัสโครงการ')
 	contract_no = forms.CharField(max_length=200, label='เลขที่สัญญา', required=False)
-	name = forms.CharField(max_length=512, label='ชื่อโครงการ')
+	name = forms.CharField(max_length=500, label='ชื่อโครงการ')
+	abbr_name = forms.CharField(max_length=200, label='ชื่อย่อโครงการ')
 	start_date = forms.DateField(required=False, widget=YUICalendar(attrs={'id':'id_start_date'}), label='ระยะเวลาโครงการ')
 	end_date = forms.DateField(required=False, widget=YUICalendar(attrs={'id':'id_end_date'}), label='ถึง')
-	description = forms.CharField(max_length=1000, label='คำอธิบายโครงการ', widget=forms.Textarea)
+	description = forms.CharField(required=False, max_length=1000, label='คำอธิบายโครงการ', widget=forms.Textarea)
 	
 	def clean(self):
 		cleaned_data = self.cleaned_data
@@ -145,8 +146,8 @@ class ModifyProjectForm(forms.Form):
 			
 		return cleaned_data
 
-class ActivityForm(forms.Form):
-	name 			= forms.CharField(max_length=1024, label='ชื่อกิจกรรม')
+class ModifyActivityForm(forms.Form):
+	name 			= forms.CharField(max_length=500, label='ชื่อกิจกรรม')
 	start_date      = forms.DateField(widget=YUICalendar(attrs={'id':'id_start_date'}), label='เริ่มตั้งแต่วันที่', required=False)
 	end_date        = forms.DateField(widget=YUICalendar(attrs={'id':'id_end_date'}), label='ถึง', required=False)
 	description 	= forms.CharField(max_length=2000, required=False, widget=forms.Textarea(), label='รายละเอียด')

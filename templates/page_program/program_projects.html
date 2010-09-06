@@ -2,7 +2,6 @@
 {% load helper_tags page_tags tab_tags %}
 
 {% block html_head %}
-
 {% endblock %}
 
 {% block body_title %}{% display_program_header user program %}{% endblock %}
@@ -12,7 +11,7 @@
 <div class="program_projects_page">
 	<div class="ss_control_panel">
         <ul>
-            <li><img src="{{MEDIA_URL}}/images/icons/record_create.png" class="icon"/><a href="{% url view_program_add_project program.id %}">เพิ่มโครงการ</a></li>
+            <li><img src="{{MEDIA_URL}}/images/icons/create.png" class="icon"/><a href="{% url view_program_add_project program.id %}">เพิ่มโครงการ</a></li>
         </ul>
     </div>
 	
@@ -29,10 +28,9 @@
         {% for project in projects %}
         <tr>
         	<td class="controls">
-        		<a href="#"><img src="{{MEDIA_URL}}/images/icons/record_edit.png" class="icon"/></a>
-				<a href="#"><img src="{{MEDIA_URL}}/images/icons/record_delete.png" class="icon"/></a>
+        		<a href="{% url view_program_edit_project project.id %}" title="แก้ไขโครงการ"><img src="{{MEDIA_URL}}/images/icons/edit.png" class="icon"/></a>
 			</td>
-            <td class="ref_no">{{project.ref_no}}</td>
+            <td class="ref_no">{% if project.ref_no %}{{project.ref_no}}{% else %}-{% endif %}</td>
             <td class="contract_no">{% if project.contract_no %}{{project.contract_no}}{% else %}-{% endif %}</td>
             <td class="name"><a href="{% url view_project_overview project.id %}">{{project.name}}</a></td>
             <td class="start_date">{% if project.start_date %}{{project.start_date|abbr_date}}{% else %}ไม่กำหนด{% endif %}</td>

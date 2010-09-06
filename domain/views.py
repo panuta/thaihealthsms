@@ -247,10 +247,10 @@ def view_program_add_project(request, program_id):
                 ref_no=form.cleaned_data['ref_no'],
                 contract_no=form.cleaned_data['contract_no'],
                 name=form.cleaned_data['name'],
-                abbr_name=form.cleaned_data['abbr_name'],
                 description=form.cleaned_data['description'],
                 start_date=form.cleaned_data['start_date'],
-                end_date=form.cleaned_data['end_date']
+                end_date=form.cleaned_data['end_date'],
+                created_by=request.user.get_profile()
             )
             
             messages.success(request, u'เพิ่มโครงการเรียบร้อย')
@@ -260,6 +260,31 @@ def view_program_add_project(request, program_id):
         form = ModifyProjectForm(initial={'program_id':program.id})
     
     return render_page_response(request, 'projects', 'page_program/program_projects_modify_project.html', {'program':program, 'form':form})
+
+@login_required
+def view_program_edit_project(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    program = project.program
+    
+    if request.method == 'POST':
+        form = ModifyProjectForm(request.POST)
+        if form.is_valid():
+            project.ref_no = form.cleaned_data.get('ref_no')
+            project.contract_no = form.cleaned_data.get('contract_no')
+            project.name = form.cleaned_data.get('name')
+            project.description = form.cleaned_data.get('description')
+            project.start_date = form.cleaned_data.get('start_date')
+            project.end_date = form.cleaned_data.get('end_date')
+            project.save()
+            
+            messages.success(request, u'แก้ไขโครงการเรียบร้อย')
+            return redirect('view_program_projects', (program.id))
+        
+    else:
+        form = ModifyProjectForm(initial={'program_id':program.id, 'project_id':project.id, 'ref_no':project.ref_no, 'contract_no':project.contract_no, 'name':project.name, 'description':project.description, 'start_date':project.start_date, 'end_date':project.end_date})
+    
+    project.removable = Activity.objects.filter(project=project).count() == 0
+    return render_page_response(request, 'projects', 'page_program/program_projects_modify_project.html', {'program':program, 'form':form, 'project':project})
 
 #
 # PROJECT #######################################################################
@@ -274,9 +299,101 @@ def view_project_overview(request, project_id):
     return render_page_response(request, 'overview', 'page_program/project_overview.html', {'project':project, 'current_activities':current_activities})
 
 @login_required
+def view_project_edit_project(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    program = project.program
+    
+    if request.method == 'POST':
+        form = ModifyProjectForm(request.POST)
+        if form.is_valid():
+            project.ref_no = form.cleaned_data.get('ref_no')
+            project.contract_no = form.cleaned_data.get('contract_no')
+            project.name = form.cleaned_data.get('name')
+            project.description = form.cleaned_data.get('description')
+            project.start_date = form.cleaned_data.get('start_date')
+            project.end_date = form.cleaned_data.get('end_date')
+            project.save()
+            
+            messages.success(request, u'แก้ไขโครงการเรียบร้อย')
+            return redirect('view_project_overview', (project.id))
+        
+    else:
+        form = ModifyProjectForm(initial={'program_id':program.id, 'project_id':project.id, 'ref_no':project.ref_no, 'contract_no':project.contract_no, 'name':project.name, 'description':project.description, 'start_date':project.start_date, 'end_date':project.end_date})
+    
+    project.removable = Activity.objects.filter(project=project).count() == 0
+    return render_page_response(request, '', 'page_program/project_edit_project.html', {'project':project, 'form':form})
+
+@login_required
+def view_project_delete_project(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    program = project.program
+    
+    if not Activity.objects.filter(project=project).count():
+        project.delete()
+        messages.success(request, u'ลบโครงการเรียบร้อย')
+    else:
+        messages.error(request, 'ไม่สามารถลบโครงการที่มีกิจกรรมอยู่ได้')
+    
+    return redirect('view_program_projects', (program.id))
+
+@login_required
 def view_project_activities(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-    return render_page_response(request, 'activities', 'page_program/project_activities.html', {'project':project, })
+    activities = Activity.objects.filter(project=project).order_by('-start_date')
+    return render_page_response(request, 'activities', 'page_program/project_activities.html', {'project':project, 'activities':activities})
+
+@login_required
+def view_project_add_activity(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    
+    if request.method == 'POST':
+        form = ModifyActivityForm(request.POST)
+        if form.is_valid():
+            activity = Activity.objects.create(project=project,
+                name=form.cleaned_data['name'],
+                start_date=form.cleaned_data['start_date'],
+                end_date=form.cleaned_data['end_date'],
+                description=form.cleaned_data['description'],
+                location=form.cleaned_data['location'],
+                result_goal=form.cleaned_data['result_goal'],
+                result_real=form.cleaned_data['result_real'],
+                created_by=request.user.get_profile(),
+                )
+            
+            messages.success(request, u'เพิ่มกิจกรรมเรียบร้อย')
+            return redirect('view_project_activities', (project.id))
+
+    else:
+        form = ModifyActivityForm()
+    
+    return render_page_response(request, 'activities', 'page_program/project_activities_modify_activity.html', {'project':project, 'form':form})
+
+@login_required
+def view_project_edit_activity(request, activity_id):
+    activity = get_object_or_404(Activity, pk=activity_id)
+    project = activity.project
+    
+    if request.method == 'POST':
+        form = ModifyActivityForm(request.POST)
+        if form.is_valid():
+            activity = Activity.objects.create(project=project,
+                name=form.cleaned_data['name'],
+                start_date=form.cleaned_data['start_date'],
+                end_date=form.cleaned_data['end_date'],
+                description=form.cleaned_data['description'],
+                location=form.cleaned_data['location'],
+                result_goal=form.cleaned_data['result_goal'],
+                result_real=form.cleaned_data['result_real'],
+                created_by=request.user.get_profile(),
+                )
+            
+            messages.success(request, u'เพิ่มกิจกรรมเรียบร้อย')
+            return redirect('view_project_activities', (project.id))
+
+    else:
+        form = ModifyActivityForm(initial=activity.__dict__)
+    
+    return render_page_response(request, 'activities', 'page_program/project_activities_modify_activity.html', {'project':project, 'form':form, 'activity':activity})
 
 #
 # ACTIVITY #######################################################################
@@ -286,3 +403,39 @@ def view_project_activities(request, project_id):
 def view_activity_overview(request, activity_id):
     activity = get_object_or_404(Activity, pk=activity_id)
     return render_page_response(request, 'overview', 'page_program/activity_overview.html', {'activity':activity, })
+
+@login_required
+def view_activity_edit_activity(request, activity_id):
+    activity = get_object_or_404(Activity, pk=activity_id)
+    
+    if request.method == 'POST':
+        form = ModifyActivityForm(request.POST)
+        if form.is_valid():
+            activity = Activity.objects.create(project=project,
+                name=form.cleaned_data['name'],
+                start_date=form.cleaned_data['start_date'],
+                end_date=form.cleaned_data['end_date'],
+                description=form.cleaned_data['description'],
+                location=form.cleaned_data['location'],
+                result_goal=form.cleaned_data['result_goal'],
+                result_real=form.cleaned_data['result_real'],
+                created_by=request.user.get_profile(),
+                )
+            
+            messages.success(request, u'เพิ่มกิจกรรมเรียบร้อย')
+            return redirect('view_project_activities', (project.id))
+
+    else:
+        form = ModifyActivityForm(initial=activity.__dict__)
+    
+    return render_page_response(request, '', 'page_program/activity_edit_activity.html', {'activity':activity, 'form':form})
+
+@login_required
+def view_activity_delete_activity(request, activity_id):
+    activity = get_object_or_404(Activity, pk=activity_id)
+    project = activity.project
+    
+    activity.delete()
+    messages.success(request, u'ลบโครงการเรียบร้อย')
+    
+    return redirect('view_project_activities', (project.id))

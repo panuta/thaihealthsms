@@ -102,3 +102,15 @@ def tabs_for_project(page, user, project):
     else: html = html + '<li><a href="%s">ความคิดเห็น</a></li>' % reverse('view_project_comments', args=[project.id])
     
     return _generate_tabs(html)
+
+@register.simple_tag
+def tabs_for_activity(page, user, activity):
+    html = ''
+    
+    if page == 'overview': html = html + '<li class="selected">ภาพรวม</li>'
+    else: html = html + '<li><a href="%s">ภาพรวม</a></li>' % reverse('view_activity_overview', args=[activity.id])
+    
+    if page == 'comments': html = html + '<li class="selected">ความคิดเห็น</li>'
+    else: html = html + '<li><a href="%s">ความคิดเห็น</a></li>' % reverse('view_activity_comments', args=[activity.id])
+    
+    return _generate_tabs(html)

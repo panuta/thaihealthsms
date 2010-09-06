@@ -153,4 +153,14 @@
 .program_projects_page .ss_table .start_date {width:120px;text-align:center;}
 .program_projects_page .ss_table .end_date {width:120px;text-align:center;}
 
+/*
+ * PROJECT
+ */
 
+.project_activities_page .ss_table .name {}
+.project_activities_page .ss_table .start_date {width:120px;text-align:center;}
+.project_activities_page .ss_table .end_date {width:120px;text-align:center;}
+
+/*
+ * ACTIVITY
+ */
