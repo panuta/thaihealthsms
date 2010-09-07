@@ -1,11 +1,11 @@
 from django.db import models
 
 class BudgetSchedule(models.Model):
-    program = models.ForeignKey('domain.Program')
+    of_program = models.ForeignKey('domain.Program')
     grant_budget = models.IntegerField(default=0)
     claim_budget = models.IntegerField(default=0)
     schedule_on = models.DateField()
-    claimed_on = models.DateField()
+    claimed_on = models.DateField(null=True)
 
 class BudgetScheduleRevision(models.Model):
     schedule = models.ForeignKey('BudgetSchedule')

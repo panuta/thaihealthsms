@@ -1,4 +1,6 @@
 # -*- encoding: utf-8 -*-
+from datetime import date
+
 from django import template
 from django.conf import settings
 from django.core.urlresolvers import reverse
@@ -57,7 +59,7 @@ def display_messages(messages):
     else:
         return ''
 
-# PERMISSION
+# PERMISSION #################################################################
 
 @register.simple_tag
 def who_program_manager(program):
@@ -205,5 +207,55 @@ def generate_quarter_table_header(quarter_year):
         
         end_month = end_month + 3
         if end_month > 12: end_month = end_month - 12
+    
+    return html
+
+@register.simple_tag
+def generate_quarter_month_selector(quarter, quarter_year):
+    if not quarter_year: quarter_year = date.today().year + 543
+    
+    from helper.constants import THAI_MONTH_NAME
+    
+    start_month = settings.QUARTER_START_MONTH
+    end_month = settings.QUARTER_START_MONTH + 2
+    if end_month > 12: end_month = end_month - 12
+    
+    html = ''
+    for i in range(1, 5):
+        year = quarter_year
+        
+        if start_month >= settings.QUARTER_START_MONTH and not settings.QUARTER_LOWER_YEAR_NUMBER:
+            year = quarter_year - 1
+        
+        if start_month < settings.QUARTER_START_MONTH and settings.QUARTER_LOWER_YEAR_NUMBER:
+            year = quarter_year + 1
+        
+        if i == quarter:
+            html = html + '<option value="%d" selected="selected">%s - %s %d</option>' % (i, THAI_MONTH_NAME[start_month], THAI_MONTH_NAME[end_month], year)
+        else:
+            html = html + '<option value="%d">%s - %s %d</option>' % (i, THAI_MONTH_NAME[start_month], THAI_MONTH_NAME[end_month], year)
+        
+        start_month = start_month + 3
+        if start_month > 12: start_month = start_month - 12
+        
+        end_month = end_month + 3
+        if end_month > 12: end_month = end_month - 12
+    
+    return html
+
+@register.simple_tag
+def generate_quarter_year_selector(quarter_year):
+    if not quarter_year: quarter_year = date.today().year + 543
+    
+    year_span = settings.QUARTER_INPUT_YEAR_SPAN
+    
+    html = '<option value="back-%d">&lt; ปีก่อนหน้า</option>' % (quarter_year - year_span)
+    for i in range(-year_span, year_span+1):
+        if (quarter_year + i) == quarter_year:
+            html = html + '<option selected="selected">%d</option>' % (quarter_year + i)
+        else:
+            html = html + '<option>%d</option>' % (quarter_year + i)
+    
+    html = html + '<option value="next-%d">ปีถัดไป &gt;</option>' % (quarter_year + year_span)
     
     return html

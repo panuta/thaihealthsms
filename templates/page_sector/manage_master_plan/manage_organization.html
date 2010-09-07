@@ -59,15 +59,19 @@ $(document).ready(function() {
                     	<div class="title">รหัสแผนงาน: {{program.ref_no}}</div>
                     	<a href="{% url view_program_overview program.id %}">{{program.name}}</a>
 						<div class="subcontrols">
-							<img src="{{MEDIA_URL}}/images/icons/row_edit.png" class="icon" /> <a href="{% url view_master_plan_edit_program program.id %}">แก้ไข</a>
-							<span>|</span>
-							<a href="{% url view_master_plan_manage_program_kpi program.id %}">จัดการแผนผลลัพธ์</a>
-							<span>|</span>
-							<a href="{% url view_master_plan_manage_program_budget program.id %}">จัดการแผนการเงิน</a>
-							{% if program.removable %}
-							<span>|</span>
-							<a href="{% url view_master_plan_delete_program program.id %}" class="delete-program">ลบแผนงาน</a>
-							{% endif %}
+							<ul>
+								<li><img src="{{MEDIA_URL}}/images/icons/row_edit_small.png" class="icon" /> <a href="{% url view_master_plan_edit_program program.id %}">แก้ไข</a></li>
+								<li><a href="{% url view_master_plan_manage_program_kpi program.id %}">จัดการแผนผลลัพธ์</a></li>
+								<li><a href="{% url view_master_plan_manage_program_budget program.id %}">จัดการแผนการเงิน</a></li>
+								<li><a href="#">รายงานที่ต้องส่ง</a></li>
+							    <li>
+							    	{% if program.removable %}
+		                            <a href="{% url view_master_plan_delete_program program.id %}" class="delete-program">ลบแผนงาน</a>
+		                            {% else %}
+		                            <span class="disabled" title="ไม่สามารถลบแผนงานได้ เนื่องจากยังมีโครงการหรือรายงานผูกอยู่กับแผนงานนี้">ลบแผนงาน</span>
+		                            {% endif %}
+							    </li>
+							</ul>
 						</div>
 					</td>
 					<td class="date_span">

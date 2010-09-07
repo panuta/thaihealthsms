@@ -71,7 +71,7 @@ def view_master_plan_manage_program_budget(request, program_id):
     if not permission.access_obj(request.user, 'master_plan manage', master_plan):
         return access_denied(request)
     
-    budget_schedules = ProgramBudgetSchedule.objects.filter(program=program).order_by('schedule_on')
+    budget_schedules = BudgetSchedule.objects.filter(of_program=program).order_by('-schedule_on')
     
     if request.method == 'POST':
         updating_schedules = list()
@@ -83,12 +83,12 @@ def view_master_plan_manage_program_budget(request, program_id):
                 grant_budget = int(grant_budget)
             except:
                 messages.error(request, 'ข้อมูลไม่อยู่ในรูปแบบที่ถูกต้อง กรุณากรอกใหม่อีกครั้ง')
-                return redirect('view_master_plan_project_budget', (program.id))
+                return redirect('view_master_plan_manage_program_budget', (program.id))
             else:
                 create_revision = False
                 
                 if schedule_id and schedule_id != 'none':
-                    schedule = ProgramBudgetSchedule.objects.get(pk=schedule_id)
+                    schedule = BudgetSchedule.objects.get(pk=schedule_id)
                     
                     if schedule.grant_budget != grant_budget or schedule.schedule_on != schedule_on:
                         create_revision = True
@@ -98,11 +98,11 @@ def view_master_plan_manage_program_budget(request, program_id):
                         schedule.save()
                     
                 else:
-                    schedule = ProgramBudgetSchedule.objects.create(program=program, grant_budget=grant_budget, claim_budget=0, schedule_on=schedule_on)
+                    schedule = BudgetSchedule.objects.create(of_program=program, grant_budget=grant_budget, claim_budget=0, schedule_on=schedule_on)
                     create_revision = True
                 
                 if create_revision:
-                    revision = ProgramBudgetScheduleRevision.objects.create(
+                    revision = BudgetScheduleRevision.objects.create(
                         schedule=schedule,
                         grant_budget=schedule.grant_budget,
                         claim_budget=schedule.claim_budget,
@@ -120,13 +120,10 @@ def view_master_plan_manage_program_budget(request, program_id):
                     found = True
             
             if not found:
-                ProjectBudgetScheduleRevision.objects.filter(schedule=budget_schedule).delete()
+                BudgetScheduleRevision.objects.filter(schedule=budget_schedule).delete()
                 budget_schedule.delete()
         
         return utilities.redirect_or_back('view_master_plan_manage_organization', (master_plan.ref_no), request)
-        
-    for budget_schedule in budget_schedules:
-        budget_schedule.schedule_quarter = utilities.find_quarter_number(budget_schedule.schedule_on)
     
     return render_page_response(request, 'organization', 'page_sector/manage_master_plan/manage_program_budget.html', {'master_plan':master_plan, 'program':program, 'schedules':budget_schedules})
 

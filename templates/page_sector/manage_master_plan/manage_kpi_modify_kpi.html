@@ -33,7 +33,7 @@
             {{form.abbr_name.errors}}
         </li>
 		<li>
-            <label for="id_year" class="caption">{{form.year.label}}</label>
+            <label for="id_year" class="caption">{{form.year.label}}{% display_required %}</label>
             <div class="input SHORT">{{form.year}}</div>
             {{form.year.errors}}
 			<div class="comment">ใส่เป็นตัวเลขปีพุทธศักราช เช่น 2553</div>
@@ -50,6 +50,7 @@
             <div class="comment">เช่น คน หมู่บ้าน เปอร์เซ็นต์ บทความ ฯลฯ</div>
         </li>
     </ul>
+	{% back_form request %}
     {{form.plan_id}}
     <div class="button_panel"><button type="submit">ตกลง</button></div>
 </form>

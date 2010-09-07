@@ -9,7 +9,8 @@ urlpatterns = patterns('kpi.views',
     url(r'^master_plan/manage/program/(?P<program_id>\d+)/kpi/$', 'view_master_plan_manage_program_kpi', name='view_master_plan_manage_program_kpi'),
     
     # Master Plan - Manage KPI
-    url(r'^master_plan/(?P<master_plan_ref_no>\d+)/manage/kpi/$', 'view_master_plan_manage_kpi', name='view_master_plan_manage_kpi'),
+    url(r'^master_plan/(?P<master_plan_ref_no>\d+)/manage/kpi/$', 'view_master_plan_manage_kpi', {'kpi_year':''}, name='view_master_plan_manage_kpi'),
+    url(r'^master_plan/(?P<master_plan_ref_no>\d+)/manage/kpi/(?P<kpi_year>\d+)/$', 'view_master_plan_manage_kpi', name='view_master_plan_manage_kpi_year'),
     url(r'^master_plan/(?P<master_plan_ref_no>\d+)/manage/kpi/add/$', 'view_master_plan_manage_kpi_add_kpi', name='view_master_plan_manage_kpi_add_kpi'),
     url(r'^master_plan/manage/kpi/(?P<kpi_id>\d+)/edit/$', 'view_master_plan_manage_kpi_edit_kpi', name='view_master_plan_manage_kpi_edit_kpi'),
     url(r'^master_plan/manage/kpi/(?P<kpi_id>\d+)/delete/$', 'view_master_plan_manage_kpi_delete_kpi', name='view_master_plan_manage_kpi_delete_kpi'),

@@ -36,7 +36,7 @@ class DomainKPIModifyForm(forms.Form):
     
     ref_no = forms.CharField(max_length=100, label='รหัส')
     name = forms.CharField(max_length=1000, label='ชื่อตัวชี้วัด')
-    abbr_name = forms.CharField(max_length=200, label='ชื่อย่อตัวชี้วัด')
+    abbr_name = forms.CharField(required=False, max_length=200, label='ชื่อย่อตัวชี้วัด')
     year = forms.IntegerField(label='สำหรับปี')
     category = DomainKPICategoryChoiceField(required=False, label='ประเภท')
     unit_name = forms.CharField(max_length=300, label='หน่วยที่ใช้วัด')

@@ -10,7 +10,7 @@
 
 {% block body_content %}
 <div class="ss_breadcrumbs">
-    <div class="breadcrumbs"><a href="{% url view_master_plan_manage_organization master_plan.ref_no %}">หน้าแผนงาน</a> &#187;</div>
+    <div class="breadcrumbs"><a href="{% url view_master_plan_manage_organization master_plan.ref_no %}">หน้าจัดการแผนงาน</a> &#187;</div>
     {% if program %}<div class="supertitle">({{program.ref_no}}) {{program.name}}</div>{% endif %}
 	<h2>{% if not program %}เพิ่มแผนงาน{% else %}แก้ไขแผนงาน{% endif %}</h2>
 </div>

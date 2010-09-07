@@ -2,7 +2,19 @@
 {% load helper_tags page_tags tab_tags %}
 
 {% block html_head %}
-
+<script type="text/javascript">
+$(document).ready(function() {
+    $("#kpi-year-choices").change(function() {
+		window.location = "http://" + window.location.host + "{% url view_master_plan_manage_kpi master_plan.id %}" + $(this).find("option:selected").val() + "/";
+	});
+	
+	$(".delete-kpi").click(function(e) {
+        if(!window.confirm("ยืนยันการลบตัวชี้วัด?")) {
+            e.preventDefault();
+        }
+    });
+});
+</script>
 {% endblock %}
 
 {% block body_title %}{% display_master_plan_management_header user master_plan %}{% endblock %}
@@ -26,15 +38,15 @@
 	{% if year_choices %}
 	<div class="kpi_year_choices">
 		<span>ตัวชี้วัดสำหรับปี</span>
-		<select>
+		<select id="kpi-year-choices">
 			{% for choice in year_choices %}
-			<option>{{choice}}</option>
+			{% if choice == kpi_year %}<option selected="selected">{{choice|add:543}}</option>{% else %}<option>{{choice|add:543}}</option>{% endif %}
 			{% endfor %}
 		</select>
 	</div>
 	
 	{% for kpi_category in kpi_categories %}
-	<h2>{{kpi_category.name}}</h2>
+	<h3>{{kpi_category.name}}</h3>
 	<table class="ss_table">
         <tr>
             <th class="controls"></th>
@@ -46,7 +58,7 @@
         <tr>
             <td class="controls">
                 <a href="{% url view_master_plan_manage_kpi_edit_kpi kpi.id %}" title="แก้ไขตัวชี้วัด"><img src="{{MEDIA_URL}}/images/icons/edit.png" class="icon" /></a>
-                {% if category.removable %}
+                {% if kpi.removable %}
                 <a href="{% url view_master_plan_manage_kpi_delete_kpi kpi.id %}" title="ลบตัวชี้วัด" class="delete-kpi"><img src="{{MEDIA_URL}}/images/icons/delete.png" class="icon" /></a>
                 {% else %}
                 <img src="{{MEDIA_URL}}/images/icons/delete_disabled.png" class="icon" title="ตัวชี้วัดนี้ยังผูกอยู่กับแผนงาน"/>
@@ -61,7 +73,7 @@
 	{% endfor %}
 	
 	{% if no_category_kpis %}
-	<h2 class="no_category">[ ตัวชี้วัดที่ไม่มีประเภท ]</h2>
+	<h3 class="no_category">[ ตัวชี้วัดที่ไม่มีประเภท ]</h3>
 	<table class="ss_table">
         <tr>
             <th class="controls"></th>
@@ -73,7 +85,7 @@
         <tr>
             <td class="controls">
                 <a href="{% url view_master_plan_manage_kpi_edit_kpi kpi.id %}" title="แก้ไขตัวชี้วัด"><img src="{{MEDIA_URL}}/images/icons/edit.png" class="icon" /></a>
-                {% if category.removable %}
+                {% if kpi.removable %}
                 <a href="{% url view_master_plan_manage_kpi_delete_kpi kpi.id %}" title="ลบตัวชี้วัด" class="delete-kpi"><img src="{{MEDIA_URL}}/images/icons/delete.png" class="icon" /></a>
                 {% else %}
                 <img src="{{MEDIA_URL}}/images/icons/delete_disabled.png" class="icon" title="ตัวชี้วัดนี้ยังผูกอยู่กับแผนงาน"/>

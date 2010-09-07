@@ -17,7 +17,7 @@ $(document).ready(function() {
     $(".new-schedule").click(function(e) {
         e.preventDefault();
         var uid = new Date().getTime();
-        var new_row = $('<tr class="schedule"><td class="actions"><a href="#" class="remove-schedule">ลบ</a></td><td class="grant_column"><input type="text" /> บาท</td><td class="schedule_on_column"><span class="yui_date_picker_panel"><input type="hidden" name="schedule_on" value="" id="id_schedule_on_' + uid + '_value"/><input type="text" value="" id="id_schedule_on_' + uid + '_display" readonly="readonly" class="yui_date_picker_textbox"/> <img src="/m/images/icons/date_picker.png" id="id_schedule_on_' + uid + '" class="yui_date_picker"/></span></td><td></td></tr>');
+        var new_row = $('<tr class="schedule"><td class="controls"><a href="#" class="remove-schedule">ลบแถว</a></td><td class="grant_column"><input type="text" /> บาท</td><td class="schedule_on_column"><span class="yui_date_picker_panel"><input type="hidden" name="schedule_on" value="" id="id_schedule_on_' + uid + '_value"/><input type="text" value="" id="id_schedule_on_' + uid + '_display" readonly="readonly" class="yui_date_picker_textbox"/> <img src="/m/images/icons/date_picker.png" id="id_schedule_on_' + uid + '" class="yui_date_picker"/></span></td><td></td></tr>');
         initializeRowEvents(new_row);
         new_row.insertBefore($(this).closest('tr'));
     });
@@ -104,62 +104,60 @@ function initializeRowEvents(row_obj) {
 
 {% block body_content %}
 <div class="ss_breadcrumbs">
-    <div class="breadcrumbs"><a href="{% url view_master_plan_manage_organization master_plan.ref_no %}">หน้าแผนงาน</a> &#187;</div>
+    <div class="breadcrumbs"><a href="{% url view_master_plan_manage_organization master_plan.ref_no %}">หน้าจัดการแผนงาน</a> &#187;</div>
     <div class="supertitle">({{program.ref_no}}) {{program.name}}</div>
 	<h2>จัดการแผนการเงิน</h2>
 </div>
 
-<div class="master_plan_manage">
+<div class="master_plan_manage master_plan_manage_program_budget">
     <div class="error_message invalid_input" style="display:none;">ข้อมูลไม่ครบถ้วนหรือไม่อยู่ในรูปแบบที่ถูกต้อง</div>
-    
-    <div class="manage_program_budget">
-        <table class="ss_table">
-            <tr>
-                <th class="controls"></th>
-                <th class="grant_column">ตัวเลขคาดการณ์</th>
-                <th class="schedule_on_column">วันที่เบิกจ่าย</th>
-                <th></th>
-            </tr>
-            {% if schedules %}
-                {% for schedule in schedules %}
-                <tr class="schedule" id="schedule-{{schedule.id}}">
-                    <td class="controls"><a href="#" class="remove-schedule">ลบ</a></td>
-                    <td class="grant_column"><input type="text" value="{{schedule.grant_budget|intcomma}}"/> บาท</td>
-                    <td class="schedule_on_column">
-                        <span class="yui_date_picker_panel">
-                            <input type="hidden" name="schedule_on" value="{{schedule.schedule_on|date:"Y-n-j"}}" id="id_schedule_on_{{schedule.id}}_value"/>
-                            <input type="text" value="{{schedule.schedule_on|date:"j F"}} {{schedule.schedule_on.year|add:543}}" id="id_schedule_on_{{schedule.id}}_display" readonly="readonly" class="yui_date_picker_textbox"/>
-                            <img src="/m/images/icons/date_picker.png" id="id_schedule_on_{{schedule.id}}" class="yui_date_picker"/>
-                        </span>
-                    </td>
-                    <td>&nbsp;</td>
-                </tr>
-                {% endfor %}
-            {% else %}
-            <tr class="schedule">
-                <td class="actions"><a href="#" class="remove-schedule">ลบ</a></td>
-                <td class="grant_column"><input type="text" /> บาท</td>
+
+    <table>
+        <tr>
+            <th class="controls"></th>
+            <th class="grant_column">ตัวเลขคาดการณ์</th>
+            <th class="schedule_on_column">วันที่เบิกจ่าย</th>
+            <th></th>
+        </tr>
+        {% if schedules %}
+            {% for schedule in schedules %}
+            <tr class="schedule" id="schedule-{{schedule.id}}">
+                <td class="controls"><a href="#" class="remove-schedule">ลบแถว</a></td>
+                <td class="grant_column"><input type="text" value="{{schedule.grant_budget|intcomma}}"/> บาท</td>
                 <td class="schedule_on_column">
                     <span class="yui_date_picker_panel">
-                        <input type="hidden" name="schedule_on" value="" id="id_schedule_on_starter_value"/>
-                        <input type="text" value="" id="id_schedule_on_starter_display" readonly="readonly" class="yui_date_picker_textbox"/>
-                        <img src="/m/images/icons/date_picker.png" id="id_schedule_on_starter" class="yui_date_picker"/>
+                        <input type="hidden" name="schedule_on" value="{{schedule.schedule_on|date:"Y-n-j"}}" id="id_schedule_on_{{schedule.id}}_value"/>
+                        <input type="text" value="{{schedule.schedule_on|date:"j F"}} {{schedule.schedule_on.year|add:543}}" id="id_schedule_on_{{schedule.id}}_display" readonly="readonly" class="yui_date_picker_textbox"/>
+                        <img src="/m/images/icons/date_picker.png" id="id_schedule_on_{{schedule.id}}" class="yui_date_picker"/>
                     </span>
                 </td>
                 <td>&nbsp;</td>
             </tr>
-            {% endif %}
-            <tr>
-                <td></td>
-                <td colspan="3"><img src="{{MEDIA_URL}}/images/icons/create.png" class="icon"/> <a href="#" class="new-schedule">เพิ่มรายการ</a></td>
-            </tr>
-        </table>
-        
-        <form action="." method="POST" class="ss_form">
-        	{% csrf_token %}
-			{% back_form request %}
-            <div class="button_panel"><button type="submit">บันทึกการแก้ไข</button></div>
-        </form>
-    </div>
+            {% endfor %}
+        {% else %}
+        <tr class="schedule">
+            <td class="controls"><a href="#" class="remove-schedule">ลบแถว</a></td>
+            <td class="grant_column"><input type="text" /> บาท</td>
+            <td class="schedule_on_column">
+                <span class="yui_date_picker_panel">
+                    <input type="hidden" name="schedule_on" value="" id="id_schedule_on_starter_value"/>
+                    <input type="text" value="" id="id_schedule_on_starter_display" readonly="readonly" class="yui_date_picker_textbox"/>
+                    <img src="/m/images/icons/date_picker.png" id="id_schedule_on_starter" class="yui_date_picker"/>
+                </span>
+            </td>
+            <td>&nbsp;</td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td></td>
+            <td colspan="3"><img src="{{MEDIA_URL}}/images/icons/create.png" class="icon"/> <a href="#" class="new-schedule">เพิ่มรายการ</a></td>
+        </tr>
+    </table>
+    
+    <form action="." method="POST" class="ss_form">
+    	{% csrf_token %}
+		{% back_form request %}
+        <div class="button_panel"><button type="submit">บันทึกการแก้ไข</button></div>
+    </form>
 </div>
 {% endblock %}
