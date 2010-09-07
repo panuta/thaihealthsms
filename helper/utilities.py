@@ -37,6 +37,18 @@ def make_random_user_password():
     from random import choice
     return ''.join([choice(allow_password_chars) for i in range(random_password_length)])
 
+# MASTER PLAN YEAR
+def master_plan_current_year_number(master_plan):
+    today = date.today()
+    
+    if settings.QUARTER_START_MONTH == 1:
+        return today.year
+    else:
+        if today.month >= settings.QUARTER_START_MONTH:
+            return today.year if settings.QUARTER_LOWER_YEAR_NUMBER else (today.year + 1)
+        else:
+            return (today.year - 1) if settings.QUARTER_LOWER_YEAR_NUMBER else today.year
+
 # URL Utilities
 def redirect_or_back(url_name, url_param, request):
     from django.shortcuts import redirect

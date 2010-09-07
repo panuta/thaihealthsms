@@ -5,22 +5,21 @@ urlpatterns = patterns('kpi.views',
     url(r'^master_plan/(?P<master_plan_ref_no>\d+)/kpi/$', 'view_master_plan_kpi', name='view_master_plan_kpi'),
     url(r'^program/(?P<program_id>\d+)/kpi/$', 'view_program_kpi', name='view_program_kpi'),
     
-    
-    # Manage - Master Plan - KPI
-    url(r'^master_plan/(?P<master_plan_ref_no>\d+)/manage/kpi/$', 'view_master_plan_manage_kpi', name='view_master_plan_manage_kpi'),
-    
-    # Manage - Master Plan - KPI - KPI Category
-    #url(r'^master_plan/(?P<master_plan_id>\d+)/manage/kpi_category/add/$', 'view_master_plan_add_kpi_category', name='view_master_plan_add_kpi_category'),
-    #url(r'^master_plan/manage/kpi_category/(?P<kpi_category_id>\d+)/edit/$', 'view_master_plan_edit_kpi_category', name='view_master_plan_edit_kpi_category'),
-    #url(r'^master_plan/manage/kpi_category/(?P<kpi_category_id>\d+)/delete/$', 'view_master_plan_delete_kpi_category', name='view_master_plan_delete_kpi_category'),
-    
-    # Manage - Master Plan - KPI - KPI
-    #url(r'^master_plan/(?P<master_plan_id>\d+)/manage/kpi/add/$', 'view_master_plan_add_kpi', name='view_master_plan_add_kpi'),
-    #url(r'^master_plan/manage/kpi/(?P<kpi_id>\d+)/edit/$', 'view_master_plan_edit_kpi', name='view_master_plan_edit_kpi'),
-    #url(r'^master_plan/manage/kpi/(?P<kpi_id>\d+)/delete/$', 'view_master_plan_delete_kpi', name='view_master_plan_delete_kpi'),
-    
+    # Master Plan - Manage - Organization
     url(r'^master_plan/manage/program/(?P<program_id>\d+)/kpi/$', 'view_master_plan_manage_program_kpi', name='view_master_plan_manage_program_kpi'),
     
+    # Master Plan - Manage KPI
+    url(r'^master_plan/(?P<master_plan_ref_no>\d+)/manage/kpi/$', 'view_master_plan_manage_kpi', name='view_master_plan_manage_kpi'),
+    url(r'^master_plan/(?P<master_plan_ref_no>\d+)/manage/kpi/add/$', 'view_master_plan_manage_kpi_add_kpi', name='view_master_plan_manage_kpi_add_kpi'),
+    url(r'^master_plan/manage/kpi/(?P<kpi_id>\d+)/edit/$', 'view_master_plan_manage_kpi_edit_kpi', name='view_master_plan_manage_kpi_edit_kpi'),
+    url(r'^master_plan/manage/kpi/(?P<kpi_id>\d+)/delete/$', 'view_master_plan_manage_kpi_delete_kpi', name='view_master_plan_manage_kpi_delete_kpi'),
+    
+    url(r'^master_plan/(?P<master_plan_ref_no>\d+)/manage/kpi/categoty/$', 'view_master_plan_manage_kpi_category', name='view_master_plan_manage_kpi_category'),
+    url(r'^master_plan/(?P<master_plan_ref_no>\d+)/manage/kpi/category/add/$', 'view_master_plan_manage_kpi_add_category', name='view_master_plan_manage_kpi_add_category'),
+    url(r'^master_plan/manage/kpi/category/(?P<kpi_category_id>\d+)/edit/$', 'view_master_plan_manage_kpi_edit_category', name='view_master_plan_manage_kpi_edit_category'),
+    url(r'^master_plan/manage/kpi/category/(?P<kpi_category_id>\d+)/delete/$', 'view_master_plan_manage_kpi_delete_category', name='view_master_plan_manage_kpi_delete_category'),
+    
+    # KPI Schedule
     url(r'^kpi/(?P<schedule_id>\d+)/$', 'view_kpi_overview', name='view_kpi_overview'),
 )
 

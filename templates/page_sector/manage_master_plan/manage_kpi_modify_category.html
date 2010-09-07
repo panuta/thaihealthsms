@@ -9,19 +9,13 @@
 
 {% block body_content %}
 <div class="ss_breadcrumbs">
-    <div class="breadcrumbs"><a href="{% url view_master_plan_manage_organization master_plan.ref_no %}">หน้าแผนงาน/โครงการ</a> &#187;</div>
-    <h2>{% if master_plan %}แก้ไขกลุ่มแผนงาน{% else %}เพิ่มกลุ่มแผนงาน{% endif %}</h2>
+    <div class="breadcrumbs"><a href="{% url view_master_plan_manage_kpi_category master_plan.ref_no %}">หน้าประเภทตัวชี้วัด</a> &#187;</div>
+    <h2>{% if kpi_category %}แก้ไขประเภทตัวชี้วัด{% else %}เพิ่มประเภทตัวชี้วัด{% endif %}</h2>
 </div>
 
 <form action="." method="post" class="ss_form">
     {% csrf_token %}
-	<ul>
-        <li>
-            <label for="id_ref_no" class="caption">{{form.ref_no.label}}{% display_required %}</label>
-            <div class="input SHORT">{{form.ref_no}}</div>
-            <div class="comment">ประกอบด้วยตัวเลขหรือตัวหนังสือ ความยาวไม่เกิน 64 ตัวอักษร</div>
-            {{form.ref_no.errors}}
-        </li>
+    <ul>
         <li>
             <label for="id_name" class="caption">{{form.name.label}}{% display_required %}</label>
             <div class="input LONG">{{form.name}}</div>

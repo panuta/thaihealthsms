@@ -66,6 +66,14 @@ a:hover {color:#FFF;background-color:#369;}
 .ss_control_panel ul li a {color:#FFF !important;}
 .ss_control_panel ul li a:hover {}
 
+/* Page Section */
+.ss_section {border-bottom:1px solid #CCC;margin:5px 0px 20px;}
+.ss_section ul {border-bottom:1px solid #999;}
+.ss_section li {margin-bottom:8px;padding:8px 15px 5px;display:inline-block;display:-moz-inline-stack;*display:inline;list-style:none;zoom:1;}
+.ss_section li.selected {background-color:#A35229;color:#FFF;}
+.ss_section li a {color:#666;}
+.ss_section li a:hover {color:#FFF;}
+
 /* Pagination */
 .ss_pagination {margin-bottom:15px;text-align:right;}
 .ss_pagination span {margin:0px 5px;color:#333;}

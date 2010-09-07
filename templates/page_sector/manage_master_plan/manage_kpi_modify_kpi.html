@@ -1,0 +1,56 @@
+{% extends 'page_base.html' %}
+{% load helper_tags page_tags tab_tags %}
+
+{% block html_head %}
+{% endblock %}
+
+{% block body_title %}{% display_master_plan_management_header user master_plan %}{% endblock %}
+{% block body_tabs %}{% tabs_for_manage_master_plan page master_plan %}{% endblock %}
+
+{% block body_content %}
+<div class="ss_breadcrumbs">
+    <div class="breadcrumbs"><a href="{% url view_master_plan_manage_kpi master_plan.ref_no %}">หน้าตัวชี้วัดแผนหลัก</a> &#187;</div>
+    <h2>{% if kpi %}แก้ไขตัวชี้วัด{% else %}เพิ่มตัวชี้วัด{% endif %}</h2>
+</div>
+
+<form action="." method="post" class="ss_form">
+    {% csrf_token %}
+    <ul>
+        <li>
+            <label for="id_ref_no" class="caption">{{form.ref_no.label}}{% display_required %}</label>
+            <div class="input SHORT">{{form.ref_no}}</div>
+            {{form.ref_no.errors}}
+            <div class="comment">ประกอบด้วยตัวเลขหรือตัวหนังสือ ความยาวไม่เกิน 64 ตัวอักษร</div>
+        </li>
+        <li>
+            <label for="id_name" class="caption">{{form.name.label}}{% display_required %}</label>
+            <div class="input LONG">{{form.name}}</div>
+            {{form.name.errors}}
+        </li>
+		<li>
+            <label for="id_abbr_name" class="caption">{{form.abbr_name.label}}</label>
+            <div class="input LONG">{{form.abbr_name}}</div>
+            {{form.abbr_name.errors}}
+        </li>
+		<li>
+            <label for="id_year" class="caption">{{form.year.label}}</label>
+            <div class="input SHORT">{{form.year}}</div>
+            {{form.year.errors}}
+			<div class="comment">ใส่เป็นตัวเลขปีพุทธศักราช เช่น 2553</div>
+        </li>
+        <li>
+            <label for="id_category" class="caption">{{form.category.label}}</label>
+            <div class="input LONG">{{form.category}}</div>
+            {{form.category.errors}}
+        </li>
+        <li>
+            <label for="id_unit_name" class="caption">{{form.unit_name.label}}{% display_required %}</label>
+            <div class="input LONG">{{form.unit_name}}</div>
+            {{form.unit_name.errors}}
+            <div class="comment">เช่น คน หมู่บ้าน เปอร์เซ็นต์ บทความ ฯลฯ</div>
+        </li>
+    </ul>
+    {{form.plan_id}}
+    <div class="button_panel"><button type="submit">ตกลง</button></div>
+</form>
+{% endblock %}

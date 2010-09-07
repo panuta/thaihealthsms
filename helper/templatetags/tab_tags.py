@@ -41,8 +41,8 @@ def tabs_for_master_plan(page, user, master_plan):
     if page == 'overview': html = html + '<li class="selected">ภาพรวม</li>'
     else: html = html + '<li><a href="%s">ภาพรวม</a></li>' % reverse('view_master_plan_overview', args=[master_plan.ref_no])
     
-    if page == 'programs': html = html + '<li class="selected">แผนงาน/โครงการ</li>'
-    else: html = html + '<li><a href="%s">แผนงาน/โครงการ</a></li>' % reverse('view_master_plan_programs', args=[master_plan.ref_no])
+    if page == 'programs': html = html + '<li class="selected">แผนงาน</li>'
+    else: html = html + '<li><a href="%s">แผนงาน</a></li>' % reverse('view_master_plan_programs', args=[master_plan.ref_no])
     
     if page == 'kpi': html = html + '<li class="selected">แผนผลลัพธ์</li>'
     else: html = html + '<li><a href="%s">แผนผลลัพธ์</a></li>' % reverse('view_master_plan_kpi', args=[master_plan.ref_no])
@@ -56,8 +56,8 @@ def tabs_for_master_plan(page, user, master_plan):
 def tabs_for_manage_master_plan(page, master_plan):
     html = ''
     
-    if page == 'organization': html = html + '<li class="selected">แผนงาน/โครงการ</li>'
-    else: html = html + '<li><a href="%s">แผนงาน/โครงการ</a></li>' % reverse('view_master_plan_manage_organization', args=[master_plan.ref_no])
+    if page == 'organization': html = html + '<li class="selected">แผนงาน</li>'
+    else: html = html + '<li><a href="%s">แผนงาน</a></li>' % reverse('view_master_plan_manage_organization', args=[master_plan.ref_no])
     
     if page == 'report': html = html + '<li class="selected">กำหนดส่งรายงาน</li>'
     else: html = html + '<li><a href="%s">กำหนดส่งรายงาน</a></li>' % reverse('view_master_plan_manage_report', args=[master_plan.ref_no])

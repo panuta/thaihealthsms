@@ -13,7 +13,9 @@ from models import *
 
 from accounts.models import *
 from budget.models import *
+from comment.models import *
 from kpi.models import *
+from report.models import *
 
 from helper import utilities, permission
 from helper.shortcuts import render_response, render_page_response, access_denied
@@ -86,7 +88,7 @@ def view_master_plan_add_plan(request, master_plan_ref_no):
         return access_denied(request)
     
     if request.method == 'POST':
-        form = ModifyPlanForm(request.POST, master_plan=master_plan)
+        form = PlanModifyForm(request.POST, master_plan=master_plan)
         if form.is_valid():
             plan = Plan.objects.create(ref_no=form.cleaned_data['ref_no'], name=form.cleaned_data['name'], master_plan=master_plan)
             
@@ -94,9 +96,9 @@ def view_master_plan_add_plan(request, master_plan_ref_no):
             return redirect('view_master_plan_manage_organization', (master_plan.ref_no))
             
     else:
-        form = ModifyPlanForm(master_plan=master_plan)
+        form = PlanModifyForm(master_plan=master_plan)
     
-    return render_page_response(request, 'organization', 'page_sector/manage_master_plan/manage_modify_plan.html', {'master_plan':master_plan, 'form':form})
+    return render_page_response(request, 'organization', 'page_sector/manage_master_plan/manage_organization_modify_plan.html', {'master_plan':master_plan, 'form':form})
 
 @login_required
 def view_master_plan_edit_plan(request, plan_id):
@@ -107,7 +109,7 @@ def view_master_plan_edit_plan(request, plan_id):
         return access_denied(request)
     
     if request.method == 'POST':
-        form = ModifyPlanForm(request.POST, master_plan=master_plan)
+        form = PlanModifyForm(request.POST, master_plan=master_plan)
         if form.is_valid():
             cleaned_data = form.cleaned_data
             plan.ref_no = cleaned_data['ref_no']
@@ -117,9 +119,9 @@ def view_master_plan_edit_plan(request, plan_id):
             messages.success(request, 'แก้ไขกลุ่มแผนงานเรียบร้อย')
             return redirect('view_master_plan_manage_organization', (master_plan.ref_no))
     else:
-        form = ModifyPlanForm(master_plan=master_plan, initial={'plan_id':plan.id, 'ref_no':plan.ref_no, 'name':plan.name})
+        form = PlanModifyForm(master_plan=master_plan, initial={'plan_id':plan.id, 'ref_no':plan.ref_no, 'name':plan.name})
     
-    return render_page_response(request, 'organization', 'page_sector/manage_master_plan/manage_modify_plan.html', {'master_plan':master_plan, 'plan':plan, 'form':form})
+    return render_page_response(request, 'organization', 'page_sector/manage_master_plan/manage_organization_modify_plan.html', {'master_plan':master_plan, 'plan':plan, 'form':form})
 
 @login_required
 def view_master_plan_delete_plan(request, plan_id):
@@ -167,7 +169,7 @@ def view_master_plan_add_program(request, master_plan_ref_no):
     else:
         form = MasterPlanProgramForm(master_plan=master_plan)
     
-    return render_page_response(request, 'organization', 'page_sector/manage_master_plan/manage_modify_program.html', {'master_plan':master_plan, 'form':form})
+    return render_page_response(request, 'organization', 'page_sector/manage_master_plan/manage_organization_modify_program.html', {'master_plan':master_plan, 'form':form})
 
 @login_required
 def view_master_plan_edit_program(request, program_id):
@@ -195,7 +197,7 @@ def view_master_plan_edit_program(request, program_id):
     else:
         form = MasterPlanProgramForm(master_plan=master_plan, initial={'program_id':program.id, 'plan':program.plan.id, 'ref_no':program.ref_no, 'name':program.name, 'abbr_name':program.abbr_name, 'description':program.description, 'start_date':program.start_date, 'end_date':program.end_date, 'manager_name':program.manager_name})
     
-    return render_page_response(request, 'organization', 'page_sector/manage_master_plan/manage_modify_program.html', {'master_plan':master_plan, 'program':program, 'form':form})
+    return render_page_response(request, 'organization', 'page_sector/manage_master_plan/manage_organization_modify_program.html', {'master_plan':master_plan, 'program':program, 'form':form})
 
 @login_required
 def view_master_plan_delete_program(request, program_id):
@@ -205,17 +207,48 @@ def view_master_plan_delete_program(request, program_id):
     if not permission.access_obj(request.user, 'master_plan manage', master_plan):
         return access_denied(request)
     
+    removable = True
+    
     if Project.objects.filter(program=program).count():
-        messages.error(request, u'ไม่สามารถลบแผนงานได้ เนื่องจากยังมีโครงการที่อยู่ภายใต้')
-    else:
-        schedules = ProgramBudgetSchedule.objects.filter(program=program)
-        ProgramBudgetScheduleRevision.objects.filter(schedule__in=schedules).delete()
+        messages.error(request, u'ไม่สามารถลบแผนงานได้ เนื่องจากยังมีโครงการที่อยู่ภายใต้แผนงานนี้')
+        removable = False
+    
+    if Report.objects.filter(of_program=program).count():
+        messages.error(request, u'ไม่สามารถลบแผนงานได้ เนื่องจากยังมีรายงานที่แผนงานนี้สร้างขึ้น')
+        removable = False
+    
+    if ReportSubmission.objects.filter(program=program).exclude(state=NO_ACTIVITY).count():
+        messages.error(request, u'ไม่สามารถลบแผนงานได้ เนื่องจากยังมีรายงานที่แผนงานเขียนหรือส่งไปแล้ว')
+        removable = False
+    
+    if removable:
+        # REMOVE BUDGET
+        BudgetScheduleRevision.objects.filter(schedule__program=program).delete()
+        schedules = BudgetSchedule.objects.filter(program=program)
+        
+        schedule_ids = [schedule.id for schedule in schedules]
+        
+        comments = Comment.objects.filter(object_name='budget', object_id__in=schedule_ids)
+        comment_replies = CommentReply.objects.filter(comment__in=comments)
+        
+        UnreadComment.objects.filter(comment__in=comments).delete()
+        UnreadCommentReply.objects.filter(reply__in=comment_replies).delete()
+        
+        comment_replies.delete()
+        comments.delete()
+        
         schedules.delete()
         
-        # TODO: Delete KPI Schedule
+        # REMOVE KPI
+        DomainKPIType.objects.filter(of_program=program).delete()
+        kpis = DomainKPI.objects.filter(of_program=program)
+        DomainKPISchedule.objects.filter(kpi__in=kpis).delete()
         
+        kpis.delete()
+        
+        # REMOVE PROGRAM
         program.delete()
-        messages.success(request, u'ลบแผนงาน/โครงการเรียบร้อย')
+        messages.success(request, u'ลบแผนงานเรียบร้อย')
     
     return redirect('view_master_plan_manage_organization', (master_plan.ref_no))
 
@@ -240,7 +273,7 @@ def view_program_add_project(request, program_id):
     program = get_object_or_404(Program, pk=program_id)
     
     if request.method == 'POST':
-        form = ModifyProjectForm(request.POST)
+        form = ProjectModifyForm(request.POST)
         if form.is_valid():
             project = Project.objects.create(
                 program=program,
@@ -257,7 +290,7 @@ def view_program_add_project(request, program_id):
             return redirect('view_program_projects', (program.id))
         
     else:
-        form = ModifyProjectForm(initial={'program_id':program.id})
+        form = ProjectModifyForm(initial={'program_id':program.id})
     
     return render_page_response(request, 'projects', 'page_program/program_projects_modify_project.html', {'program':program, 'form':form})
 
@@ -267,7 +300,7 @@ def view_program_edit_project(request, project_id):
     program = project.program
     
     if request.method == 'POST':
-        form = ModifyProjectForm(request.POST)
+        form = ProjectModifyForm(request.POST)
         if form.is_valid():
             project.ref_no = form.cleaned_data.get('ref_no')
             project.contract_no = form.cleaned_data.get('contract_no')
@@ -281,7 +314,7 @@ def view_program_edit_project(request, project_id):
             return redirect('view_program_projects', (program.id))
         
     else:
-        form = ModifyProjectForm(initial={'program_id':program.id, 'project_id':project.id, 'ref_no':project.ref_no, 'contract_no':project.contract_no, 'name':project.name, 'description':project.description, 'start_date':project.start_date, 'end_date':project.end_date})
+        form = ProjectModifyForm(initial={'program_id':program.id, 'project_id':project.id, 'ref_no':project.ref_no, 'contract_no':project.contract_no, 'name':project.name, 'description':project.description, 'start_date':project.start_date, 'end_date':project.end_date})
     
     project.removable = Activity.objects.filter(project=project).count() == 0
     return render_page_response(request, 'projects', 'page_program/program_projects_modify_project.html', {'program':program, 'form':form, 'project':project})
@@ -304,7 +337,7 @@ def view_project_edit_project(request, project_id):
     program = project.program
     
     if request.method == 'POST':
-        form = ModifyProjectForm(request.POST)
+        form = ProjectModifyForm(request.POST)
         if form.is_valid():
             project.ref_no = form.cleaned_data.get('ref_no')
             project.contract_no = form.cleaned_data.get('contract_no')
@@ -318,7 +351,7 @@ def view_project_edit_project(request, project_id):
             return redirect('view_project_overview', (project.id))
         
     else:
-        form = ModifyProjectForm(initial={'program_id':program.id, 'project_id':project.id, 'ref_no':project.ref_no, 'contract_no':project.contract_no, 'name':project.name, 'description':project.description, 'start_date':project.start_date, 'end_date':project.end_date})
+        form = ProjectModifyForm(initial={'program_id':program.id, 'project_id':project.id, 'ref_no':project.ref_no, 'contract_no':project.contract_no, 'name':project.name, 'description':project.description, 'start_date':project.start_date, 'end_date':project.end_date})
     
     project.removable = Activity.objects.filter(project=project).count() == 0
     return render_page_response(request, '', 'page_program/project_edit_project.html', {'project':project, 'form':form})
@@ -347,7 +380,7 @@ def view_project_add_activity(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     
     if request.method == 'POST':
-        form = ModifyActivityForm(request.POST)
+        form = ActivityModifyForm(request.POST)
         if form.is_valid():
             activity = Activity.objects.create(project=project,
                 name=form.cleaned_data['name'],
@@ -364,7 +397,7 @@ def view_project_add_activity(request, project_id):
             return redirect('view_project_activities', (project.id))
 
     else:
-        form = ModifyActivityForm()
+        form = ActivityModifyForm()
     
     return render_page_response(request, 'activities', 'page_program/project_activities_modify_activity.html', {'project':project, 'form':form})
 
@@ -374,7 +407,7 @@ def view_project_edit_activity(request, activity_id):
     project = activity.project
     
     if request.method == 'POST':
-        form = ModifyActivityForm(request.POST)
+        form = ActivityModifyForm(request.POST)
         if form.is_valid():
             activity = Activity.objects.create(project=project,
                 name=form.cleaned_data['name'],
@@ -391,7 +424,7 @@ def view_project_edit_activity(request, activity_id):
             return redirect('view_project_activities', (project.id))
 
     else:
-        form = ModifyActivityForm(initial=activity.__dict__)
+        form = ActivityModifyForm(initial=activity.__dict__)
     
     return render_page_response(request, 'activities', 'page_program/project_activities_modify_activity.html', {'project':project, 'form':form, 'activity':activity})
 
@@ -409,7 +442,7 @@ def view_activity_edit_activity(request, activity_id):
     activity = get_object_or_404(Activity, pk=activity_id)
     
     if request.method == 'POST':
-        form = ModifyActivityForm(request.POST)
+        form = ActivityModifyForm(request.POST)
         if form.is_valid():
             activity = Activity.objects.create(project=project,
                 name=form.cleaned_data['name'],
@@ -426,7 +459,7 @@ def view_activity_edit_activity(request, activity_id):
             return redirect('view_project_activities', (project.id))
 
     else:
-        form = ModifyActivityForm(initial=activity.__dict__)
+        form = ActivityModifyForm(initial=activity.__dict__)
     
     return render_page_response(request, '', 'page_program/activity_edit_activity.html', {'activity':activity, 'form':form})
 

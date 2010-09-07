@@ -136,6 +136,19 @@
 .master_plan_manage .manage_program_budget .ss_table .schedule_on_column input.invalid {background-color:#FCC;}
 .master_plan_manage .manage_program_budget .button_panel {margin-left:0px !important;}
 
+/* Manage KPI */
+.master_plan_manage_kpi .kpi_year_choices {margin-bottom:20px;}
+.master_plan_manage_kpi .kpi_year_choices span {margin-right:10px;font-weight:bold;font-size:108%;color:#333;}
+
+.master_plan_manage_kpi h2 {font-size:123.1%;color:#C60;margin-bottom:8px;}
+.master_plan_manage_kpi h2.no_category {font-style:italic;}
+
+.master_plan_manage_kpi .ss_table {margin-bottom:30px;}
+.master_plan_manage_kpi .ss_table .ref_no {width:110px;text-align:center;}
+.master_plan_manage_kpi .ss_table .unit_name {width:120px;text-align:center;}
+
+
+
 /*
  * PROGRAM
  */

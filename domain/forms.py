@@ -48,7 +48,7 @@ class PlanChoiceField(forms.ModelChoiceField):
 
 # FORM CLASSES
 
-class ModifyPlanForm(forms.Form):
+class PlanModifyForm(forms.Form):
 	def __init__(self, *args, **kwargs):
 		self.master_plan = kwargs.pop('master_plan', None)
 		forms.Form.__init__(self, *args, **kwargs)
@@ -110,7 +110,7 @@ class MasterPlanProgramForm(forms.Form):
 		
 		return cleaned_data
 
-class ModifyProjectForm(forms.Form):
+class ProjectModifyForm(forms.Form):
 	program_id = forms.IntegerField(widget=forms.HiddenInput())
 	project_id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
 	ref_no = forms.CharField(required=False, max_length=64, label='รหัสโครงการ')
@@ -146,7 +146,7 @@ class ModifyProjectForm(forms.Form):
 			
 		return cleaned_data
 
-class ModifyActivityForm(forms.Form):
+class ActivityModifyForm(forms.Form):
 	name 			= forms.CharField(max_length=500, label='ชื่อกิจกรรม')
 	start_date      = forms.DateField(widget=YUICalendar(attrs={'id':'id_start_date'}), label='เริ่มตั้งแต่วันที่', required=False)
 	end_date        = forms.DateField(widget=YUICalendar(attrs={'id':'id_end_date'}), label='ถึง', required=False)
@@ -165,4 +165,3 @@ class ModifyActivityForm(forms.Form):
 			del cleaned_data['start_date']
 		
 		return cleaned_data
-

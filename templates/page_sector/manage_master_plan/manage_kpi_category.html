@@ -1,0 +1,58 @@
+{% extends 'page_base.html' %}
+{% load helper_tags page_tags tab_tags %}
+
+{% block html_head %}
+<script type="text/javascript">
+$(document).ready(function() {
+    $(".delete-kpi-category").click(function(e) {
+        if(!window.confirm("ยืนยันการลบประเภทตัวชี้วัด?")) {
+            e.preventDefault();
+        }
+    });
+});
+</script>
+{% endblock %}
+
+{% block body_title %}{% display_master_plan_management_header user master_plan %}{% endblock %}
+{% block body_tabs %}{% tabs_for_manage_master_plan page master_plan %}{% endblock %}
+
+{% block body_content %}
+<div class="ss_section">
+    <ul>
+        <li><a href="{% url view_master_plan_manage_kpi master_plan.ref_no %}">ตัวชี้วัดแผนหลัก</a></li>
+		<li class="selected">ประเภทตัวชี้วัด</li>
+    </ul>
+</div>
+
+<div class="ss_control_panel">
+    <ul>
+        <li><img src="{{MEDIA_URL}}/images/icons/create.png" class="icon"/><a href="{% url view_master_plan_manage_kpi_add_category master_plan.ref_no %}">เพิ่มประเภทตัวชี้วัด</a></li>
+    </ul>
+</div>
+
+<div class="master_plan_manage">
+    {% if categories %}
+    <table class="ss_table">
+        <tr>
+            <th class="controls"></th>
+            <th class="name">ชื่อประเภท</th>
+        </tr>
+        {% for category in categories %}
+        <tr>
+            <td class="controls">
+                <a href="{% url view_master_plan_manage_kpi_edit_category category.id %}" title="แก้ไขประเภทตัวชี้วัด"><img src="{{MEDIA_URL}}/images/icons/edit.png" class="icon" /></a>
+                {% if category.removable %}
+                <a href="{% url view_master_plan_manage_kpi_delete_category category.id %}" title="ลบประเภทตัวชี้วัด" class="delete-kpi-category"><img src="{{MEDIA_URL}}/images/icons/delete.png" class="icon" /></a>
+                {% else %}
+				<img src="{{MEDIA_URL}}/images/icons/delete_disabled.png" class="icon" title="ยังมีตัวชี้วัดที่อยู่ในประเภทตัวชี้วัดนี้"/>
+                {% endif %}
+            </td>
+            <td>{{category.name}}</td>
+        </tr>
+		{% endfor %}
+    </table>
+    {% else %}
+    <div class="ss_no_information">ไม่มีประเภทตัวชี้วัด</div>
+    {% endif %}
+</div>
+{% endblock %}
