@@ -1,0 +1,170 @@
+{% extends 'page_base.html' %}
+{% load helper_tags page_tags tab_tags %}
+
+{% block html_head %}
+<link href="{{MEDIA_URL}}/yui/build/container/assets/skins/sam/container.css" type="text/css" media="all" rel="stylesheet" />
+<link href="{{MEDIA_URL}}/yui/build/calendar/assets/skins/sam/calendar.css" type="text/css" media="all" rel="stylesheet" />
+
+<link href="{{MEDIA_URL}}/css/yui.calendar.widget.css" type="text/css" media="all" rel="stylesheet" />
+<script type="text/javascript" src="{{MEDIA_URL}}/yui/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+<script type="text/javascript" src="{{MEDIA_URL}}/yui/build/element/element-min.js"></script>
+<script type="text/javascript" src="{{MEDIA_URL}}/yui/build/container/container-min.js"></script>
+<script type="text/javascript" src="{{MEDIA_URL}}/yui/build/calendar/calendar-min.js"></script>
+<script type="text/javascript" src="{{MEDIA_URL}}/scripts/yui.calendar.widget.js"></script>
+
+<script type="text/javascript">
+var due_date_count = 1;
+$(document).ready(function() {
+    $(".form_radio_group input[type='radio']").click(function(e) {
+        $(".due_panel").hide();
+        
+        if($(this).attr("id") == "report_due_type_specific_due") {
+            $(".specific_due_panel").show();
+        } else if($(this).attr("id") == "report_due_type_repeat_due") {
+            $(".repeat_due_panel").show();
+        }   
+    });
+    
+    $(".specific_due_panel a.add_more").click(function(e) {
+        e.preventDefault();
+        due_date_count = due_date_count + 1;
+        var new_row = $('<div class="due_row"><span class="yui_date_picker_panel"><input type="hidden" name="due_dates" value="" id="id_due_date_' + due_date_count + '_value"/><input type="text" value="" id="id_due_date_' + due_date_count + '_display" readonly="readonly" class="yui_date_picker_textbox"/> <img src="/m/images/input/date_picker.png" id="id_due_date_' + due_date_count + '" class="yui_date_picker"/><img src="{{MEDIA_URL}}/images/input/date_picker_remove.png" class="remove_row"/></span></div>');
+        
+        new_row.find(".yui_date_picker").click(function(e) {
+            activeCalendarInputID = e.target.id;
+            triggerYUICalendar();
+        });
+        
+        new_row.find(".yui_date_picker_textbox").click(function(e) {
+            activeCalendarInputID = $(this).parent().find(".yui_date_picker").attr('id');
+            triggerYUICalendar();
+        });
+        
+        new_row.find(".remove_row").click(function(e) {
+            if(window.confirm("ยืนยันการลบวันที่?")) {
+                $(this).closest(".due_row").remove();
+            }
+        });
+        
+        new_row.insertBefore($(this));
+    });
+    
+    $(".specific_due_panel .remove_row").click(function(e) {
+        if(window.confirm("ยืนยันการลบวันที่?")) {
+            $(this).closest(".due_row").remove();
+        }
+    });
+    
+    $(".submit-button").click(function(e) {
+        if($("#report_due_type_specific_due").attr("checked")) {
+            var found = false;
+            $(".specific_due_panel .due_row").each(function() {
+                if($(this).find("input[name='due_dates']").val() != "") {
+                    found = true;
+                }
+            });
+            
+            if(!found) {
+                alert("กรุณากรอกข้อมูลวันที่รอบการส่งรายงาน");
+                return false;
+            }
+        }
+    });
+});
+</script>
+{% endblock %}
+
+{% block body_title %}{% display_program_header user program %}{% endblock %}
+{% block body_tabs %}{% tabs_for_program page user program %}{% endblock %}
+
+{% block body_content %}
+<div class="ss_breadcrumbs">
+    <div class="breadcrumbs"><a href="{% url view_program_reports program.id %}">รายงานของแผนงาน</a> &#187; <a href="{% url view_program_reports_manage_report program.id %}">จัดการหัวเรื่องรายงาน</a> &#187;</div>
+    <h2>{% if not report.id %}เพิ่มหัวเรื่องรายงาน{% else %}แก้ไขหัวเรื่องรายงาน{% endif %}</h2>
+</div>
+
+<div class="program_reports_page_manage">
+    <form method="post" action="." class="ss_form">
+    	{% csrf_token %}
+        {% if not report.id %}<div class="instruction">รายงานที่สร้างจากภายในหน้านี้ ใช้สำหรับภายในแผนงานนี้เท่านั้น</div>{% endif %}
+        
+        <ul>
+            <li>
+                <label for="id_name" class="caption">{{form.name.label}}{% display_required %}</label>
+                <div class="input LONG">{{form.name}}</div>
+                {{form.name.errors}}
+            </li>
+            
+            <li class="form_check_group">
+                <div class="caption">การส่งรายงาน</div>
+                <div class="check_row">
+                    {{form.need_checkup}}
+                    <label for="id_need_checkup">{{form.need_checkup.label}}</label>
+                    <div>{{form.need_checkup.errors}}</div>
+                </div>
+                <div class="check_row">
+                    {{form.need_approval}}
+                    <label for="id_need_approval">{{form.need_approval.label}}</label>
+                    <div>{{form.need_approval.errors}}</div>
+                </div>
+            </li>
+            
+            <li class="form_radio_group">
+                <div class="caption">กำหนดการส่งรายงาน</div>
+                <div class="radio_row">
+                    <input type="radio" name="report_due_type" value="no_due" class="radio" id="report_due_type_no_due" {% ifequal report.due_type 1 %}checked="checked"{% endifequal %}/><label for="report_due_type_no_due">ไม่กำหนดวันส่งรายงาน</label>
+                </div>
+                <div class="radio_row">
+                    <input type="radio" name="report_due_type" value="dates_due" class="radio" id="report_due_type_specific_due" {% ifequal report.due_type 3 %}checked="checked"{% endifequal %}/><label for="report_due_type_specific_due">เลือกวันที่ส่งรายงาน</label>
+                    <div class="due_panel specific_due_panel" {% ifnotequal report.due_type 3 %}style="display:none;"{% endifnotequal %}>
+                        {% if report.due_dates %}
+                            {% for due_date in report.due_dates %}
+                            <div class="due_row">
+                                <span class="yui_date_picker_panel">
+                                    <input type="hidden" name="due_dates" value="{{due_date.due_date|date:"Y-n-j"}}" id="id_due_date_a{{due_date.id}}_value"/>
+                                    <input type="text" value="{{due_date.due_date|date:"j F"}} {{due_date.due_date.year|add:543}}" id="id_due_date_a{{due_date.id}}_display" readonly="readonly" class="yui_date_picker_textbox"/>
+                                    <img src="{{MEDIA_URL}}/images/input/date_picker.png" id="id_due_date_a{{due_date.id}}" class="yui_date_picker"/>
+                                    <img src="{{MEDIA_URL}}/images/input/date_picker_remove.png" class="remove_row"/>
+                                </span>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="due_row">
+                                <span class="yui_date_picker_panel">
+                                    <input type="hidden" name="due_dates" value="" id="id_due_date_1_value"/>
+                                    <input type="text" value="" id="id_due_date_1_display" readonly="readonly" class="yui_date_picker_textbox"/>
+                                    <img src="{{MEDIA_URL}}/images/input/date_picker.png" id="id_due_date_1" class="yui_date_picker"/>
+                                    <img src="{{MEDIA_URL}}/images/input/date_picker_remove.png" class="remove_row"/>
+                                </span>
+                            </div>
+                        {% endif %}
+                        <a href="#" class="add_more">เพิ่มวันที่ส่งรายงาน</a>
+                    </div>
+                </div>
+                <div class="radio_row">
+                    <input type="radio" name="report_due_type" value="repeat_due" class="radio" id="report_due_type_repeat_due" {% ifequal report.due_type 2 %}checked="checked"{% endifequal %}/><label for="report_due_type_repeat_due">เลือกรอบการส่งรายงาน</label>
+                    <div class="due_panel repeat_due_panel" {% ifnotequal report.due_type 2 %}style="display:none;"{% endifnotequal %}>
+                        <div class="due_row">
+                            {{form.cycle_length.label}} {{form.cycle_length}} เดือน
+                        </div>
+                        <div class="due_row">
+                            {{form.monthly_date.label}} {{form.monthly_date}}
+                        </div>
+                    </div>
+                </div>
+            </li>
+            
+            <li class="form_check_group">
+                <div class="caption">การแจ้งเตือน</div>
+                <div class="check_row">
+                    {{form.notify_before}} <label for="id_notify_before">{{form.notify_before.label}}</label> <span class="notify_input">{{form.notify_before_days}}</span> วัน
+                </div>
+                <div class="check_row">
+                    {{form.notify_due}} <label for="id_notify_due">{{form.notify_due.label}}</label>
+                </div>
+            </li>
+        </ul>
+        <div class="button_panel"><button class="submit-button">ตกลง</button></div>
+    </form>
+</div>
+{% endblock %}

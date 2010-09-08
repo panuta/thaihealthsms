@@ -2,12 +2,52 @@
 {% load helper_tags page_tags tab_tags %}
 
 {% block html_head %}
-
+<script type="text/javascript">
+$(document).ready(function() {
+    $(".delete-report").click(function(e) {
+        if(!window.confirm("ยืนยันการลบหัวเรื่องรายงาน?")) {
+            e.preventDefault();
+        }
+    });
+});
+</script>
 {% endblock %}
 
 {% block body_title %}{% display_master_plan_management_header user master_plan %}{% endblock %}
 {% block body_tabs %}{% tabs_for_manage_master_plan page master_plan %}{% endblock %}
 
 {% block body_content %}
+<div class="ss_control_panel">
+    <ul>
+        <li><img src="{{MEDIA_URL}}/images/icons/create.png" class="icon"/><a href="{% url view_master_plan_manage_report_add_report master_plan.ref_no %}">เพิ่มหัวเรื่องรายงาน</a></li>
+    </ul>
+</div>
 
+<div class="master_plan_manage master_plan_manage_report">
+    {% if reports %}
+	<ul class="ss_report_schedule">
+        {% for report in reports %}
+        <li>
+            <h4>{{report.name}}</h4>
+            <div class="property">
+                {% if report.need_approval %}<span class="active_property">ต้องมีการรับรองรายงาน</span>{% else %}<span class="inactive_property">ไม่ต้องมีการรับรองรายงาน</span>{% endif %}
+            </div>
+            <div class="due">
+                <span class="caption">กำหนดส่งรายงาน:</span> {% display_report_due report %}
+            </div>
+			<div class="actions">
+				<span><img src="{{MEDIA_URL}}/images/page/record_edit.png" class="icon"/> <a href="{% url view_master_plan_manage_report_edit_report report.id %}" title="แก้ไขหัวเรื่องรายงาน">แก้ไข</a></span>
+				{% if report.removable %}
+                <span><img src="{{MEDIA_URL}}/images/page/record_delete.png" class="icon"/> <a href="{% url view_master_plan_manage_report_delete_report report.id  %}" title="ลบหัวเรื่องรายงาน" class="delete-report">ลบ</a></span>
+                {% else %}
+                <span title="ไม่สามารถลบหัวเรื่องรายงานที่แผนงานหรือโครงการยังใช้อยู่ หรือมีการส่งรายงานไปแล้วได้"><img src="{{MEDIA_URL}}/images/page/record_delete.png" class="icon"/> ลบ</span>
+                {% endif %}
+			</div>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <div class="ss_no_information">ไม่มีรายงาน</div>
+    {% endif %}
+</div>
 {% endblock %}

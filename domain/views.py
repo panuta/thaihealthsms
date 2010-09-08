@@ -213,7 +213,7 @@ def view_master_plan_delete_program(request, program_id):
         messages.error(request, u'ไม่สามารถลบแผนงานได้ เนื่องจากยังมีโครงการที่อยู่ภายใต้แผนงานนี้')
         removable = False
     
-    if Report.objects.filter(of_program=program).count():
+    if Report.objects.filter(program=program).count():
         messages.error(request, u'ไม่สามารถลบแผนงานได้ เนื่องจากยังมีรายงานที่แผนงานนี้สร้างขึ้น')
         removable = False
     
@@ -222,6 +222,9 @@ def view_master_plan_delete_program(request, program_id):
         removable = False
     
     if removable:
+        # REMOVE REPORT
+        ReportAssignment.objects.filter(program=program).delete()
+        
         # REMOVE BUDGET
         BudgetScheduleRevision.objects.filter(schedule__program=program).delete()
         schedules = BudgetSchedule.objects.filter(program=program)
@@ -240,8 +243,8 @@ def view_master_plan_delete_program(request, program_id):
         schedules.delete()
         
         # REMOVE KPI
-        DomainKPIType.objects.filter(of_program=program).delete()
-        kpis = DomainKPI.objects.filter(of_program=program)
+        DomainKPICategory.objects.filter(program=program).delete()
+        kpis = DomainKPI.objects.filter(program=program)
         DomainKPISchedule.objects.filter(kpi__in=kpis).delete()
         
         kpis.delete()

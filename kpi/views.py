@@ -47,8 +47,8 @@ def view_master_plan_manage_program_kpi(request, program_id):
     if not permission.access_obj(request.user, 'master_plan manage', master_plan):
         return access_denied(request)
     
-    kpi_choices = DomainKPI.objects.filter(of_master_plan=master_plan).order_by('ref_no')
-    kpi_schedules = DomainKPISchedule.objects.filter(of_program=program).order_by('-quarter_year', '-quarter')
+    kpi_choices = DomainKPI.objects.filter(master_plan=master_plan).order_by('ref_no')
+    kpi_schedules = DomainKPISchedule.objects.filter(program=program).order_by('-quarter_year', '-quarter')
     
     if request.method == 'POST':
         # 'schedule' - kpi_id , schedule_id , target , target_on - "123,None,100,2010-01-01"
@@ -75,7 +75,7 @@ def view_master_plan_manage_program_kpi(request, program_id):
                         schedule.save()
                     
                 else:
-                    schedule = DomainKPISchedule.objects.create(kpi=kpi, of_program=program, target=target, result=0, quarter_year=quarter_year, quarter=quarter_month)
+                    schedule = DomainKPISchedule.objects.create(kpi=kpi, program=program, target=target, result=0, quarter_year=quarter_year, quarter=quarter_month)
                 
             updating_schedules.append(schedule)
         
@@ -91,7 +91,7 @@ def view_master_plan_manage_program_kpi(request, program_id):
                 program_schedule.delete()
         
         messages.success(request, 'แก้ไขแผนผลลัพธ์เรียบร้อย')
-        return redirect('view_master_plan_manage_organization', (program.plan.master_plan.ref_no))
+        return redirect('view_master_plan_manage_organization', (master_plan.ref_no))
     
     return render_page_response(request, 'organization', 'page_sector/manage_master_plan/manage_program_kpi.html', {'master_plan':master_plan, 'program':program, 'kpi_choices':kpi_choices, 'kpi_schedules':kpi_schedules})
 
@@ -107,13 +107,13 @@ def view_master_plan_manage_kpi(request, master_plan_ref_no, kpi_year):
         year_number = utilities.master_plan_current_year_number(master_plan)
     
     kpi_categories = []
-    for dict in DomainKPI.objects.filter(of_master_plan=master_plan, year=year_number).values('category').distinct():
+    for dict in DomainKPI.objects.filter(master_plan=master_plan, year=year_number).values('category').distinct():
         try:
             kpi_category = DomainKPICategory.objects.get(pk=dict['category'])
         except DomainKPICategory.DoesNotExist:
             pass
         else:
-            kpis = DomainKPI.objects.filter(of_master_plan=master_plan, year=year_number, category=kpi_category).order_by('ref_no')
+            kpis = DomainKPI.objects.filter(master_plan=master_plan, year=year_number, category=kpi_category).order_by('ref_no')
             
             for kpi in kpis:
                 kpi.removable = DomainKPISchedule.objects.filter(kpi=kpi).count() == 0
@@ -121,13 +121,13 @@ def view_master_plan_manage_kpi(request, master_plan_ref_no, kpi_year):
             kpi_category.kpis = kpis
             kpi_categories.append(kpi_category)
     
-    no_category_kpis = DomainKPI.objects.filter(of_master_plan=master_plan, year=year_number, category=None)
+    no_category_kpis = DomainKPI.objects.filter(master_plan=master_plan, year=year_number, category=None)
     
     for kpi in no_category_kpis:
         kpi.removable = DomainKPISchedule.objects.filter(kpi=kpi).count() == 0
     
     year_choices = []
-    for dict in DomainKPI.objects.filter(of_master_plan=master_plan).order_by('year').values('year').distinct():
+    for dict in DomainKPI.objects.filter(master_plan=master_plan).order_by('year').values('year').distinct():
         year_choices.append(int(dict['year']))
     
     return render_page_response(request, 'kpi', 'page_sector/manage_master_plan/manage_kpi.html', {'master_plan':master_plan, 'kpi_categories':kpi_categories, 'no_category_kpis':no_category_kpis, 'year_choices':year_choices, 'kpi_year':year_number})
@@ -140,7 +140,7 @@ def view_master_plan_manage_kpi_add_kpi(request, master_plan_ref_no):
         form = DomainKPIModifyForm(request.POST, master_plan=master_plan)
         if form.is_valid():
             kpi = DomainKPI.objects.create(
-                of_master_plan = master_plan,
+                master_plan = master_plan,
                 ref_no = form.cleaned_data['ref_no'],
                 name = form.cleaned_data['name'],
                 abbr_name = form.cleaned_data['abbr_name'],
@@ -160,7 +160,7 @@ def view_master_plan_manage_kpi_add_kpi(request, master_plan_ref_no):
 @login_required
 def view_master_plan_manage_kpi_edit_kpi(request, kpi_id):
     kpi = get_object_or_404(DomainKPI, pk=kpi_id)
-    master_plan = kpi.of_master_plan
+    master_plan = kpi.master_plan
     
     if request.method == 'POST':
         form = DomainKPIModifyForm(request.POST, master_plan=master_plan)
@@ -184,7 +184,7 @@ def view_master_plan_manage_kpi_edit_kpi(request, kpi_id):
 @login_required
 def view_master_plan_manage_kpi_delete_kpi(request, kpi_id):
     kpi = get_object_or_404(DomainKPI, pk=kpi_id)
-    master_plan = kpi.of_master_plan
+    master_plan = kpi.master_plan
     
     if not DomainKPISchedule.objects.filter(kpi=kpi).count():
         kpi.delete()
@@ -199,7 +199,7 @@ def view_master_plan_manage_kpi_delete_kpi(request, kpi_id):
 @login_required
 def view_master_plan_manage_kpi_category(request, master_plan_ref_no):
     master_plan = get_object_or_404(MasterPlan, ref_no=master_plan_ref_no)
-    categories = DomainKPICategory.objects.filter(of_master_plan=master_plan).order_by('name')
+    categories = DomainKPICategory.objects.filter(master_plan=master_plan).order_by('name')
     
     for category in categories:
         category.removable = DomainKPI.objects.filter(category=category).count() == 0
@@ -213,7 +213,7 @@ def view_master_plan_manage_kpi_add_category(request, master_plan_ref_no):
     if request.method == 'POST':
         form = DomainKPICategoryModifyForm(request.POST)
         if form.is_valid():
-            category = DomainKPICategory.objects.create(of_master_plan=master_plan, name=form.cleaned_data['name'])
+            category = DomainKPICategory.objects.create(master_plan=master_plan, name=form.cleaned_data['name'])
             
             messages.success(request, 'เพิ่มประเภทตัวชี้วัดเรียบร้อย')
             return redirect('view_master_plan_manage_kpi_category', (master_plan.ref_no))
@@ -226,7 +226,7 @@ def view_master_plan_manage_kpi_add_category(request, master_plan_ref_no):
 @login_required
 def view_master_plan_manage_kpi_edit_category(request, kpi_category_id):
     kpi_category = get_object_or_404(DomainKPICategory, pk=kpi_category_id)
-    master_plan = kpi_category.of_master_plan
+    master_plan = kpi_category.master_plan
     
     if request.method == 'POST':
         form = DomainKPICategoryModifyForm(request.POST)
@@ -245,7 +245,7 @@ def view_master_plan_manage_kpi_edit_category(request, kpi_category_id):
 @login_required
 def view_master_plan_manage_kpi_delete_category(request, kpi_category_id):
     kpi_category = get_object_or_404(DomainKPICategory, pk=kpi_category_id)
-    master_plan = kpi_category.of_master_plan
+    master_plan = kpi_category.master_plan
     
     if not DomainKPI.objects.filter(category=kpi_category).count():
         kpi_category.delete()

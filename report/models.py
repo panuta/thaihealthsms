@@ -15,8 +15,8 @@ REJECTED_ACTIVITY = 3
 CANCELLED_ACTIVITY = 4
 
 class Report(models.Model):
-    of_master_plan = models.ForeignKey('domain.MasterPlan', null=True)
-    of_program = models.ForeignKey('domain.Program', null=True)
+    master_plan = models.ForeignKey('domain.MasterPlan', null=True)
+    program = models.ForeignKey('domain.Program', null=True)
     due_type = models.IntegerField(default=REPORT_NO_DUE_DATE)
     
     name = models.CharField(max_length=500)

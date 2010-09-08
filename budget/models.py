@@ -1,7 +1,7 @@
 from django.db import models
 
 class BudgetSchedule(models.Model):
-    of_program = models.ForeignKey('domain.Program')
+    program = models.ForeignKey('domain.Program')
     grant_budget = models.IntegerField(default=0)
     claim_budget = models.IntegerField(default=0)
     schedule_on = models.DateField()

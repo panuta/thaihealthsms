@@ -1,8 +1,8 @@
 from django.db import models
 
 class DomainKPICategory(models.Model):
-    of_master_plan = models.ForeignKey('domain.MasterPlan', null=True)
-    of_program = models.ForeignKey('domain.Program', null=True)
+    master_plan = models.ForeignKey('domain.MasterPlan', null=True)
+    program = models.ForeignKey('domain.Program', null=True)
     name = models.CharField(max_length=300)
 
 class DomainKPI(models.Model):
@@ -12,12 +12,12 @@ class DomainKPI(models.Model):
     year = models.IntegerField(default=0) # gregorian calendar year
     unit_name = models.CharField(max_length=300)
     category = models.ForeignKey('DomainKPICategory', null=True)
-    of_master_plan = models.ForeignKey('domain.MasterPlan', null=True)
-    of_program = models.ForeignKey('domain.Program', null=True)
+    master_plan = models.ForeignKey('domain.MasterPlan', null=True)
+    program = models.ForeignKey('domain.Program', null=True)
 
 class DomainKPISchedule(models.Model):
     kpi = models.ForeignKey('DomainKPI')
-    of_program = models.ForeignKey('domain.Program', null=True)
+    program = models.ForeignKey('domain.Program', null=True)
     target = models.IntegerField()
     result = models.IntegerField()
     quarter = models.IntegerField() # 1-4

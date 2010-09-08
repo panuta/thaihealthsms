@@ -37,7 +37,7 @@ class YUICalendar(Input):
         
         value_input = '<input type="hidden" name="%s" value="%s" id="%s_value"/>' % (name, value, input_id)
         display_input = '<input type="text" value="%s" id="%s_display" readonly="readonly" class="yui_date_picker_textbox"/>' % (display_value, input_id)
-        calendar_icon = '<img src="%s/images/icons/date_picker.png" id="%s" class="yui_date_picker"/>' % (settings.MEDIA_URL, input_id)
+        calendar_icon = '<img src="%s/images/input/date_picker.png" id="%s" class="yui_date_picker"/>' % (settings.MEDIA_URL, input_id)
         
         return mark_safe(u'<span class="yui_date_picker_panel">%s%s %s</span>' % (value_input, display_input, calendar_icon))
     

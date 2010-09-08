@@ -102,6 +102,8 @@ a:hover {color:#FFF;background-color:#369;}
 
 .ss_form li .errorlist {margin:5px 0px 0px 0px;color:#C30;}
 
+.ss_form .instruction {border:1px solid #CCC;background-color:#FFC;padding:10px;margin:15px 0px;font-size:116%;}
+
 /* Text Box */
 .ss_form .SHORT input {width:100px;}
 .ss_form .MEDIUM input {width:250px;}
@@ -153,8 +155,6 @@ a:hover {color:#FFF;background-color:#369;}
 
 .ss_form .radio_choices {}
 
-.ss_form .instruction {border:1px solid #CCC;background-color:#FFC;padding:10px;margin:15px 0px;font-size:116%;}
-
 .ss_form .SHORT input {width:100px;}
 .ss_form .MEDIUM input {width:250px;}
 .ss_form .LONG input {width:500px;}
@@ -172,16 +172,11 @@ a:hover {color:#FFF;background-color:#369;}
 */
 
 /* Form - Checkbox Group */
-/*
-.ss_form .form_check_group .check_group {margin-bottom:10px;}
 .ss_form .form_check_group .caption {font-size:108%;margin:10px 0px;color:#396;}
-.ss_form .form_check_group label {font-size:108%;}
+.ss_form .form_check_group .check_row {margin:0px 0px 15px 10px;font-size:108%;}
 .ss_form .form_check_group input {margin-right:7px;}
-*/
 
 /* Form - Radio Group */
-/*
 .ss_form .form_radio_group .caption {font-size:108%;margin:10px 0px;color:#396;}
-.ss_form .form_radio_group .radio_panel {margin:0px 0px 15px 10px;font-size:108%;}
+.ss_form .form_radio_group .radio_row {margin:0px 0px 15px 10px;font-size:108%;}
 .ss_form .form_radio_group .radio {margin-right:7px;}
-*/

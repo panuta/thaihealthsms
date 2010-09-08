@@ -1,0 +1,30 @@
+{% extends 'page_base.html' %}
+{% load helper_tags page_tags tab_tags humanize %}
+
+{% block html_head %}
+
+{% endblock %}
+
+{% block body_title %}{% display_master_plan_management_header user master_plan %}{% endblock %}
+{% block body_tabs %}{% tabs_for_manage_master_plan page master_plan %}{% endblock %}
+
+{% block body_content %}
+<div class="ss_breadcrumbs">
+    <div class="breadcrumbs"><a href="{% url view_master_plan_manage_organization master_plan.ref_no %}">หน้าจัดการแผนงาน</a> &#187;</div>
+    <div class="supertitle">({{program.ref_no}}) {{program.name}}</div>
+    <h2>รายงานที่ต้องส่ง</h2>
+</div>
+
+<div class="master_plan_manage master_plan_manage_program_report">
+    {% if has_reports %}
+    <form action="" method="POST" class="ss_form select_reports_form">
+    	{% csrf_token %}
+        {{form.reports.errors}}
+        {{form.reports}}
+        <div class="button_panel"><button type="submit">บันทึกการแก้ไข</button></div>
+    </form>
+    {% else %}
+    <div class="ss_prerequisite">ยังไม่มีรอบการส่งรายงานที่จะใช้ภายในแผน คุณสามารถเพิ่มรอบการส่งรายงานได้ที่หน้า <a href="{% url view_master_plan_add_report master_plan.id %}?{% back_to_this request %}">เพิ่มรอบการส่งรายงาน</a></div>
+    {% endif %}
+</div>
+{% endblock %}

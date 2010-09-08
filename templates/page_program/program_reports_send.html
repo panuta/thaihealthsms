@@ -1,0 +1,44 @@
+{% extends 'page_base.html' %}
+{% load helper_tags page_tags tab_tags %}
+
+{% block html_head %}
+<script type="text/javascript">
+$(document).ready(function() {
+    $(".delete-report").click(function(e) {
+        if(!window.confirm("ยืนยันการลบหัวเรื่องรายงาน?")) {
+            e.preventDefault();
+        }
+    });
+});
+</script>
+{% endblock %}
+
+{% block body_title %}{% display_program_header user program %}{% endblock %}
+{% block body_tabs %}{% tabs_for_program page user program %}{% endblock %}
+
+{% block body_content %}
+<div class="ss_breadcrumbs">
+    <div class="breadcrumbs"><a href="{% url view_program_reports program.id %}">รายงานของแผนงาน</a> &#187;</div>
+    <h2>ส่งรายงาน</h2>
+</div>
+
+<div class="program_reports_page_send">
+    {% if reports %}
+    <div class="instruction">เลือกรายงานที่ต้องการส่ง</div>
+    <ul class="reports">
+    {% for report in reports %}
+        <li>
+            <h2><a href="{% url view_program_reports_send_report program.id report.id %}">{{report.name}}</a></h2>
+            <div class="counter">
+                {% if report.counter.overdue %}<span class="is_overdue">เลยกำหนดส่ง {{report.counter.overdue}} รายงาน</span>{% endif %}
+                {% if report.counter.rejected %}<span class="is_rejected">ถูกตีกลับ {{report.counter.rejected}} รายงาน</span>{% endif %}
+                {% if report.counter.waiting %}<span class="is_waiting">กำลังรอการอนุมัติ {{report.counter.waiting}} รายงาน</span>{% endif %}
+            </div>
+        </li>
+    {% endfor %}
+    </ul>
+    {% else %}
+    <div class="ss_no_information">ไม่มีรายงานที่ต้องส่ง</div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'page_base.html' %}
+{% load helper_tags page_tags tab_tags %}
+
+{% block html_head %}
+<script type="text/javascript">
+$(document).ready(function() {
+    $(".delete-report").click(function(e) {
+        if(!window.confirm("ยืนยันการลบหัวเรื่องรายงาน?")) {
+            e.preventDefault();
+        }
+    });
+});
+</script>
+{% endblock %}
+
+{% block body_title %}{% display_program_header user program %}{% endblock %}
+{% block body_tabs %}{% tabs_for_program page user program %}{% endblock %}
+
+{% block body_content %}
+<div class="ss_breadcrumbs">
+    <div class="breadcrumbs"><a href="{% url view_program_reports program.id %}">รายงานของแผนงาน</a> &#187; <a href="{% url view_program_reports_send_list program.id %}">ส่งรายงาน</a> &#187;</div>
+    <h2>ส่งรายงาน {{report.name}}</h2>
+</div>
+
+<div class="program_reports_page_send">
+    <ul class="submissions">
+    {% for submission in submissions %}
+        <li>
+            <div class="due_date"><a href="{% url view_report_overview submission.id %}">{{submission.schedule_date|full_date}}</a></div>
+            {% display_report_sending_notice submission %}
+        </li>
+    {% endfor %}
+    </ul>
+</div>
+{% endblock %}

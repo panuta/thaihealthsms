@@ -71,7 +71,7 @@ def view_master_plan_manage_program_budget(request, program_id):
     if not permission.access_obj(request.user, 'master_plan manage', master_plan):
         return access_denied(request)
     
-    budget_schedules = BudgetSchedule.objects.filter(of_program=program).order_by('-schedule_on')
+    budget_schedules = BudgetSchedule.objects.filter(program=program).order_by('-schedule_on')
     
     if request.method == 'POST':
         updating_schedules = list()
@@ -98,7 +98,7 @@ def view_master_plan_manage_program_budget(request, program_id):
                         schedule.save()
                     
                 else:
-                    schedule = BudgetSchedule.objects.create(of_program=program, grant_budget=grant_budget, claim_budget=0, schedule_on=schedule_on)
+                    schedule = BudgetSchedule.objects.create(program=program, grant_budget=grant_budget, claim_budget=0, schedule_on=schedule_on)
                     create_revision = True
                 
                 if create_revision:

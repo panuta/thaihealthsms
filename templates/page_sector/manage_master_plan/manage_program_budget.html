@@ -128,7 +128,7 @@ function initializeRowEvents(row_obj) {
                     <span class="yui_date_picker_panel">
                         <input type="hidden" name="schedule_on" value="{{schedule.schedule_on|date:"Y-n-j"}}" id="id_schedule_on_{{schedule.id}}_value"/>
                         <input type="text" value="{{schedule.schedule_on|date:"j F"}} {{schedule.schedule_on.year|add:543}}" id="id_schedule_on_{{schedule.id}}_display" readonly="readonly" class="yui_date_picker_textbox"/>
-                        <img src="/m/images/icons/date_picker.png" id="id_schedule_on_{{schedule.id}}" class="yui_date_picker"/>
+                        <img src="{{MEDIA_URL}}/images/input/date_picker.png" id="id_schedule_on_{{schedule.id}}" class="yui_date_picker"/>
                     </span>
                 </td>
                 <td>&nbsp;</td>
@@ -142,7 +142,7 @@ function initializeRowEvents(row_obj) {
                 <span class="yui_date_picker_panel">
                     <input type="hidden" name="schedule_on" value="" id="id_schedule_on_starter_value"/>
                     <input type="text" value="" id="id_schedule_on_starter_display" readonly="readonly" class="yui_date_picker_textbox"/>
-                    <img src="/m/images/icons/date_picker.png" id="id_schedule_on_starter" class="yui_date_picker"/>
+                    <img src="{{MEDIA_URL}}/images/input/date_picker.png" id="id_schedule_on_starter" class="yui_date_picker"/>
                 </span>
             </td>
             <td>&nbsp;</td>

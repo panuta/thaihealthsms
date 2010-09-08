@@ -59,8 +59,8 @@ def tabs_for_manage_master_plan(page, master_plan):
     if page == 'organization': html = html + '<li class="selected">แผนงาน</li>'
     else: html = html + '<li><a href="%s">แผนงาน</a></li>' % reverse('view_master_plan_manage_organization', args=[master_plan.ref_no])
     
-    if page == 'report': html = html + '<li class="selected">กำหนดส่งรายงาน</li>'
-    else: html = html + '<li><a href="%s">กำหนดส่งรายงาน</a></li>' % reverse('view_master_plan_manage_report', args=[master_plan.ref_no])
+    if page == 'report': html = html + '<li class="selected">รายงาน</li>'
+    else: html = html + '<li><a href="%s">รอบการส่งรายงาน</a></li>' % reverse('view_master_plan_manage_report', args=[master_plan.ref_no])
     
     if page == 'kpi': html = html + '<li class="selected">ตัวชี้วัด</li>'
     else: html = html + '<li><a href="%s">ตัวชี้วัด</a></li>' % reverse('view_master_plan_manage_kpi', args=[master_plan.ref_no])
@@ -112,5 +112,20 @@ def tabs_for_activity(page, user, activity):
     
     if page == 'comments': html = html + '<li class="selected">ความคิดเห็น</li>'
     else: html = html + '<li><a href="%s">ความคิดเห็น</a></li>' % reverse('view_activity_comments', args=[activity.id])
+    
+    return _generate_tabs(html)
+
+@register.simple_tag
+def tabs_for_report(page, user, report_submission):
+    html = ''
+    
+    if page == 'overview': html = html + '<li class="selected">เนื้อหา</li>'
+    else: html = html + '<li><a href="%s">ภาพรวม</a></li>' % reverse('view_report_overview', args=[report_submission.id])
+    
+    if page == 'related': html = html + '<li class="selected">ข้อมูลประกอบ</li>'
+    else: html = html + '<li><a href="%s">ข้อมูลประกอบ</a></li>' % reverse('view_report_related_data', args=[report_submission.id])
+    
+    if page == 'comments': html = html + '<li class="selected">ความคิดเห็น</li>'
+    else: html = html + '<li><a href="%s">ความคิดเห็น</a></li>' % reverse('view_report_submission_comments', args=[report_submission.id])
     
     return _generate_tabs(html)

@@ -1,10 +1,19 @@
+.ss_report_schedule li {border:1px solid #999;margin-bottom:15px;padding:10px;}
+.ss_report_schedule h4 {font-size:116%;color:#2D8659;border-bottom:1px dashed #999;padding-bottom:5px;}
+.ss_report_schedule .property {margin:10px 0px;}
+.ss_report_schedule .property .active_property {background-color:#FFC;margin-right:10px;}
+.ss_report_schedule .property .inactive_property {color:#666;background-color:#EEE;margin-right:10px;}
+.ss_report_schedule .due .caption {color:#666;}
+.ss_report_schedule .actions {color:#666;margin-top:10px;border-top:1px dashed #999;padding-top:8px;}
+.ss_report_schedule .actions span {margin-right:20px;}
+
 
 /*
  * ADMINISTRATION PAGE
  */
 
 /* Manage Organization */
-.admin_org_page h2 {font-size:138.5%;margin-bottom:10px;color:#096;}
+.admin_org_page h2 {font-size:138.5%;margin-bottom:10px;color:#2D8659;}
 
 .admin_org_page table {margin-bottom:20px;}
 .admin_org_page table .sector_number {width:80px;text-align:center;}
@@ -174,18 +183,23 @@
 
 .master_plan_manage_program_budget .button_panel {margin-left:0px !important;}
 
+/* Manage Report */
+.master_plan_manage_report .due_panel {margin:10px 0px 20px;padding:10px;border:1px solid #CCC;background-color:#F3F3F3;}
+.master_plan_manage_report .due_panel .due_row {margin:10px 10px;font-size:0.9em;}
+.master_plan_manage_report .due_panel a.add_more {font-size:0.9em;margin-left:10px;}
+.master_plan_manage_report .due_panel .due_row select {margin:0px 10px;}
+.master_plan_manage_report .notify_input input {width:60px;margin:0px 10px;}
+
 /* Manage KPI */
 .master_plan_manage_kpi .kpi_year_choices {margin-bottom:20px;border:1px dashed #CCC;padding:10px;}
 .master_plan_manage_kpi .kpi_year_choices span {margin-right:10px;font-size:123.1%;color:#333;}
 
-.master_plan_manage_kpi h3 {font-size:123.1%;color:#096;margin-bottom:8px;}
+.master_plan_manage_kpi h3 {font-size:123.1%;color:#2D8659;margin-bottom:8px;}
 .master_plan_manage_kpi h3.no_category {font-style:italic;}
 
 .master_plan_manage_kpi .ss_table {margin-bottom:30px;}
 .master_plan_manage_kpi .ss_table .ref_no {width:110px;text-align:center;}
 .master_plan_manage_kpi .ss_table .unit_name {width:120px;text-align:center;}
-
-
 
 /*
  * PROGRAM
@@ -203,6 +217,37 @@
 .program_projects_page .ss_table .name {}
 .program_projects_page .ss_table .start_date {width:120px;text-align:center;}
 .program_projects_page .ss_table .end_date {width:120px;text-align:center;}
+
+.program_reports_page {}
+
+.program_reports_page_manage h3 {font-size:138.5%;margin-bottom:10px;color:#333;}
+.program_reports_page_manage .ss_no_information {margin-left:15px;}
+.program_reports_page_manage .ss_report_schedule {margin-left:20px;}
+
+.program_reports_page_manage .due_panel {margin:10px 0px 20px;padding:10px;border:1px solid #CCC;background-color:#F3F3F3;}
+.program_reports_page_manage .due_panel .due_row {margin:10px 10px;font-size:0.9em;}
+.program_reports_page_manage .due_panel a.add_more {font-size:0.9em;margin-left:10px;}
+.program_reports_page_manage .due_panel .due_row select {margin:0px 10px;}
+.program_reports_page_manage .notify_input input {width:60px;margin:0px 10px;}
+
+.program_reports_page_send .instruction {font-size:116%;color:#666;margin-bottom:15px;}
+.program_reports_page_send ul.reports {margin-left:20px;}
+.program_reports_page_send ul.reports li {margin-bottom:15px; list-style:disc;}
+.program_reports_page_send ul.reports h2 {font-size:116%;margin-bottom:10px;}
+.program_reports_page_send .counter span {margin-right:10px;}
+
+.program_reports_page_send ul.submissions {margin-left:20px;}
+.program_reports_page_send ul.submissions li {margin-bottom:20px; list-style:disc;}
+.program_reports_page_send ul.submissions .due_date {margin-right:10px;}
+
+.program_reports_page_send ul.submissions .notice {margin-top:8px;}
+.program_reports_page_send ul.submissions .overdue {color:#C30;font-weight:bold;}
+.program_reports_page_send ul.submissions .waiting {color:#666;}
+.program_reports_page_send ul.submissions .rejected {color:#C30;font-weight:bold;}
+
+.program_reports_page_send .is_overdue {background-color:#FCC;padding:2px 10px;}
+.program_reports_page_send .is_rejected {background-color:#FCC;padding:2px 10px;}
+.program_reports_page_send .is_waiting {background-color:#EEE;padding:2px 10px;}
 
 /*
  * PROJECT

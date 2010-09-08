@@ -9,5 +9,26 @@
 {% block body_tabs %}{% tabs_for_program page user program %}{% endblock %}
 
 {% block body_content %}
+<div class="ss_control_panel">
+    <ul>
+        <li><img src="{{MEDIA_URL}}/images/toolbar/report_send.png" class="icon"/><a href="{% url view_program_reports_send_list program.id %}">ส่งรายงาน</a></li>
+        <li><img src="{{MEDIA_URL}}/images/toolbar/list.png" class="icon"/><a href="{% url view_program_reports_manage_report program.id %}">จัดการหัวเรื่องรายงาน</a></li>
+    </ul>
+</div>
 
+<div class="program_reports_page">
+    {% if submissions %}
+        <ul>
+        {% for submission in submissions %}
+            <li>
+                <div class="report_name"><a href="{% url view_report_overview submission.id %}">{{submission.schedule_date|abbr_date}} - {{submission.report.name}}</a></div>
+                <div class="metadata"><span class="submitted">ส่งเมื่อวันที่ {{submission.submitted_on|abbr_datetime}}</span>{% if submission.approval_on %}<span class="submitted">รับรองรายงานเมื่อวันที่ {{submission.approval_on|abbr_datetime}}</span>{% endif %}</div>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+    <div class="ss_no_information">ไม่มีรายงาน</div>
+    {% endif %}
+    
+</div>
 {% endblock %}
