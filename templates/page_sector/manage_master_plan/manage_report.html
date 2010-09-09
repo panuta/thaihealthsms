@@ -36,9 +36,9 @@ $(document).ready(function() {
                 <span class="caption">กำหนดส่งรายงาน:</span> {% display_report_due report %}
             </div>
 			<div class="actions">
-				<span><img src="{{MEDIA_URL}}/images/page/record_edit.png" class="icon"/> <a href="{% url view_master_plan_manage_report_edit_report report.id %}" title="แก้ไขหัวเรื่องรายงาน">แก้ไข</a></span>
+				<span><img src="{{MEDIA_URL}}/images/page/report_edit.png" class="icon"/> <a href="{% url view_master_plan_manage_report_edit_report report.id %}" title="แก้ไขหัวเรื่องรายงาน">แก้ไข</a></span>
 				{% if report.removable %}
-                <span><img src="{{MEDIA_URL}}/images/page/record_delete.png" class="icon"/> <a href="{% url view_master_plan_manage_report_delete_report report.id  %}" title="ลบหัวเรื่องรายงาน" class="delete-report">ลบ</a></span>
+                <span><img src="{{MEDIA_URL}}/images/page/report_delete.png" class="icon"/> <a href="{% url view_master_plan_manage_report_delete_report report.id  %}" title="ลบหัวเรื่องรายงาน" class="delete-report">ลบ</a></span>
                 {% else %}
                 <span title="ไม่สามารถลบหัวเรื่องรายงานที่แผนงานหรือโครงการยังใช้อยู่ หรือมีการส่งรายงานไปแล้วได้"><img src="{{MEDIA_URL}}/images/page/record_delete.png" class="icon"/> ลบ</span>
                 {% endif %}

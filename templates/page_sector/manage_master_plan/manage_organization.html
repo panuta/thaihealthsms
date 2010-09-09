@@ -25,8 +25,8 @@ $(document).ready(function() {
 {% block body_content %}
 <div class="ss_control_panel">
     <ul>
-        <li><img src="{{MEDIA_URL}}/images/icons/create.png" class="icon"/><a href="{% url view_master_plan_add_plan master_plan.ref_no %}">เพิ่มกลุ่มแผนงาน</a></li>
-        {% if plans %}<li><img src="{{MEDIA_URL}}/images/icons/create.png" class="icon"/><a href="{% url view_master_plan_add_program master_plan.ref_no %}">เพิ่มแผนงาน</a></li>{% endif %}
+        <li><img src="{{MEDIA_URL}}/images/toolbar/create.png" class="icon"/><a href="{% url view_master_plan_add_plan master_plan.ref_no %}">เพิ่มกลุ่มแผนงาน</a></li>
+        {% if plans %}<li><img src="{{MEDIA_URL}}/images/toolbar/create.png" class="icon"/><a href="{% url view_master_plan_add_program master_plan.ref_no %}">เพิ่มแผนงาน</a></li>{% endif %}
     </ul>
 </div>
 
@@ -60,11 +60,12 @@ $(document).ready(function() {
                     	<a href="{% url view_program_overview program.id %}">{{program.name}}</a>
 						<div class="subcontrols">
 							<ul>
-								<li><img src="{{MEDIA_URL}}/images/icons/row_edit_small.png" class="icon" /> <a href="{% url view_master_plan_edit_program program.id %}">แก้ไข</a></li>
-								<li><a href="{% url view_master_plan_manage_program_kpi program.id %}">จัดการแผนผลลัพธ์</a></li>
-								<li><a href="{% url view_master_plan_manage_program_budget program.id %}">จัดการแผนการเงิน</a></li>
-								<li><a href="{% url view_master_plan_manage_program_report program.id %}">รายงานที่ต้องส่ง</a></li>
+								<li><img src="{{MEDIA_URL}}/images/page/program_edit.png" class="icon" /> <a href="{% url view_master_plan_edit_program program.id %}">แก้ไข</a></li>
+								<li><img src="{{MEDIA_URL}}/images/page/program_edit_kpi.png" class="icon" /> <a href="{% url view_master_plan_manage_program_kpi program.id %}">จัดการแผนผลลัพธ์</a></li>
+								<li><img src="{{MEDIA_URL}}/images/page/program_edit_budget.png" class="icon" /> <a href="{% url view_master_plan_manage_program_budget program.id %}">จัดการแผนการเงิน</a></li>
+								<li><img src="{{MEDIA_URL}}/images/page/program_edit_report.png" class="icon" /> <a href="{% url view_master_plan_manage_program_report program.id %}">รายงานที่ต้องส่ง</a></li>
 							    <li>
+							    	<img src="{{MEDIA_URL}}/images/page/program_delete.png" class="icon" /> 
 							    	{% if program.removable %}
 		                            <a href="{% url view_master_plan_delete_program program.id %}" class="delete-program">ลบแผนงาน</a>
 		                            {% else %}

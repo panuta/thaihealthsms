@@ -9,5 +9,30 @@
 {% block body_tabs %}{% tabs_for_project page user project %}{% endblock %}
 
 {% block body_content %}
-
+<div class="project_overview_page">
+    <div class="activities">
+        <h3>กิจกรรมที่ดำเนินอยู่</h3>
+        {% if current_activities %}
+        <ul>
+            {% for activity in current_activities %}
+            <li><a href="{% url view_activity_overview activity.id %}">{{activity.name}}</a></li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <div class="ss_no_information">ไม่มีโครงการที่ดำเนินอยู่</div>
+        {% endif %}
+    </div>
+	<div class="activities">
+        <h3>กิจกรรมในอนาคต</h3>
+        {% if next_activities %}
+        <ul>
+            {% for activity in next_activities %}
+            <li><a href="{% url view_activity_overview activity.id %}">{{activity.name}}</a></li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <div class="ss_no_information">ไม่มีโครงการที่ดำเนินอยู่</div>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

@@ -43,9 +43,9 @@ $(document).ready(function() {
                 <span class="caption">กำหนดส่งรายงาน:</span> {% display_report_due report %}
             </div>
 			<div class="actions">
-                <span><img src="{{MEDIA_URL}}/images/page/record_edit.png" class="icon"/> <a href="{% url view_program_reports_manage_report_edit_report report.id %}" title="แก้ไขรอบการส่งรายงาน">แก้ไข</a></span>
+                <span><img src="{{MEDIA_URL}}/images/page/report_edit.png" class="icon"/> <a href="{% url view_program_reports_manage_report_edit_report report.id %}" title="แก้ไขรอบการส่งรายงาน">แก้ไข</a></span>
                 {% if report.removable %}
-                <span><img src="{{MEDIA_URL}}/images/page/record_delete.png" class="icon"/> <a href="{% url view_program_reports_manage_report_delete_report report.id  %}" title="ลบรอบการส่งรายงาน" class="delete-report">ลบ</a></span>
+                <span><img src="{{MEDIA_URL}}/images/page/report_delete.png" class="icon"/> <a href="{% url view_program_reports_manage_report_delete_report report.id  %}" title="ลบรอบการส่งรายงาน" class="delete-report">ลบ</a></span>
                 {% else %}
                 <span title="ไม่สามารถลบรายงานที่มีการส่งรายงานแล้วได้"><img src="{{MEDIA_URL}}/images/page/record_delete.png" class="icon"/> ลบ</span>
                 {% endif %}

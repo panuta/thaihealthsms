@@ -24,7 +24,7 @@
         <div class="button_panel"><button type="submit">บันทึกการแก้ไข</button></div>
     </form>
     {% else %}
-    <div class="ss_prerequisite">ยังไม่มีรอบการส่งรายงานที่จะใช้ภายในแผน คุณสามารถเพิ่มรอบการส่งรายงานได้ที่หน้า <a href="{% url view_master_plan_add_report master_plan.id %}?{% back_to_this request %}">เพิ่มรอบการส่งรายงาน</a></div>
+    <div class="ss_prerequisite">ยังไม่มีรอบการส่งรายงานที่จะใช้ภายในแผน คุณสามารถเพิ่มรอบการส่งรายงานได้ที่หน้า <a href="{% url view_master_plan_manage_report_add_report master_plan.ref_no %}?{% back_to_this request %}">เพิ่มรอบการส่งรายงาน</a></div>
     {% endif %}
 </div>
 {% endblock %}

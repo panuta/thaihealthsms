@@ -116,7 +116,7 @@ class ProjectModifyForm(forms.Form):
 	ref_no = forms.CharField(required=False, max_length=64, label='รหัสโครงการ')
 	contract_no = forms.CharField(max_length=200, label='เลขที่สัญญา', required=False)
 	name = forms.CharField(max_length=500, label='ชื่อโครงการ')
-	abbr_name = forms.CharField(max_length=200, label='ชื่อย่อโครงการ')
+	abbr_name = forms.CharField(required=False, max_length=200, label='ชื่อย่อโครงการ')
 	start_date = forms.DateField(required=False, widget=YUICalendar(attrs={'id':'id_start_date'}), label='ระยะเวลาโครงการ')
 	end_date = forms.DateField(required=False, widget=YUICalendar(attrs={'id':'id_end_date'}), label='ถึง')
 	description = forms.CharField(required=False, max_length=1000, label='คำอธิบายโครงการ', widget=forms.Textarea)

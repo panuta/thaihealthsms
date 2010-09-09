@@ -262,8 +262,9 @@ def view_master_plan_delete_program(request, program_id):
 @login_required
 def view_program_overview(request, program_id):
     program = get_object_or_404(Program, pk=program_id)
-    
-    return render_page_response(request, 'overview', 'page_program/program_overview.html', {'program':program, })
+    current_date = date.today()
+    current_projects = Project.objects.filter(program=program, start_date__lte=current_date, end_date__gte=current_date)
+    return render_page_response(request, 'overview', 'page_program/program_overview.html', {'program':program, 'current_projects':current_projects})
 
 @login_required
 def view_program_projects(request, program_id):
@@ -330,9 +331,9 @@ def view_program_edit_project(request, project_id):
 def view_project_overview(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     current_date = date.today()
-    
     current_activities = Activity.objects.filter(project=project, start_date__lte=current_date, end_date__gte=current_date)
-    return render_page_response(request, 'overview', 'page_program/project_overview.html', {'project':project, 'current_activities':current_activities})
+    next_activities = Activity.objects.filter(project=project, start_date__gt=current_date)
+    return render_page_response(request, 'overview', 'page_program/project_overview.html', {'project':project, 'current_activities':current_activities, 'next_activities':next_activities})
 
 @login_required
 def view_project_edit_project(request, project_id):

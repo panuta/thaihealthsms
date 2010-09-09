@@ -9,5 +9,18 @@
 {% block body_tabs %}{% tabs_for_program page user program %}{% endblock %}
 
 {% block body_content %}
-
+<div class="program_overview_page">
+	<div class="projects">
+		<h3>โครงการที่ดำเนินอยู่</h3>
+		{% if current_projects %}
+		<ul>
+			{% for project in current_projects %}
+			<li><a href="{% url view_project_overview project.id %}">{{project.name}}</a></li>
+			{% endfor %}
+		</ul>
+		{% else %}
+		<div class="ss_no_information">ไม่มีโครงการที่ดำเนินอยู่</div>
+		{% endif %}
+	</div>
+</div>
 {% endblock %}

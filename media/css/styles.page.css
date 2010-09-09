@@ -139,8 +139,8 @@
 
 .master_plan_manage .ss_table .title {color:#666;font-size:93%;margin-bottom:5px;}
 
-.master_plan_manage .ss_table .subcontrols {font-size:85%;margin:10px 0px 5px;}
-.master_plan_manage .ss_table .subcontrols li {border:1px solid #CCC;padding:3px 10px;margin-right:10px;display:inline-block;display:-moz-inline-stack;*display:inline;list-style:none;zoom:1;}
+.master_plan_manage .ss_table .subcontrols {border-top:1px dashed #999;padding-top:10px;font-size:85%;margin:15px 0px 5px;}
+.master_plan_manage .ss_table .subcontrols li {margin-right:25px;display:inline-block;display:-moz-inline-stack;*display:inline;list-style:none;zoom:1;}
 .master_plan_manage .ss_table .subcontrols li img {margin-right:5px;}
 .master_plan_manage .ss_table .subcontrols a {color:#666;}
 .master_plan_manage .ss_table .subcontrols a.delete-program {color:#C30 !important;}
@@ -212,6 +212,12 @@
 /*
  * PROGRAM
  */
+.program_overview_page {}
+.program_overview_page .projects {margin:10px 0px 20px;}
+.program_overview_page .projects h3 {font-size:138.5%;padding-bottom:5px;margin-bottom:10px;color:#2D8659;border-bottom:3px solid #999;}
+.program_overview_page .projects li {list-style:disc;margin-left:20px;}
+
+
 .program_budget_page {}
 
 .program_budget_page .ss_table .link_column {width:110px;text-align:center;font-size:100%;}
@@ -272,6 +278,11 @@
 /*
  * PROJECT
  */
+
+.project_overview_page {}
+.project_overview_page .activities {margin:10px 0px 20px;}
+.project_overview_page .activities h3 {font-size:138.5%;padding-bottom:5px;margin-bottom:10px;color:#2D8659;border-bottom:3px solid #999;}
+.project_overview_page .activities li {list-style:disc;margin-left:20px;}
 
 .project_activities_page .ss_table .name {}
 .project_activities_page .ss_table .start_date {width:120px;text-align:center;}

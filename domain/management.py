@@ -124,13 +124,25 @@ def after_syncdb(sender, **kwargs):
     
     AdminPermission.objects.get_or_create(permission='master_plan manage')
     
+    # FOR SECTOR MANAGER
     UserPermission.objects.get_or_create(permission='master_plan manage', role=sector_manager_role, only_responsible=True)
-    UserPermission.objects.get_or_create(permission='master_plan manage', role=sector_manager_assistant_role, only_responsible=True)
-    UserPermission.objects.get_or_create(permission='master_plan manage', role=sector_specialist_role, only_responsible=True)
+    UserPermission.objects.get_or_create(permission='report submission approve', role=sector_manager_role, only_responsible=True)
     
+    # FOR SECTOR MANAGER ASSISTANT
+    UserPermission.objects.get_or_create(permission='master_plan manage', role=sector_manager_assistant_role, only_responsible=True)
+    UserPermission.objects.get_or_create(permission='report submission approve', role=sector_manager_assistant_role, only_responsible=True)
+    
+    # FOR SECTOR SPECIALIST
+    UserPermission.objects.get_or_create(permission='master_plan manage', role=sector_specialist_role, only_responsible=True)
+    UserPermission.objects.get_or_create(permission='report submission approve', role=sector_specialist_role, only_responsible=True)
+    
+    # FOR PROGRAM MANAGER
     UserPermission.objects.get_or_create(permission='report submission edit', role=program_manager_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='report submission submit', role=program_manager_role, only_responsible=True)
-    UserPermission.objects.get_or_create(permission='report submission approve', role=sector_manager_role, only_responsible=True)
+    
+    # FOR PROGRAM MANAGER ASSISTANT
+    UserPermission.objects.get_or_create(permission='report submission edit', role=program_manager_assistant_role, only_responsible=True)
+    UserPermission.objects.get_or_create(permission='report submission submit', role=program_manager_assistant_role, only_responsible=True)
     
     """
     END HERE
