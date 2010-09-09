@@ -343,4 +343,10 @@
 #upload-file-dialog label {margin-bottom:10px;font-size:116%;display:block;}
 #upload-file-dialog button {margin-top:10px;padding:3px 10px;border-top:1px solid #CCC;border-left:1px solid #CCC;border-bottom:1px solid #999;border-right:1px solid #999;background-color:#369;cursor:pointer;color:#FFF;}
 
+.report_reference_page {}
+.report_reference_page h3 {font-size:123.1%;color:#2D8659;border-bottom:3px solid #999;padding:10px 0px;margin-bottom:10px;}
+.report_reference_page ul {margin:0px 0px 20px 15px;}
+.report_reference_page li {font-size:108%;margin-bottom:10px;}
+.report_reference_page li label {}
 
+.report_reference_edit_page {}

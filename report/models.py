@@ -67,7 +67,8 @@ class ReportSubmissionFileResponse(models.Model):
     uploaded_by = models.ForeignKey('accounts.UserAccount')
 
 class ReportSubmissionReference(models.Model):
-    report = models.ForeignKey('ReportSubmission')
+    submission = models.ForeignKey('ReportSubmission')
     project = models.ForeignKey('domain.Project', null=True)
     kpi_schedule = models.ForeignKey('kpi.DomainKPISchedule', null=True)
     budget_schedule = models.ForeignKey('budget.BudgetSchedule', null=True)
+    description = models.CharField(max_length=1000, blank=True)

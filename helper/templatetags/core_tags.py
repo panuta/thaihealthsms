@@ -191,8 +191,8 @@ def tabs_for_report(page, user, report_submission):
     if page == 'overview': html = html + '<li class="selected">เนื้อหา</li>'
     else: html = html + '<li><a href="%s">เนื้อหา</a></li>' % reverse('view_report_overview', args=[report_submission.program.id, report_submission.report.id, utilities.format_dateid(report_submission.schedule_date)])
     
-    if page == 'related': html = html + '<li class="selected">ข้อมูลประกอบ</li>'
-    else: html = html + '<li><a href="%s">ข้อมูลประกอบ</a></li>' % reverse('view_report_related_data', args=[report_submission.program.id, report_submission.report.id, utilities.format_dateid(report_submission.schedule_date)])
+    if page == 'reference': html = html + '<li class="selected">ข้อมูลประกอบ</li>'
+    else: html = html + '<li><a href="%s">ข้อมูลประกอบ</a></li>' % reverse('view_report_reference', args=[report_submission.program.id, report_submission.report.id, utilities.format_dateid(report_submission.schedule_date)])
     
     if page == 'comments': html = html + '<li class="selected">ความคิดเห็น</li>'
     else: html = html + '<li><a href="%s">ความคิดเห็น</a></li>' % reverse('view_report_comments', args=[report_submission.program.id, report_submission.report.id, utilities.format_dateid(report_submission.schedule_date)])

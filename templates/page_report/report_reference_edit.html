@@ -1,0 +1,20 @@
+{% extends 'page_base.html' %}
+{% load helper_tags page_tags core_tags %}
+
+{% block html_head %}
+
+{% endblock %}
+
+{% block body_title %}{% display_report_header user submission %}{% endblock %}
+{% block body_tabs %}{% tabs_for_report page user submission %}{% endblock %}
+
+{% block body_content %}
+<div class="ss_breadcrumbs">
+    <div class="breadcrumbs"><a href="{% url view_report_reference submission.program.id submission.report.id submission.schedule_date|dateid %}">หน้าข้อมูลประกอบรายงาน</a> &#187;</div>
+    <h2>แก้ไขข้อมูลประกอบ</h2>
+</div>
+
+<div class="report_reference_edit_page">
+    
+</div>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends 'page_base.html' %}
+{% load helper_tags page_tags core_tags %}
+
+{% block html_head %}
+
+{% endblock %}
+
+{% block body_title %}{% display_report_header user submission %}{% endblock %}
+{% block body_tabs %}{% tabs_for_report page user submission %}{% endblock %}
+
+{% block body_content %}
+<div class="ss_control_panel">
+    <ul>
+        <li><img src="{{MEDIA_URL}}/images/toolbar/report_reference.png" class="icon"/><a href="{% url view_report_reference_edit_reference submission.program.id submission.report.id submission.schedule_date|dateid %}">แก้ไขข้อมูลประกอบ</a></li>
+    </ul>
+</div>
+
+
+<div class="report_reference_page">
+	<h3>โครงการ</h3>
+	{% if ref_projects %}
+	<ul>
+		{% for project in ref_projects %}
+		<li><a href="{% url view_project_overview project.id %}">{{project.name}}</a></li>
+		{% endfor %}
+	</ul>
+	{% else %}
+	<div class="ss_no_information">ไม่มีโครงการที่เกี่ยวข้อง</div>
+	{% endif %}
+	
+	<h3>ตัวชี้วัด</h3>
+	{% if ref_kpi_schedules %}
+	<ul>
+        {% for schedule in ref_kpi_schedules %}
+        <li><a href="{% url view_kpi_overview schedule.id %}">{{schedule.kpi.ref_no}} {{schedule.kpi.name}}</a></li>
+        {% endfor %}
+    </ul>
+	{% else %}
+    <div class="ss_no_information">ไม่มีตัวชี้วัดที่เกี่ยวข้อง</div>
+    {% endif %}
+	
+	<h3>งวดเบิกจ่าย</h3>
+	{% if ref_budget_schedules %}
+	<ul>
+        {% for schedule in ref_budget_schedules %}
+        <li><a href="{% url view_budget_overview schedule.id %}">งวดเบิกจ่ายวันที่ {{schedule.schedule_on|full_date}}</a></li>
+        {% endfor %}
+    </ul>
+	{% else %}
+    <div class="ss_no_information">ไม่มีงวดเบิกจ่ายที่เกี่ยวข้อง</div>
+    {% endif %}
+</div>
+
+
+{% endblock %}

@@ -13,7 +13,9 @@ from models import *
 
 from report import functions as report_functions
 
-from domain.models import MasterPlan, Program
+from budget.models import BudgetSchedule
+from domain.models import MasterPlan, Program, Project
+from kpi.models import DomainKPI, DomainKPISchedule
 
 from helper import utilities, permission
 from helper.shortcuts import render_response, render_page_response, access_denied
@@ -604,14 +606,45 @@ def view_report_overview(request, program_id, report_id, schedule_dateid):
     return render_page_response(request, 'overview', 'page_report/report_overview.html', {'submission':submission, 'REPORT_SUBMIT_FILE_URL':settings.REPORT_SUBMIT_FILE_URL})
 
 @login_required
-def view_report_related_data(request, program_id, report_id, schedule_dateid):
+def view_report_reference(request, program_id, report_id, schedule_dateid):
     program = get_object_or_404(Program, pk=program_id)
     report = get_object_or_404(Report, pk=report_id)
     schedule_date = utilities.convert_dateid_to_date(schedule_dateid)
+    
+    ref_projects = []
+    ref_kpi_schedules = []
+    ref_budget_schedules = []
+    
+    try:
+        submission = ReportSubmission.objects.get(program=program, report=report, schedule_date=schedule_date)
+        references = ReportSubmissionReference.objects.filter(submission=submission)
+        
+        for reference in references:
+            if reference.project:
+                ref_projects.append(reference)
+                
+            elif reference.kpi_schedule:
+                ref_kpi_schedules.append(reference)
+                
+            elif reference.budget_schedule:
+                ref_budget_schedules.append(reference)
+        
+    except:
+        submission = ReportSubmission(program=program, report=report, schedule_date=schedule_date)
+    
+    return render_page_response(request, 'reference', 'page_report/report_reference.html', {'submission':submission, 'ref_projects':ref_projects, 'ref_kpi_schedules':ref_kpi_schedules, 'ref_budget_schedules':ref_budget_schedules})
+
+@login_required
+def view_report_reference_edit_reference(request, program_id, report_id, schedule_dateid):
+    program = get_object_or_404(Program, pk=program_id)
+    report = get_object_or_404(Report, pk=report_id)
+    schedule_date = utilities.convert_dateid_to_date(schedule_dateid)
+    
+    print schedule_date
     
     try:
         submission = ReportSubmission.objects.get(program=program, report=report, schedule_date=schedule_date)
     except:
         submission = ReportSubmission(program=program, report=report, schedule_date=schedule_date)
     
-    return render_page_response(request, 'related', 'page_report/report_related_data.html', {'submission':submission})
+    return render_page_response(request, 'reference', 'page_report/report_reference_edit.html', {'submission':submission,})
