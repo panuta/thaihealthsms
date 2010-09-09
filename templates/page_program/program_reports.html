@@ -1,5 +1,5 @@
 {% extends 'page_base.html' %}
-{% load helper_tags page_tags tab_tags %}
+{% load helper_tags page_tags core_tags %}
 
 {% block html_head %}
 
@@ -21,7 +21,7 @@
         <ul>
         {% for submission in submissions %}
             <li>
-                <div class="report_name"><a href="{% url view_report_overview submission.id %}">{{submission.schedule_date|abbr_date}} - {{submission.report.name}}</a></div>
+                <div class="report_name"><a href="{% url view_report_overview submission.program.id submission.report.id submission.schedule_date|dateid %}">{{submission.schedule_date|abbr_date}} - {{submission.report.name}}</a></div>
                 <div class="metadata"><span class="submitted">ส่งเมื่อวันที่ {{submission.submitted_on|abbr_datetime}}</span>{% if submission.approval_on %}<span class="submitted">รับรองรายงานเมื่อวันที่ {{submission.approval_on|abbr_datetime}}</span>{% endif %}</div>
             </li>
         {% endfor %}

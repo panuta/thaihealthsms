@@ -13,7 +13,6 @@ from django.conf import settings
 from accounts.models import *
 from domain.models import *
 from report.models import *
-#from comments.models import *
 from helper import utilities
 
 # For creating report
@@ -35,70 +34,9 @@ def generate_report_schedule_start(start_now, schedule_monthly_date):
     
     return schedule_start
 
-def get_checkup_submissions(project):
-    """
-    For sector manager assistant
-    - submitted reports that need approval
-    - overdue reports
-    - before-due submitted reports
-    - rejected submission
-    """
-    current_date = date.today()
-    
-    report_projects = ReportProject.objects.filter(project=project, report__need_checkup=True, is_active=True)
-    
-    submissions = []
-    for report_project in report_projects:
-        report = report_project.report
-        
-        if report.due_type == REPORT_REPEAT_DUE:
-            repeatable = ReportDueRepeatable.objects.get(report=report)
-            
-            next_date = repeatable.schedule_start
-            while next_date < current_date:
-                submission, created = ReportSubmission.objects.get_or_create(report=report, project=project, schedule_date=next_date)
-                
-                if submission.state == NO_ACTIVITY or submission.state == EDITING_ACTIVITY:
-                    submission.this_is = 'overdue'
-                    submissions.append(submission)
-                elif report.need_approval and submission.state == SUBMIT_ACTIVITY:
-                    submission.this_is = 'waiting'
-                    submissions.append(submission)
-                elif submission.state == REJECT_ACTIVITY:
-                    submission.this_is = 'rejected'
-                    submissions.append(submission)
-                
-                next_date = _get_next_schedule(next_date, repeatable)
-            
-            if report.need_approval:
-                for submission in ReportSubmission.objects.filter(report=report, project=project, schedule_date__gte=current_date).filter(Q(state=SUBMIT_ACTIVITY) | Q(state=REJECT_ACTIVITY)).order_by('schedule_date'):
-                    if submission.state == REJECT_ACTIVITY:
-                        submission.this_is = 'rejected'
-                    else:
-                        submission.this_is = 'beforedue'
-                    submissions.append(submission)
-            else:
-                for submission in ReportSubmission.objects.filter(report=report, project=project, schedule_date__gte=current_date, state=REJECT_ACTIVITY).order_by('schedule_date'):
-                    submission.this_is = 'rejected'
-                    submissions.append(submission)
-                
-        elif report.due_type == REPORT_DUE_DATES:
-            
-            for due_date in ReportDueDates.objects.filter(report=report).order_by('due_date'):
-                submission, created = ReportSubmission.objects.get_or_create(report=report, project=project, schedule_date=due_date.due_date)
-                
-                if due_date.due_date < current_date and (submission.state == NO_ACTIVITY or submission.state == EDITING_ACTIVITY):
-                    submission.this_is = 'overdue'
-                    submissions.append(submission)
-                elif report.need_approval and submission.state == SUBMIT_ACTIVITY and not submission.approval_on:
-                    submission.this_is = 'waiting'
-                    submissions.append(submission)
-                elif submission.state == REJECT_ACTIVITY:
-                    submission.this_is = 'rejected'
-                    submissions.append(submission)
-    
-    submissions.sort(key=lambda item:item.schedule_date, reverse=False)
-    return submissions
+#
+# SEND REPORT PAGE
+#
 
 def get_sending_report_count(program, report):
     """
@@ -158,7 +96,11 @@ def get_sending_report(program, report):
         
         next_date = repeatable.schedule_start
         while next_date < current_date:
-            submission, created = ReportSubmission.objects.get_or_create(report=report, program=program, schedule_date=next_date)
+            try:
+                submission = ReportSubmission.objects.get(report=report, program=program, schedule_date=next_date)
+            except:
+                submission = ReportSubmission(report=report, program=program, schedule_date=next_date)
+            
             if submission.state == NO_ACTIVITY or submission.state == EDITING_ACTIVITY:
                 submission.this_is = 'overdue'
                 submissions.append(submission)
@@ -176,7 +118,10 @@ def get_sending_report(program, report):
         
         advanced_submission_count = 0
         while settings.REPORT_DISPLAY_ADVANCED_SCHEDULES > advanced_submission_count:
-            submission, created = ReportSubmission.objects.get_or_create(report=report, program=program, schedule_date=next_date)
+            try:
+                submission = ReportSubmission.objects.get(report=report, program=program, schedule_date=next_date)
+            except:
+                submission = ReportSubmission(report=report, program=program, schedule_date=next_date)
             
             if submission.state == NO_ACTIVITY or submission.state == EDITING_ACTIVITY:
                 submission.this_is = 'nextdue'
@@ -191,7 +136,10 @@ def get_sending_report(program, report):
         advanced_submission_count = 0
         
         for due_date in ReportDueDates.objects.filter(report=report).order_by('due_date'):
-            submission, created = ReportSubmission.objects.get_or_create(report=report, program=program, schedule_date=due_date.due_date)
+            try:
+                submission = ReportSubmission.objects.get(report=report, program=program, schedule_date=next_date)
+            except:
+                submission = ReportSubmission(report=report, program=program, schedule_date=due_date.due_date)
             
             if (submission.state == NO_ACTIVITY or submission.state == EDITING_ACTIVITY) and due_date.due_date < current_date:
                 submission.this_is = 'overdue'
@@ -211,6 +159,15 @@ def get_sending_report(program, report):
                 submissions.append(submission)
     
     return submissions
+
+# END -- SEND REPORT PAGE
+
+#
+# REPORT NOTIFICATION
+#
+
+"""
+WILL HAVE TO DEAL WITH NO-SUBMISSION-ID
 
 def submission_notification():
     current_date = date.today()
@@ -318,8 +275,11 @@ def _who_to_notify(project):
         users.add(responsibility.user)
     
     return users
+"""
+# END -- REPORT NOTIFICATION
 
-# Only for monthly
+
+# NOTE: Only for monthly
 def _get_next_schedule(current_schedule, repeatable):
     month = current_schedule.month + repeatable.schedule_cycle_length
     

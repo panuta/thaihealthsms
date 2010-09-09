@@ -12,6 +12,10 @@ register = template.Library()
 
 # DATE TIME #################################################################
 
+@register.filter(name='dateid')
+def dateid(datetime):
+    return utilities.format_dateid(datetime)
+
 @register.filter(name='full_datetime')
 def full_datetime(datetime):
     return utilities.format_full_datetime(datetime)

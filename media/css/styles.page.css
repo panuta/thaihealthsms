@@ -218,7 +218,19 @@
 .program_projects_page .ss_table .start_date {width:120px;text-align:center;}
 .program_projects_page .ss_table .end_date {width:120px;text-align:center;}
 
-.program_reports_page {}
+/* PROGRAM - REPORT */
+.program_reports_page h2 {font-size:138.5%;margin:5px 0px 10px;border-bottom:1px dashed #CCC;padding-bottom:5px;}
+.program_reports_page ul {margin:0px 0px 20px 30px;}
+.program_reports_page ul li {margin-bottom:25px;list-style:disc;}
+.program_reports_page .ss_no_information {margin-left:15px;}
+
+.program_reports_page .report_period {font-size:116%;margin-bottom:15px;}
+
+.program_reports_page .report_name {margin-bottom:10px;font-size:108%;}
+.program_reports_page .report_name .due {margin-right:15px;color:#555;}
+.program_reports_page .metadata {color:#555;}
+.program_reports_page .metadata span {margin-right:15px;padding:0px 6px;}
+.program_reports_page .metadata span.submitted {background-color:#CFC;}
 
 .program_reports_page_manage h3 {font-size:138.5%;margin-bottom:10px;color:#333;}
 .program_reports_page_manage .ss_no_information {margin-left:15px;}
@@ -260,3 +272,50 @@
 /*
  * ACTIVITY
  */
+
+
+
+
+/*
+ * REPORT
+ */
+.report_page {padding:0px 0px 25px;}
+
+.report_page .report_status {border:1px solid #CCC;margin-bottom:15px;padding:10px;font-size:131%;}
+.report_page .report_status .overdue {color:#C30;}
+.report_page .report_status .not_submitted {color:#666;}
+.report_page .report_status .submitted {color:#2D8659;}
+.report_page .report_status .waiting {color:#666;}
+.report_page .report_status .approved {color:#2D8659;}
+.report_page .report_status .rejected {color:#C30;}
+
+.report_page .report_status .no_data {color:#666;margin-top:8px;font-style:italic;font-size:0.8em;}
+.report_page .report_status .buttons {margin-top:10px;font-size:0.75em;}
+.report_page .report_status .buttons button {margin-right:20px;padding:3px 25px;font-size:116%;border-top:1px solid #CCC;border-left:1px solid #CCC;border-bottom:1px solid #999;border-right:1px solid #999;background-color:#369;cursor:pointer;color:#FFF;}
+.report_page .report_status .buttons span {margin-left:15px;color:#333;background-color:#FFC;padding:0px 5px;}
+
+.report_page .content {margin-top:15px;}
+.report_page .content h3 {font-size:138.5%;margin:5px 0px 15px;color:#2D8659;}
+.report_page .content .text_content {margin-left:15px;}
+.report_page .content .text_content p {margin-bottom:8px;}
+
+.report_page .edit_content {display:none;}
+.report_page .edit_content .button_panel {margin:15px 0px;}
+.report_page .edit_content .button_panel button {margin-right:20px;padding:3px 15px;border-top:1px solid #CCC;border-left:1px solid #CCC;border-bottom:1px solid #999;border-right:1px solid #999;background-color:#369;cursor:pointer;color:#FFF;}
+
+.report_page .files {margin-left:15px;}
+.report_page .files li {background-color:#DBE7F0;padding:6px 10px;border:1px solid #C6D4E0;margin-bottom:10px;}
+.report_page .files li .filename {font-size:116%;padding-bottom:8px;}
+.report_page .files li .metadata {color:#555;font-style:italic;}
+.report_page .files li .actions {margin-left:10px;}
+.report_page .files li .actions a:link, .report_page .files li .actions a:visited, .report_page .files li .actions a:active {color:#C30;}
+.report_page .files li .actions a:hover {background:none !important;}
+
+.report_page .text_content {margin:10px 0px 25px;font-size:116%;}
+
+#upload-file-dialog {display:none;}
+#upload-file-dialog form {margin:10px 20px;}
+#upload-file-dialog label {margin-bottom:10px;font-size:116%;display:block;}
+#upload-file-dialog button {margin-top:10px;padding:3px 10px;border-top:1px solid #CCC;border-left:1px solid #CCC;border-bottom:1px solid #999;border-right:1px solid #999;background-color:#369;cursor:pointer;color:#FFF;}
+
+

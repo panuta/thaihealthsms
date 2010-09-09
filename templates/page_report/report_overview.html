@@ -1,0 +1,188 @@
+{% extends 'page_base.html' %}
+{% load helper_tags page_tags core_tags %}
+
+{% block html_head %}
+<script type="text/javascript" src="{{MEDIA_URL}}/ckeditor/ckeditor.js"></script>
+<script type="text/javascript" src="{{MEDIA_URL}}/ckeditor/adapters/jquery.js"></script>
+
+<script type="text/javascript">
+var initializedTextarea = false;
+
+$(document).ready(function() {
+    $(".upload-file").colorbox({width:"50%", scrolling:false, opacity:0.4, inline:true, href:"#upload-file-dialog", 
+        onOpen:function(){
+            $("#upload-file-dialog").css("display", "block");
+            $("#post-comment-dialog textarea").val("");
+            $("#post-comment-dialog .loading").hide();
+            
+            $("#post-comment-dialog input[name='comment_target']").val($.fn.colorbox.element().attr("rel"));
+            
+            $("#post-comment-receivers_feed").css("width", "auto");
+        },
+        onComplete:function(){ $("#post-comment-dialog textarea").focus(); },
+        onCleanup:function() {
+            $("#upload-file-dialog").css("display", "none");
+        }
+    });
+    
+    $(".edit-report").click(function(e) {
+        e.preventDefault();
+        if(initializedTextarea == false) {
+            var config = {
+                toolbar:[['Bold', 'Italic', 'Underline', '-', 'NumberedList', 'BulletedList'],],
+                language:'th'
+            };
+            $('.edit_content textarea').ckeditor(config);
+            
+            CKEDITOR.on( 'instanceReady', function( ev ) {
+                ev.editor.dataProcessor.writer.setRules( 'p', {
+                    indent : false,
+                    breakBeforeOpen : true,
+                    breakAfterOpen : false,
+                    breakBeforeClose : false,
+                    breakAfterClose : true
+                });
+            });
+            
+            $('.cancel-text-edit').click(function(e) {
+                e.preventDefault();
+                $('.edit_content').hide();
+            });
+        }
+        
+        $('.edit_content').show();
+    });
+    
+    $('.delete-report-file').click(function(e) {
+        e.preventDefault();
+        if(window.confirm('ยืนยันการลบไฟล์?')) {
+            var liObject = $(this).closest('li');
+            var file_id = $(this).attr('rel');
+            $.post('{% url ajax_delete_report_file %}', {id:file_id}, function(data) {
+                liObject.hide('slow', function() {
+                    if(liObject.parent().find('li:visible').size() == 0) {
+                        liObject.closest('.files_panel').hide();
+                    }
+                });
+            });
+        }
+    });
+    
+});
+</script>
+{% endblock %}
+
+{% block body_title %}{% display_report_header user submission %}{% endblock %}
+{% block body_tabs %}{% tabs_for_report page user submission %}{% endblock %}
+
+{% block body_content %}
+<div class="report_page">
+    <div class="report_status">
+        <div>
+            สถานะรายงาน:
+            {% if submission.status_code == 'overdue' or submission.status_code == 'not_submitted' %}
+                {% if submission.status_code == 'overdue' %}<span class="overdue">รายงานยังไม่ถูกส่ง และเลยกำหนดส่งมาแล้ว {{submission.schedule_date|week_elapse}}</span>{% endif %}
+			    {% if submission.status_code == 'not_submitted' %}<span class="not_submitted">รายงานยังไม่ถูกส่ง</span>{% endif %}
+                
+			    {% access user 'report submission submit' submission %}
+				{% if submission.files or submission.text_response.text %}
+                <form method="post" action=".">
+                    {% csrf_token %}
+                    <input type="hidden" name="schedule_id" value="{{submission.id}}" />
+                    <div class="buttons"><button name="submit" value="submit-report">ส่งรายงาน</button></div>
+				</form>
+				{% else %}
+				<div class="no_data">* ไม่สามารถส่งรายงานได้ เนื่องจากยังไม่มีเนื้อหาหรือไฟล์รายงาน</div>
+				{% endif %}
+                {% endaccess %}
+			{% endif %}
+			
+            {% ifequal submission.status_code 'submitted' %}<span class="submitted">ส่งเมื่อวันที่ {{submission.submitted_on|abbr_datetime}}</span>{% endifequal %}
+            {% ifequal submission.status_code 'waiting' %}
+                <span class="waiting">ส่งเมื่อวันที่ {{submission.submitted_on|abbr_datetime}}  และกำลังรอการอนุมัติ</span>
+				{% access user 'report submission approve' submission %}
+				<form method="post" action=".">
+                    {% csrf_token %}
+                    <input type="hidden" name="schedule_id" value="{{submission.id}}" />
+                    <div class="buttons"><button name="submit" value="approve-report">รับรองรายงาน</button><button name="submit" value="reject-report">ตีกลับรายงาน</button></div>
+                </form>
+				{% endaccess %}
+			{% endifequal %}
+            {% ifequal submission.status_code 'approved' %}<span class="approved">ส่งเมื่อวันที่ {{submission.submitted_on|abbr_datetime}} และได้รับการรับรองเมื่อวันที่ {{submission.approval_on|abbr_datetime}}</span>{% endifequal %}
+            {% ifequal submission.status_code 'rejected' %}
+                <span class="rejected">ส่งเมื่อวันที่ {{submission.submitted_on|abbr_datetime}} และถูกตีกลับเมื่อวันที่ {{submission.approval_on|abbr_datetime}}</span>
+				
+				{% access user 'report submission submit' submission %}
+                <form method="post" action=".">
+                	{% csrf_token %}
+                    <input type="hidden" name="schedule_id" value="{{submission.id}}" />
+                    <div class="buttons"><button {% if not submission.files and not submission.text_response %}disabled="disabled"{% endif %} name="submit" value="submit-report">ส่งรายงานอีกครั้ง</button></div>
+                </form>
+                {% endaccess %}
+            {% endifequal %}
+        </div>
+    </div>
+    
+	{% access user 'report submission edit' submission %}
+    {% if submission.allow_modifying %}
+    <div class="ss_control_panel">
+        <ul>
+            <li><img src="{{MEDIA_URL}}/images/toolbar/report_attach.png" class="icon"/><a href="#" class="upload-file">แนบไฟล์รายงาน</a></li>
+            <li><img src="{{MEDIA_URL}}/images/toolbar/edit.png" class="icon"/><a href="#" class="edit-report">เขียนเนื้อหารายงาน</a></li>
+        </ul>
+    </div>
+    
+    <div class="edit_content">
+        <form method="post" action=".">
+        	{% csrf_token %}
+            <input type="hidden" name="schedule_id" value="{{submission.id}}" />
+            <textarea name="text">{{submission.text_response.text|safe}}</textarea>
+            <div class="button_panel"><button class="save-text-edit" type="submit" name="submit" value="submit-text">จัดเก็บ</button><button class="cancel-text-edit">ยกเลิก</button></div>
+        </form>
+    </div>
+    {% endif %}
+	{% endaccess %}
+    
+    <div class="content">
+        {% if not submission.files and not submission.text_response.text %}
+            <div class="ss_no_information">ไม่มีเนื้อหาหรือไฟล์รายงาน</div>
+        {% else %}
+            {% if submission.text_response.text %}
+                <div class="text_panel">
+                    <h3>เนื้อหารายงาน</h3>
+                    <div class="text_content">
+                    {{submission.text_response.text|safe}}
+                    </div>
+                </div>
+            {% endif %}
+            
+            {% if submission.files %}
+                <div class="files_panel">
+                    <h3>ไฟล์รายงาน</h3>
+                    <ul class="files">
+                        {% for file in submission.files %}
+                        <li>
+                            <div class="filename"><a href="{{REPORT_SUBMIT_FILE_URL}}{{submission.report.id}}/{{submission.id}}/{{file.filename}}">{{file.filename}}</a></div>
+                            <div class="metadata">จัดเก็บเมื่อวันที่ {{file.uploaded|abbr_datetime}} โดย {{file.uploaded_by.first_name}} {{file.uploaded_by.last_name}}
+							<!-- CHECK ACCESS -->
+                            {% if submission.allow_modifying %}<span class="actions">| <a href="#" rel="{{file.id}}" class="delete-report-file">ลบไฟล์</a></span>{% endif %}
+                            <!-- END CHECK ACCESS -->
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+<div id="upload-file-dialog">
+    <form method="post" action="." enctype="multipart/form-data">
+    	{% csrf_token %}
+        <div><label for="uploading_file">ไฟล์รายงาน</label></div>
+        <div><input type="file" name="uploading_file"/></div>
+        <div><button type="submit" name="submit" value="submit-file">ตกลง</button></div>
+        <input type="hidden" name="schedule_id" value="{{submission.id}}" />
+    </form>
+</div>
+{% endblock %}

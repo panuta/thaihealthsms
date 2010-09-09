@@ -3,3 +3,4 @@
 .pydevproject
 .settings
 .tmp_*
+media/report/*

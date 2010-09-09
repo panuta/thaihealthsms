@@ -1,6 +1,8 @@
 # -*- encoding: utf-8 -*-
-from datetime import date
+import os
+from datetime import datetime, date
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
@@ -246,7 +248,17 @@ def view_master_plan_manage_report_delete_report(request, report_id):
 @login_required
 def view_program_reports(request, program_id):
     program = get_object_or_404(Program, id=program_id)
-    today = date.today()
+    
+    """
+    if kpi_year:
+        year_number = int(year) - 543
+    else:
+        year_number = utilities.master_plan_current_year_number(program.plan.master_plan)
+    
+    utilities.master_plan_current_year_span(program.plan.master_plan)
+    
+    submissions = ReportSubmission.objects.filter(program=program).filter(Q(state=APPROVED_ACTIVITY) | (Q(state=SUBMITTED_ACTIVITY) & (Q(report__need_approval=False) | Q(report__need_checkup=False)))).order_by('-schedule_date')
+    """
     
     # TODO Categorize by year and report type
     
@@ -274,9 +286,7 @@ def view_program_reports_send_list(request, program_id):
 def view_program_reports_send_report(request, program_id, report_id):
     program = get_object_or_404(Program, id=program_id)
     report = get_object_or_404(Report, id=report_id)
-    
     submissions = report_functions.get_sending_report(program, report)
-    
     return render_page_response(request, 'reports', 'page_program/program_reports_send_report.html', {'program':program, 'report':report, 'submissions':submissions})
 
 #
@@ -464,10 +474,144 @@ def view_program_reports_manage_report_delete_report(request, report_id):
     return redirect('view_program_reports_manage_report', (program.id))
 
 @login_required
-def view_report_overview(request, submission_id):
-    submission = get_object_or_404(ReportSubmission, pk=submission_id)
-    return render_page_response(request, 'overview', 'page_program/report_overview.html', {'submission':submission, })
+def view_report_overview(request, program_id, report_id, schedule_dateid):
+    program = get_object_or_404(Program, pk=program_id)
+    report = get_object_or_404(Report, pk=report_id)
+    schedule_date = utilities.convert_dateid_to_date(schedule_dateid)
+    
+    try:
+        submission = ReportSubmission.objects.get(program=program, report=report, schedule_date=schedule_date)
+    except:
+        submission = ReportSubmission(program=program, report=report, schedule_date=schedule_date)
+    
+    if request.method == 'POST':
+        submit_type = request.POST.get('submit')
+        
+        if submit_type == 'submit-file':
+            if not permission.access_obj(request.user, 'report submission edit', submission):
+                return access_denied(request)
+            
+            if not submission.id: submission.save()
+            
+            file_response = ReportSubmissionFileResponse.objects.create(submission=submission, uploaded_by=request.user.get_profile())
+            
+            # Uploading directory
+            uploading_directory = "%s/%d/%d/" % (settings.REPORT_SUBMIT_FILE_PATH, submission.report.id, submission.id)
+            if not os.path.exists(uploading_directory): os.makedirs(uploading_directory)
+            
+            # Uploading file
+            uploading_file = request.FILES['uploading_file']
+            (file_name, separator, file_ext) = uploading_file.name.rpartition('.')
+            
+            if not file_name:
+                file_name = file_ext
+                file_ext = ''
+            else:
+                file_ext = '.%s' % file_ext
+            
+            unique_filename = '%s%s' % (file_name, file_ext)
+            
+            unique_filename = '%s%s' % (file_name, file_ext)
+            if os.path.isfile('%s%s' % (uploading_directory, unique_filename.encode('utf-8'))):
+                # Duplicated filename
+                suffix_counter = 1
+                
+                while os.path.isfile('%s%s(%d)%s' % (uploading_directory, file_name, suffix_counter, file_ext)):
+                    suffix_counter = suffix_counter + 1
+                    
+                unique_filename = '%s(%d)%s' % (file_name, suffix_counter, file_ext)
+                
+            file_response.filename = unique_filename
+            file_response.save()
+            
+            destination = open(uploading_directory + unique_filename.encode('utf-8'), 'wb')
+            for chunk in request.FILES['uploading_file'].chunks(): destination.write(chunk)
+            destination.close()
+            
+            submission.state = EDITING_ACTIVITY
+            submission.save()
+        
+        elif submit_type == 'submit-text':
+            if not permission.access_obj(request.user, 'report submission edit', submission):
+                return access_denied(request)
+            
+            text = request.POST.get("text")
+            
+            if not submission.id: submission.save()
+            
+            try:
+                text_response = ReportSubmissionTextResponse.objects.get(submission=submission)
+            except ReportSubmissionTextResponse.DoesNotExist:
+                text_response = ReportSubmissionTextResponse.objects.create(submission=submission, submitted_by=request.user.get_profile())
+                
+            text_response.text = text
+            text_response.save()
+            
+            submission.state = EDITING_ACTIVITY if text else NO_ACTIVITY
+            submission.save()
+            
+        elif submit_type == 'submit-report':
+            if not permission.access_obj(request.user, 'report submission submit', submission):
+                return access_denied(request)
+            
+            submission.state = SUBMITTED_ACTIVITY
+            submission.submitted_on = datetime.now()
+            submission.approval_on = None
+            submission.save()
+            
+        elif submit_type == 'approve-report':
+            if not permission.access_obj(request.user, 'report submission approve', submission):
+                return access_denied(request)
+            
+            submission.state = APPROVED_ACTIVITY
+            submission.approval_on = datetime.now()
+            submission.save()
+            
+        elif submit_type == 'reject-report':
+            if not permission.access_obj(request.user, 'report submission approve', submission):
+                return access_denied(request)
+            
+            submission.state = REJECTED_ACTIVITY
+            submission.approval_on = datetime.now()
+            submission.save()
+        
+        return redirect('view_report_overview', program_id=program.id, report_id=report.id, schedule_dateid=schedule_dateid)
+    
+    current_date = date.today()
+    
+    if (submission.state == NO_ACTIVITY or submission.state == EDITING_ACTIVITY) and submission.schedule_date < current_date:
+        submission.status_code = 'overdue'
+    elif submission.state == NO_ACTIVITY or submission.state == EDITING_ACTIVITY:
+        submission.status_code = 'not_submitted'
+    elif submission.state == SUBMITTED_ACTIVITY and not submission.report.need_approval:
+        submission.status_code = 'submitted'
+    elif submission.state == SUBMITTED_ACTIVITY and submission.report.need_approval:
+        submission.status_code = 'waiting'
+    elif submission.state == APPROVED_ACTIVITY:
+        submission.status_code = 'approved'
+    elif submission.state == REJECTED_ACTIVITY:
+        submission.status_code = 'rejected'
+    
+    submission.allow_modifying = submission.status_code in ('overdue', 'not_submitted', 'rejected')
+    
+    try:
+        submission.text_response = ReportSubmissionTextResponse.objects.get(submission=submission)
+    except ReportSubmissionTextResponse.DoesNotExist:
+        submission.text_response = ''
+        
+    submission.files = ReportSubmissionFileResponse.objects.filter(submission=submission)
+    
+    return render_page_response(request, 'overview', 'page_report/report_overview.html', {'submission':submission, 'REPORT_SUBMIT_FILE_URL':settings.REPORT_SUBMIT_FILE_URL})
 
 @login_required
-def view_report_related_data(request, submission_id):
-    pass
+def view_report_related_data(request, program_id, report_id, schedule_dateid):
+    program = get_object_or_404(Program, pk=program_id)
+    report = get_object_or_404(Report, pk=report_id)
+    schedule_date = utilities.convert_dateid_to_date(schedule_dateid)
+    
+    try:
+        submission = ReportSubmission.objects.get(program=program, report=report, schedule_date=schedule_date)
+    except:
+        submission = ReportSubmission(program=program, report=report, schedule_date=schedule_date)
+    
+    return render_page_response(request, 'related', 'page_report/report_related_data.html', {'submission':submission})

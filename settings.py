@@ -118,7 +118,7 @@ QUARTER_INPUT_YEAR_SPAN = 5
 ADMIN_MANAGE_USERS_PER_PAGE = 25
 
 # REPORT
-REPORT_SUBMIT_FILE_PATH = os.path.join(_base, "media/report")
-REPORT_SUBMIT_FILE_URL = "/m/report/"
+REPORT_SUBMIT_FILE_PATH = os.path.join(_base, 'media/report')
+REPORT_SUBMIT_FILE_URL = '/m/report/'
 
 REPORT_DISPLAY_ADVANCED_SCHEDULES = 5

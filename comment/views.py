@@ -19,7 +19,7 @@ def view_activity_comments(request, activity_id):
     activity = get_object_or_404(Activity, pk=activity_id)
     return render_page_response(request, 'comments', 'page_program/activity_comments.html', {'activity':activity, })
 
-def view_report_submission_comments(request, submission_id):
+def view_report_comments(request, program_id, report_id, schedule_date):
     submission = get_object_or_404(ReportSubmission, pk=submission_id)
     return render_page_response(request, 'comments', 'page_program/report_comments.html', {'submission':submission, })
 

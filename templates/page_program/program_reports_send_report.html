@@ -1,5 +1,5 @@
 {% extends 'page_base.html' %}
-{% load helper_tags page_tags tab_tags %}
+{% load helper_tags page_tags core_tags %}
 
 {% block html_head %}
 <script type="text/javascript">
@@ -26,7 +26,7 @@ $(document).ready(function() {
     <ul class="submissions">
     {% for submission in submissions %}
         <li>
-            <div class="due_date"><a href="{% url view_report_overview submission.id %}">{{submission.schedule_date|full_date}}</a></div>
+            <div class="due_date"><a href="{% url view_report_overview program.id submission.report.id submission.schedule_date|dateid %}">{{submission.schedule_date|full_date}}</a></div>
             {% display_report_sending_notice submission %}
         </li>
     {% endfor %}

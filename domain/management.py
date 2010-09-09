@@ -119,7 +119,16 @@ def after_syncdb(sender, **kwargs):
     PermissionName.objects.get_or_create(
         permission='master_plan manage', name='จัดการแผนหลัก')
     
+    PermissionName.objects.get_or_create(permission='report submission edit', name='แก้ไขรายงาน')
+    PermissionName.objects.get_or_create(permission='report submission submit', name='ส่งรายงาน')
+    PermissionName.objects.get_or_create(permission='report submission approve', name='รับรองรายงาน')
+    
     AdminPermission.objects.get_or_create(permission='master_plan manage')
+    
+    
+    UserPermission.objects.get_or_create(permission='report submission edit', role=program_manager_role, only_responsible=True)
+    UserPermission.objects.get_or_create(permission='report submission submit', role=program_manager_role, only_responsible=True)
+    UserPermission.objects.get_or_create(permission='report submission approve', role=sector_manager_role, only_responsible=True)
     
     """
     END HERE
@@ -200,6 +209,7 @@ def after_syncdb(sender, **kwargs):
         user.groups.add(program_manager_assistant_role)
         responsibility = UserRoleResponsibility.objects.create(user=user_account, role=program_manager_assistant_role)
         responsibility.programs.add(program101_01)
+    
     
     
     project_001, created = Project.objects.get_or_create(program=program101_01, ref_no='001', contract_no='REF001', name='Project 001', abbr_name='PRJ001', created_by=sector_manager_user_account)

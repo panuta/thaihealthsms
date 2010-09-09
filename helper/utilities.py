@@ -6,6 +6,13 @@ from datetime import date
 
 from constants import *
 
+#
+# DATE - TIME
+#
+
+def format_dateid(datetime):
+    return '%02d%02d%d' % (datetime.day, datetime.month, datetime.year)
+
 def format_full_datetime(datetime):
     return unicode('%d %s %d เวลา %02d:%02d น.', 'utf-8') % (datetime.day, unicode(THAI_MONTH_NAME[datetime.month], 'utf-8'), datetime.year + 543, datetime.hour, datetime.minute)
 
@@ -19,12 +26,43 @@ def format_abbr_date(datetime):
     return unicode('%d %s %d', 'utf-8') % (datetime.day, unicode(THAI_MONTH_ABBR_NAME[datetime.month], 'utf-8'), datetime.year + 543)
 
 def format_full_month_year(datetime):
-    return "%s %d" % (unicode(THAI_MONTH_NAME[datetime.month], "utf-8"), datetime.year + 543)
+    return '%s %d' % (unicode(THAI_MONTH_NAME[datetime.month], "utf-8"), datetime.year + 543)
 
 def format_abbr_month_year(datetime):
-    return "%s %d" % (unicode(THAI_MONTH_ABBR_NAME[datetime.month], "utf-8"), datetime.year + 543)
+    return '%s %d' % (unicode(THAI_MONTH_ABBR_NAME[datetime.month], "utf-8"), datetime.year + 543)
 
+def convert_dateid_to_date(dateid):
+    return date(int(dateid[4:8]), int(dateid[2:4]), int(dateid[0:2]))
+
+def week_elapse(date):
+    current_date = date.today()
+    
+    days_elapse = (current_date - date).days
+    weeks_elapse = 0
+    
+    while days_elapse >= 7:
+        weeks_elapse = weeks_elapse + 1
+        days_elapse = days_elapse - 7
+    
+    return (weeks_elapse, days_elapse)
+
+def week_elapse_text(date):
+    (weeks_elapse, days_elapse) = week_elapse(date)
+    
+    if weeks_elapse:
+        if days_elapse:
+            text = unicode('%d สัปดาห์ %d วัน', 'utf-8') % (weeks_elapse, days_elapse)
+        else:
+            text = unicode('%d สัปดาห์', 'utf-8') % weeks_elapse
+        
+    else:
+        text = unicode('%d วัน', 'utf-8') % days_elapse
+    
+    return text
+#
 # QUARTER
+#
+
 def find_quarter_number(date):
     month_elapse = date.month - settings.QUARTER_START_MONTH
     if month_elapse < 0: month_elapse = month_elapse + 12
@@ -38,6 +76,24 @@ def make_random_user_password():
     return ''.join([choice(allow_password_chars) for i in range(random_password_length)])
 
 # MASTER PLAN YEAR
+def master_plan_current_year_span(master_plan):
+    today = date.today()
+    month_span = master_plan.month_span
+    
+    if month_span.start_month == 1:
+        return (date(today.year, 1, 1), date(today.year, 12, 31))
+    else:
+        if today.month >= month_span.start_month:
+            return (
+                date(today.year, month_span.start_month, 1),
+                date(today.year+1, month_span.start_month-1, calendar.monthrange(today.year+1, month_span.start_month-1)[1])
+                )
+        else:
+            return (
+                date(today.year-1, month_span.start_month, 1),
+                date(today.year, month_span.start_month-1, calendar.monthrange(today.year, month_span.start_month-1)[1])
+                )
+
 def master_plan_current_year_number(master_plan):
     today = date.today()
     

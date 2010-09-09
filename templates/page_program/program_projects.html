@@ -1,5 +1,5 @@
 {% extends 'page_base.html' %}
-{% load helper_tags page_tags tab_tags %}
+{% load helper_tags page_tags core_tags %}
 
 {% block html_head %}
 {% endblock %}
@@ -11,7 +11,8 @@
 <div class="program_projects_page">
 	<div class="ss_control_panel">
         <ul>
-            <li><img src="{{MEDIA_URL}}/images/icons/create.png" class="icon"/><a href="{% url view_program_add_project program.id %}">เพิ่มโครงการ</a></li>
+            <li><img src="{{MEDIA_URL}}/images/toolbar/create.png" class="icon"/><a href="{% url view_program_add_project program.id %}">เพิ่มโครงการ</a></li>
+			<li><img src="{{MEDIA_URL}}/images/toolbar/calendar.png" class="icon"/><a href="#">ปฏิทินกิจกรรม</a></li>
         </ul>
     </div>
 	
