@@ -7,7 +7,6 @@
 .ss_report_schedule .actions {color:#666;margin-top:10px;border-top:1px dashed #999;padding-top:8px;}
 .ss_report_schedule .actions span {margin-right:20px;}
 
-
 /*
  * ADMINISTRATION PAGE
  */
@@ -62,14 +61,17 @@
  * USER PAGE
  */
 .user_page .setting_panel {margin-bottom:40px;}
-.user_page h2 {font-size:138.5%;color:#666;border-bottom:1px solid #CCC;margin:0px 0px 10px;padding-bottom:5px;}
-.user_page ul.responsibilities {margin:0px 0px 20px 30px;}
-.user_page ul.responsibilities li.dept {list-style:disc;margin-bottom:10px;}
-.user_page ul.responsibilities li.dept h3 {margin-bottom:5px;}
-.user_page ul.responsibilities li.dept h3 a {font-size:123.1%;}
-.user_page ul.responsibilities ul.sections li {display:inline;margin-right:10px;}
-.user_page ul.responsibilities ul.sections li a {color:#666;}
-.user_page ul.responsibilities ul.sections li a:hover {color:#FFF;}
+
+.dashboard_page h2 {font-size:138.5%;padding-bottom:5px;margin-bottom:10px;color:#2D8659;border-bottom:3px solid #999;}
+
+.dashboard_page .primary_responsibility {font-size:108%;margin:10px 0px 15px;color:#666;border-bottom:1px solid #CCC;padding-bottom:10px;}
+.dashboard_page .primary_responsibility .sector {margin-right:10px;}
+.dashboard_page .primary_responsibility .master_plan {padding:0px 10px;}
+
+.dashboard_page .responsibilities {margin-bottom:30px;}
+.dashboard_page .responsibilities li {margin-bottom:10px;}
+.dashboard_page .responsibilities li h3 {font-size:116%;margin-bottom:5px;}
+.dashboard_page .responsibilities li .name {color:#666;}
 
 .user_page li.comment {margin-bottom:20px;}
 .user_page li.comment .source a {font-style:italic;font-size:108%;}
@@ -84,8 +86,9 @@
  * SECTOR
  */
 
-.sector_overview_page {}
-
+.sector_overview_page .master_plans h3 {font-size:123.1%;color:#666;margin-bottom:7px;}
+.sector_overview_page .master_plans li {margin-bottom:8px;font-size:108%;}
+.sector_overview_page .master_plans {}
 
 /*
  * MASTER PLAN
@@ -96,6 +99,11 @@
 /* Master Plan - Programs Page */
 .master_plan_programs_page {}
 .master_plan_programs_page h2 {font-size:138.5%;color:#333;border-bottom:1px solid #999;margin:5px 0px 10px;padding-bottom:5px;}
+
+.master_plan_programs_page .programs_controls {margin:5px 0px 20px 10px;}
+.master_plan_programs_page .programs_controls span {font-size:116%;margin-right:15px;color:#666;}
+.master_plan_programs_page .programs_controls a {border:1px solid #CCC;padding:3px 10px;text-decoration:none;}
+
 .master_plan_programs_page .programs {margin:0px 0px 20px 25px;}
 .master_plan_programs_page .program {margin:5px 0px 10px;font-size:108%;list-style:disc;}
 
@@ -273,8 +281,14 @@
  * ACTIVITY
  */
 
+.activity_page .headline {border-bottom:1px solid #CCC;padding-bottom:10px;margin-bottom:20px;}
+.activity_page .headline div {margin-right:15px;display:inline;font-size:116%;display:inline;}
+.activity_page .headline em {color:#2D8659;margin-bottom:5px;}
+.activity_page .headline .no_information {color:#666;}
 
-
+.activity_page .content h3 {font-size:138.5%;margin:20px 0px 10px;padding:0px 10px 5px 0px;color:#2D8659;border-bottom:3px solid #999;}
+.activity_page .content .description {font-size:108%;}
+.activity_page .content .description span.no_information {color:#666;font-style:italic;}
 
 /*
  * REPORT

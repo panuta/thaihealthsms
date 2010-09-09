@@ -2,6 +2,16 @@
 {% load helper_tags page_tags core_tags %}
 
 {% block html_head %}
+<script type="text/javascript">
+$(document).ready(function() {
+    $(".expand-collapse").click(function(e) {
+		e.preventDefault();
+		$(this).closest("li.plan").find("ul.programs").slideToggle();
+		$(this).blur();
+    });
+    
+});
+</script>
 {% endblock %}
 
 {% block body_title %}{% display_master_plan_header user master_plan %}{% endblock %}
@@ -19,7 +29,8 @@
 		{% for plan in plans %}
 		<li class="plan">
 			<h2>{{plan.name}}</h2>
-			<ul class="programs">
+			<div class="programs_controls"><span>{{plan.programs|length}} แผนงาน</span><a href="#" class="expand-collapse">แสดง/ซ่อนแผนงาน</a></div>
+			<ul class="programs" style="display:none;">
 				{% for program in plan.programs %}
 				<li class="program">
 					<a href="{% url view_program_overview program.id %}">แผนงาน ({{program.ref_no}}) {{program.name}}</a>

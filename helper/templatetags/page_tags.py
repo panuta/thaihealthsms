@@ -9,6 +9,7 @@ from django.core.urlresolvers import reverse
 from helper import permission, utilities
 
 from accounts.models import UserRoleResponsibility, RoleDetails
+from domain.models import SectorMasterPlan
 
 #
 # ADMIN PAGE
@@ -33,6 +34,32 @@ def list_user_roles(user_account):
             role_html = role_html + '<li>%s</li>' % (group_details.name)
     
     return role_html
+
+#
+# USER PAGE
+#
+
+@register.simple_tag
+def list_responsibility_depts(responsibility):
+    html = ''
+    
+    if responsibility.role.name == 'sector_manager':
+        
+        for sector in responsibility.sectors.all():
+            html += '<li class="dept"><h4>สำนัก %d</h4><ul>' % sector.ref_no
+            for smp in SectorMasterPlan.objects.filter(sector=sector):
+                html += '<li class="subdept">แผน %d</li>' % smp.master_plan.ref_no
+            
+            html += '</ul></li>'
+        
+    elif responsibility.role.name == 'sector_manager':
+        pass
+    elif responsibility.role.name == 'sector_manager':
+        pass
+    elif responsibility.role.name == 'sector_manager':
+        pass
+    
+    return html
 
 #
 # REPORT

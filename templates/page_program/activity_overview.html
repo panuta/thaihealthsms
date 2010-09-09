@@ -9,5 +9,18 @@
 {% block body_tabs %}{% tabs_for_activity page user activity %}{% endblock %}
 
 {% block body_content %}
-
+<div class="activity_page">
+    <div class="headline">
+        <div><em>ช่วงเวลา:</em> {% if activity.start_date and activity.end_date %}{{activity.start_date|abbr_date}} - {{activity.end_date|abbr_date}}{% else %}<span class="no_information">ยังไม่ได้กำหนดช่วงเวลา</span>{% endif %}</div>
+        <div><em>สถานที่:</em> {% if activity.location %}{{activity.location}}{% else %}<span class="no_information">ไม่มีข้อมูล</span>{% endif %}</div>
+    </div>
+    
+    <div class="content">
+        <div class="description">{% if activity.description %}{{activity.description}}{% else %}<span class="no_information">ไม่มีข้อมูลรายละเอียด</span>{% endif %}</div>
+        <h3>ผลลัพธ์ที่ตั้งเป้าไว้</h3>
+        <div class="description">{% if activity.result_goal %}{{activity.result_goal}}{% else %}<span class="no_information">ไม่มีข้อมูลผลลัพธ์ที่ตั้งเป้าไว้</span>{% endif %}</div>
+        <h3>ผลลัพธ์ที่เกิดขึ้น</h3>
+        <div class="description">{% if activity.result_real %}{{activity.result_real}}{% else %}<span class="no_information">ไม่มีข้อมูลผลลัพธ์ที่เกิดขึ้น</span>{% endif %}</div>
+    </div>
+</div>
 {% endblock %}

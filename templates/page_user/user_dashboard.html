@@ -1,5 +1,5 @@
 {% extends 'page_base.html' %}
-{% load helper_tags %}
+{% load helper_tags page_tags %}
 
 {% block html_head %}
 
@@ -10,9 +10,18 @@
 {% block body_content %}
 <div class="user_page">
 <h2>หน่วยงานที่รับผิดชอบ</h2>
+<div class="responsibilities">
+{% for responsibility in responsibilities %}
+    <h3>{{responsibility.role.roledetails.name}}</h3>
+    <ul>
+    	{% list_responsibility_depts responsibility %}
+    </ul>
+{% endfor %}
+</div>
+
 <ul class="responsibilities">
 	<li class="dept">
-		<h3><a href="#">Sector 1</a></h3>
+		<h4><a href="#">Sector 1</a></h4>
 		<ul class="sections">
 			<li class="section"><a href="#">Overview</a></li>
 			<li class="section"><a href="#">Overview</a></li>
@@ -21,7 +30,7 @@
 	</li>
 	
 	<li class="dept">
-        <h3><a href="#">Sector 1</a></h3>
+        <h4><a href="#">Sector 1</a></h4>
         <ul class="sections">
             <li class="section"><a href="#">Overview</a></li>
             <li class="section"><a href="#">Overview</a></li>

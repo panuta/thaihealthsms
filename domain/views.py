@@ -412,18 +412,16 @@ def view_project_edit_activity(request, activity_id):
     if request.method == 'POST':
         form = ActivityModifyForm(request.POST)
         if form.is_valid():
-            activity = Activity.objects.create(project=project,
-                name=form.cleaned_data['name'],
-                start_date=form.cleaned_data['start_date'],
-                end_date=form.cleaned_data['end_date'],
-                description=form.cleaned_data['description'],
-                location=form.cleaned_data['location'],
-                result_goal=form.cleaned_data['result_goal'],
-                result_real=form.cleaned_data['result_real'],
-                created_by=request.user.get_profile(),
-                )
+            activity.name = form.cleaned_data['name']
+            activity.start_date = form.cleaned_data['start_date']
+            activity.end_date = form.cleaned_data['end_date']
+            activity.description = form.cleaned_data['description']
+            activity.location = form.cleaned_data['location']
+            activity.result_goal = form.cleaned_data['result_goal']
+            activity.result_real = form.cleaned_data['result_real']
+            activity.save()
             
-            messages.success(request, u'เพิ่มกิจกรรมเรียบร้อย')
+            messages.success(request, u'แก้ไขกิจกรรมเรียบร้อย')
             return redirect('view_project_activities', (project.id))
 
     else:
@@ -443,23 +441,22 @@ def view_activity_overview(request, activity_id):
 @login_required
 def view_activity_edit_activity(request, activity_id):
     activity = get_object_or_404(Activity, pk=activity_id)
+    project = activity.project
     
     if request.method == 'POST':
         form = ActivityModifyForm(request.POST)
         if form.is_valid():
-            activity = Activity.objects.create(project=project,
-                name=form.cleaned_data['name'],
-                start_date=form.cleaned_data['start_date'],
-                end_date=form.cleaned_data['end_date'],
-                description=form.cleaned_data['description'],
-                location=form.cleaned_data['location'],
-                result_goal=form.cleaned_data['result_goal'],
-                result_real=form.cleaned_data['result_real'],
-                created_by=request.user.get_profile(),
-                )
+            activity.name = form.cleaned_data['name']
+            activity.start_date = form.cleaned_data['start_date']
+            activity.end_date = form.cleaned_data['end_date']
+            activity.description = form.cleaned_data['description']
+            activity.location = form.cleaned_data['location']
+            activity.result_goal = form.cleaned_data['result_goal']
+            activity.result_real = form.cleaned_data['result_real']
+            activity.save()
             
-            messages.success(request, u'เพิ่มกิจกรรมเรียบร้อย')
-            return redirect('view_project_activities', (project.id))
+            messages.success(request, u'แก้ไขกิจกรรมเรียบร้อย')
+            return redirect('view_activity_overview', (activity.id))
 
     else:
         form = ActivityModifyForm(initial=activity.__dict__)

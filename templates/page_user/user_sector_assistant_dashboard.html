@@ -1,0 +1,28 @@
+{% extends 'page_base.html' %}
+{% load helper_tags page_tags %}
+
+{% block html_head %}
+
+{% endblock %}
+
+{% block body_title %}<h1>หน้า{{primary_role.roledetails.name}}</h1>{% endblock %}
+
+{% block body_content %}
+<div class="dashboard_page">
+	<h2>หน่วยงานที่รับผิดชอบ</h2>
+	<div class="primary_responsibility">
+		<span class="sector"><a href="{% url view_sector_overview primary_sector.ref_no %}">สำนัก {{primary_sector.ref_no}}</a></span> รับผิดชอบ {% for master_plan in primary_master_plans %}<span class="master_plan"><a href="{% url view_master_plan_overview master_plan.ref_no %}">แผน {{master_plan.ref_no}}</a></span>{% endfor %}
+	</div>
+	<ul class="responsibilities">
+		{% for program in responsible_programs %}
+		<li>
+		  <h3><a href="{% url view_program_overview program.id %}">แผนงาน {{program.ref_no}}</a></h3>
+		  <div class="name">{{program.name}}</div>
+		</li>
+        {% endfor %}
+	</ul>
+	
+	<h2>ตรวจสอบรายงาน</h2>
+	<!-- TODO -->
+</div>
+{% endblock %}

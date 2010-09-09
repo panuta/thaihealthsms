@@ -15,6 +15,9 @@ from helper import permission, utilities
 def display_header_navigation(user):
     html = '<a href="%s"><img src="%s/images/base/nav_home.png" class="icon"/> หน้าผู้ใช้</a>' % (reverse('view_homepage'), settings.MEDIA_URL)
     
+    if not user.is_superuser:
+        html = html + '<a href="%s"><img src="%s/images/base/nav_inbox.png" class="icon"/> ข้อความ</a>' % (reverse('view_user_inbox'), settings.MEDIA_URL)
+    
     if user.is_superuser:
         html = html + '<a href="%s"><img src="%s/images/base/nav_admin.png" class="icon"/> จัดการระบบ</a>' % (reverse('view_administration'), settings.MEDIA_URL)
     

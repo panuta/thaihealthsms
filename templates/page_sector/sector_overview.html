@@ -9,15 +9,13 @@
 
 {% block body_content %}
 <div class="sector_overview_page">
-	<!-- Master Plan -->
 	<div class="master_plans">
-		<ul>
-			{% for master_plan in master_plans %}
-			<li>แผน {{master_plan.ref_no}} {{master_plan.name}}</li>
-			{% endfor %}
-		</ul>
+		<h3>แผนที่รับผิดชอบ</h3>
+	    <ul class="master_plans">
+	        {% for master_plan in master_plans %}
+	        <li><a href="{% url view_master_plan_overview master_plan.ref_no %}">แผน {{master_plan.ref_no}} {{master_plan.name}}</a></li>
+	        {% endfor %}
+	    </ul>
 	</div>
-	
-	
 </div>
 {% endblock %}

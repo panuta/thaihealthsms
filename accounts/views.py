@@ -58,6 +58,9 @@ def view_first_time_login(request):
     next = request.GET.get('next', '')
     return render_response(request, "registration/first_time_login.html", {'form':form, 'next':next})
 
+def view_user_inbox(request):
+    return render_response(request, "page_user/user_inbox.html", {})
+
 @login_required
 def view_user_settings(request):
     if request.method == 'POST':

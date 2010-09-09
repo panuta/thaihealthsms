@@ -18,7 +18,7 @@ class RoleDetails(models.Model):
     SECTOR_LEVEL = 1 # e.g. Sector Manager, Sector Manager Assistant
     PROGRAM_LEVEL = 2 # e.g. Program Manager, Program Manager Assistant
     
-    role = models.ForeignKey(Group, unique=True)
+    role = models.OneToOneField(Group)
     name = models.CharField(max_length=512)
     level = models.IntegerField(default=SECTOR_LEVEL) # Use to determine usre's role either in sector layer or program layer
 

@@ -116,8 +116,7 @@ def after_syncdb(sender, **kwargs):
     # Permission ##################
     #
     
-    PermissionName.objects.get_or_create(
-        permission='master_plan manage', name='จัดการแผนหลัก')
+    PermissionName.objects.get_or_create(permission='master_plan manage', name='จัดการแผนหลัก')
     
     PermissionName.objects.get_or_create(permission='report submission edit', name='แก้ไขรายงาน')
     PermissionName.objects.get_or_create(permission='report submission submit', name='ส่งรายงาน')
@@ -125,6 +124,9 @@ def after_syncdb(sender, **kwargs):
     
     AdminPermission.objects.get_or_create(permission='master_plan manage')
     
+    UserPermission.objects.get_or_create(permission='master_plan manage', role=sector_manager_role, only_responsible=True)
+    UserPermission.objects.get_or_create(permission='master_plan manage', role=sector_manager_assistant_role, only_responsible=True)
+    UserPermission.objects.get_or_create(permission='master_plan manage', role=sector_specialist_role, only_responsible=True)
     
     UserPermission.objects.get_or_create(permission='report submission edit', role=program_manager_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='report submission submit', role=program_manager_role, only_responsible=True)
