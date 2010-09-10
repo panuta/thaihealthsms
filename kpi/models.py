@@ -22,8 +22,10 @@ class DomainKPISchedule(models.Model):
     result = models.IntegerField()
     quarter = models.IntegerField() # 1-4
     quarter_year = models.IntegerField() # gregorian calendar year
+    remark = models.CharField(max_length=1000, blank=True)
 
-class DomainKPIScheduleRelatedDomain(models.Model):
+class DomainKPIScheduleReference(models.Model):
     schedule = models.ForeignKey('DomainKPISchedule', related_name='schedule')
     project = models.ForeignKey('domain.Project', null=True)
     kpi_schedule = models.ForeignKey('DomainKPISchedule', null=True, related_name='kpi_schedule_source')
+    report_submission = models.ForeignKey('report.ReportSubmission', null=True)

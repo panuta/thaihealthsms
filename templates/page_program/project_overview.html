@@ -15,11 +15,14 @@
         {% if current_activities %}
         <ul>
             {% for activity in current_activities %}
-            <li><a href="{% url view_activity_overview activity.id %}">{{activity.name}}</a></li>
+            <li>
+            	<h4><a href="{% url view_activity_overview activity.id %}">{{activity.name}}</a></h4>
+            	<div class="details">ช่วงวันที่ {% if activity.start_date and activity.end_date %}{{activity.start_date|abbr_date}} - {{activity.end_date|abbr_date}}{% else %}ไม่ระบุ{% endif %}</div>
+			</li>
             {% endfor %}
         </ul>
         {% else %}
-        <div class="ss_no_information">ไม่มีโครงการที่ดำเนินอยู่</div>
+        <div class="ss_no_information">ไม่มีกิจกรรมที่ดำเนินอยู่</div>
         {% endif %}
     </div>
 	<div class="activities">
@@ -31,7 +34,7 @@
             {% endfor %}
         </ul>
         {% else %}
-        <div class="ss_no_information">ไม่มีโครงการที่ดำเนินอยู่</div>
+        <div class="ss_no_information">ไม่มีกิจกรรมในอนาคต</div>
         {% endif %}
     </div>
 </div>

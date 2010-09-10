@@ -1,0 +1,15 @@
+{% extends 'page_base.html' %}
+{% load helper_tags page_tags core_tags %}
+
+{% block html_head %}
+
+{% endblock %}
+
+{% block body_title %}{% display_budget_header user schedule %}{% endblock %}
+{% block body_tabs %}{% tabs_for_budget page user schedule %}{% endblock %}
+
+{% block body_content %}
+<div class="budget_page">
+    
+</div>
+{% endblock %}

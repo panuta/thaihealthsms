@@ -1,8 +1,49 @@
 {% extends 'page_base.html' %}
-{% load helper_tags page_tags core_tags %}
+{% load helper_tags page_tags core_tags humanize %}
 
 {% block html_head %}
-
+<script type="text/javascript">
+$(document).ready(function() {
+    $(".edit-number").click(function(e) {
+        e.preventDefault();
+        var number = window.prompt("กรอกตัวเลข");
+        
+        if(number) {
+            if(!is_number(number)) {
+                alert("ตัวเลขไม่อยู่ในรูปแบบที่ถูกต้อง");
+                return;
+            }
+            
+            var tdObject = $(this).closest("td");
+            var numberObject = tdObject.find(".number");
+            var scheduleLink = numberObject.find("a").attr("href");
+            numberObject.html('<img src="{{MEDIA_URL}}/images/loading.gif" />');
+            
+            var splitted = tdObject.attr("id").split("-");
+            var number_type = splitted[1];
+            var schedule_id = splitted[2];
+            
+            number = parseInt(number, 10);
+            
+            var target = '';
+            if(number_type == 'target') target = number;
+            
+            var result = '';
+            if(number_type == 'result') result = number;
+            
+            $.post("{% url ajax_update_kpi_schedule %}", {'schedule_id':schedule_id, 'target':target, 'result':result}, function(result) {
+                if(result == 'invalid') {
+                    alert("ข้อมูลไม่อยู่ในรูปแบบที่ถูกต้อง");
+                } else if(result == 'denied') {
+                    alert("คุณไม่มีสิทธิ์เพียงพอที่จะแก้ไขข้อมูลนี้");
+                } else {
+                    numberObject.html('<a href="' + scheduleLink + '">' + digit_grouping(number) + '</a>');
+                }
+            });
+        }
+    });
+});
+</script>
 {% endblock %}
 
 {% block body_title %}{% display_program_header user program %}{% endblock %}
@@ -15,6 +56,104 @@
     </ul>
 </div>
 
-<!-- TODO -->
-
+<div class="program_kpi_page">
+    {% if categories %}
+    {% for category in categories %}
+    <h2>{{category.name}}</h2>
+    <table>
+        <tr>
+            <th rowspan="2">ตัวชี้วัด</th>
+            {% generate_quarter_table_header current_year %}
+        </tr>
+        <tr>
+            <th>คาดการณ์</th>
+            <th>ผลที่เกิด</th>
+            <th>คาดการณ์</th>
+            <th>ผลที่เกิด</th>
+            <th>คาดการณ์</th>
+            <th>ผลที่เกิด</th>
+            <th>คาดการณ์</th>
+            <th>ผลที่เกิด</th>
+        </tr>
+        {% for kpi in category.kpis %}
+        <tr id="kpi-{{kpi.id}}">
+            <td class="kpi">
+            	<div class="kpi_ref">{{kpi.ref_no}}</div>
+				<div class="kpi_name">{% if kpi.abbr_name %}{{kpi.abbr_name}}{% else %}{{kpi.name}}{% endif %}</div>
+			</td>
+            <td class="target" id="schedule-target-{{kpi.schedules.1.id}}">
+                {% if kpi.schedules.1 %}
+                <div class="number"><a href="{% url view_kpi_overview kpi.schedules.1.id %}">{{kpi.schedules.1.target|intcomma}}</a></div><div class="unit">{{kpi.schedules.1.kpi.unit_name}}</div>
+                {% access user 'program kpi edit target' program %}
+                <div class="edit"><a href="#" class="edit-number">แก้ไข</a></div>
+                {% endaccess %}
+                {% else %}-{% endif %}
+            </td>
+            <td class="result" id="schedule-result-{{kpi.schedules.1.id}}">
+                {% if kpi.schedules.1 %}
+                <div class="number"><a href="{% url view_kpi_overview kpi.schedules.1.id %}">{{kpi.schedules.1.result|intcomma}}</a></div><div class="unit">{{kpi.schedules.1.kpi.unit_name}}</div>
+                {% access user 'program kpi edit result' program %}
+                <div class="edit"><a href="#" class="edit-number">แก้ไข</a></div>
+                {% endaccess %}
+                {% else %}-{% endif %}
+            </td>
+            
+            <td class="target" id="schedule-target-{{kpi.schedules.2.id}}">
+                {% if kpi.schedules.2 %}
+                <div class="number"><a href="{% url view_kpi_overview kpi.schedules.2.id %}">{{kpi.schedules.2.target|intcomma}}</a></div><div class="unit">{{kpi.schedules.2.kpi.unit_name}}</div>
+                {% access user 'program kpi edit target' program %}
+                <div class="edit"><a href="#" class="edit-number">แก้ไข</a></div>
+                {% endaccess %}
+                {% else %}-{% endif %}
+            </td>
+            <td class="result" id="schedule-result-{{kpi.schedules.2.id}}">
+                {% if kpi.schedules.2 %}
+                <div class="number"><a href="{% url view_kpi_overview kpi.schedules.2.id %}">{{kpi.schedules.2.result|intcomma}}</a></div><div class="unit">{{kpi.schedules.2.kpi.unit_name}}</div>
+                {% access user 'program kpi edit result' program %}
+                <div class="edit"><a href="#" class="edit-number">แก้ไข</a></div>
+                {% endaccess %}
+                {% else %}-{% endif %}
+            </td>
+            
+            <td class="target" id="schedule-target-{{kpi.schedules.3.id}}">
+                {% if kpi.schedules.3 %}
+                <div class="number"><a href="{% url view_kpi_overview kpi.schedules.3.id %}">{{kpi.schedules.3.target|intcomma}}</a></div><div class="unit">{{kpi.schedules.3.kpi.unit_name}}</div>
+                {% access user 'program kpi edit target' program %}
+                <div class="edit"><a href="#" class="edit-number">แก้ไข</a></div>
+                {% endaccess %}
+                {% else %}-{% endif %}
+            </td>
+            <td class="result" id="schedule-result-{{kpi.schedules.3.id}}">
+                {% if kpi.schedules.3 %}
+                <div class="number"><a href="{% url view_kpi_overview kpi.schedules.3.id %}">{{kpi.schedules.3.result|intcomma}}</a></div><div class="unit">{{kpi.schedules.3.kpi.unit_name}}</div>
+                {% access user 'program kpi edit result' program %}
+                <div class="edit"><a href="#" class="edit-number">แก้ไข</a></div>
+                {% endaccess %}
+                {% else %}-{% endif %}
+            </td>
+            
+            <td class="target" id="schedule-target-{{kpi.schedules.4.id}}">
+                {% if kpi.schedules.4 %}
+                <div class="number"><a href="{% url view_kpi_overview kpi.schedules.4.id %}">{{kpi.schedules.4.target|intcomma}}</a></div><div class="unit">{{kpi.schedules.4.kpi.unit_name}}</div>
+                {% access user 'program kpi edit target' program %}
+                <div class="edit"><a href="#" class="edit-number">แก้ไข</a></div>
+                {% endaccess %}
+                {% else %}-{% endif %}
+            </td>
+            <td class="result" id="schedule-result-{{kpi.schedules.4.id}}">
+                {% if kpi.schedules.4 %}
+                <div class="number"><a href="{% url view_kpi_overview kpi.schedules.4.id %}">{{kpi.schedules.4.result|intcomma}}</a></div><div class="unit">{{kpi.schedules.4.kpi.unit_name}}</div>
+                {% access user 'program kpi edit result' program %}
+                <div class="edit"><a href="#" class="edit-number">แก้ไข</a></div>
+                {% endaccess %}
+                {% else %}-{% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endfor %}
+    {% else %}
+    <div class="ss_no_information">ไม่มีข้อมูลตัวชี้วัดของแผนงาน</div>
+    {% endif %}
+</div>
 {% endblock %}

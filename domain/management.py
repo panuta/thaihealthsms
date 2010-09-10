@@ -50,7 +50,7 @@ def after_syncdb(sender, **kwargs):
     for admin in admins:
         try:
             User.objects.get(username=admin[0])
-
+            
         except User.DoesNotExist:
             #random_password = User.objects.make_random_password()
             random_password = '1q2w3e4r'
@@ -118,21 +118,50 @@ def after_syncdb(sender, **kwargs):
     
     PermissionName.objects.get_or_create(permission='master_plan manage', name='จัดการแผนหลัก')
     
+    # KPI
+    PermissionName.objects.get_or_create(permission='program kpi edit target', name='แก้ไขตัวเลขคาดการณ์ตัวชี้วัด')
+    PermissionName.objects.get_or_create(permission='program kpi edit result', name='แก้ไขตัวเลขผลที่เกิดของตัวชี้วัด')
+    
+    # BUDGET
+    PermissionName.objects.get_or_create(permission='program budget edit grant', name='แก้ไขตัวเลขคาดการณ์การเบิกจ่าย')
+    PermissionName.objects.get_or_create(permission='program budget edit claim', name='แก้ไขตัวเลขเบิกจ่ายจริง')
+    
+    # REPORT
     PermissionName.objects.get_or_create(permission='report submission edit', name='แก้ไขรายงาน')
     PermissionName.objects.get_or_create(permission='report submission submit', name='ส่งรายงาน')
     PermissionName.objects.get_or_create(permission='report submission approve', name='รับรองรายงาน')
     
     AdminPermission.objects.get_or_create(permission='master_plan manage')
     
+    
+    
     # FOR SECTOR MANAGER
+    UserPermission.objects.get_or_create(permission='program kpi edit target', role=sector_manager_role, only_responsible=True)
+    UserPermission.objects.get_or_create(permission='program kpi edit result', role=sector_manager_role, only_responsible=True)
+    
+    UserPermission.objects.get_or_create(permission='program budget edit grant', role=sector_manager_role, only_responsible=True)
+    UserPermission.objects.get_or_create(permission='program budget edit claim', role=sector_manager_role, only_responsible=True)
+    
     UserPermission.objects.get_or_create(permission='master_plan manage', role=sector_manager_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='report submission approve', role=sector_manager_role, only_responsible=True)
     
     # FOR SECTOR MANAGER ASSISTANT
+    UserPermission.objects.get_or_create(permission='program kpi edit target', role=sector_manager_assistant_role, only_responsible=True)
+    UserPermission.objects.get_or_create(permission='program kpi edit result', role=sector_manager_assistant_role, only_responsible=True)
+    
+    UserPermission.objects.get_or_create(permission='program budget edit grant', role=sector_manager_assistant_role, only_responsible=True)
+    UserPermission.objects.get_or_create(permission='program budget edit claim', role=sector_manager_assistant_role, only_responsible=True)
+    
     UserPermission.objects.get_or_create(permission='master_plan manage', role=sector_manager_assistant_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='report submission approve', role=sector_manager_assistant_role, only_responsible=True)
     
     # FOR SECTOR SPECIALIST
+    UserPermission.objects.get_or_create(permission='program kpi edit target', role=sector_specialist_role, only_responsible=True)
+    UserPermission.objects.get_or_create(permission='program kpi edit result', role=sector_specialist_role, only_responsible=True)
+    
+    UserPermission.objects.get_or_create(permission='program budget edit target', role=sector_specialist_role, only_responsible=True)
+    UserPermission.objects.get_or_create(permission='program budget edit result', role=sector_specialist_role, only_responsible=True)
+    
     UserPermission.objects.get_or_create(permission='master_plan manage', role=sector_specialist_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='report submission approve', role=sector_specialist_role, only_responsible=True)
     

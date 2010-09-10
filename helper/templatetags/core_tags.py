@@ -69,6 +69,14 @@ def display_activity_edit_header(user, activity):
 def display_report_header(user, report_submission):
     return unicode('<div class="supertitle"><a href="%s">แผนงาน %s - %s</a></div><h1>รายงาน %s</h1><div class="subtitle">รอบกำหนดส่งวันที่ %s</div>', 'utf-8') % (reverse('view_program_overview', args=[report_submission.program.id]), report_submission.program.ref_no, report_submission.program.name, report_submission.report.name, utilities.format_abbr_date(report_submission.schedule_date))
 
+@register.simple_tag
+def display_kpi_header(user, schedule):
+    return unicode('<div class="supertitle"><a href="%s">แผนงาน %s - %s</a></div><h1>ตัวชี้วัด %s %s</h1><div class="subtitle">ไตรมาสที่ %d ปี %d</div>', 'utf-8') % (reverse('view_program_overview', args=[schedule.program.id]), schedule.program.ref_no, schedule.program.name, schedule.kpi.ref_no, schedule.kpi.name, schedule.quarter, schedule.quarter_year+543)
+
+@register.simple_tag
+def display_budget_header(user, schedule):
+    return unicode('<div class="supertitle"><a href="%s">แผนงาน %s - %s</a></div><h1>งวดเบิกจ่ายวันที่ %s</h1>', 'utf-8') % (reverse('view_program_overview', args=[schedule.program.id]), schedule.program.ref_no, schedule.program.name, utilities.format_full_date(schedule.schedule_on))
+
 #
 # TAB
 #
@@ -196,5 +204,29 @@ def tabs_for_report(page, user, report_submission):
     
     if page == 'comments': html = html + '<li class="selected">ความคิดเห็น</li>'
     else: html = html + '<li><a href="%s">ความคิดเห็น</a></li>' % reverse('view_report_comments', args=[report_submission.program.id, report_submission.report.id, utilities.format_dateid(report_submission.schedule_date)])
+    
+    return _generate_tabs(html)
+
+@register.simple_tag
+def tabs_for_kpi(page, user, schedule):
+    html = ''
+    
+    if page == 'overview': html = html + '<li class="selected">เนื้อหา</li>'
+    else: html = html + '<li><a href="%s">เนื้อหา</a></li>' % reverse('view_kpi_overview', args=[schedule.id])
+    
+    if page == 'comments': html = html + '<li class="selected">ความคิดเห็น</li>'
+    else: html = html + '<li><a href="%s">ความคิดเห็น</a></li>' % reverse('view_kpi_comments', args=[schedule.id])
+    
+    return _generate_tabs(html)
+
+@register.simple_tag
+def tabs_for_budget(page, user, schedule):
+    html = ''
+    
+    if page == 'overview': html = html + '<li class="selected">เนื้อหา</li>'
+    else: html = html + '<li><a href="%s">เนื้อหา</a></li>' % reverse('view_budget_overview', args=[schedule.id])
+    
+    if page == 'comments': html = html + '<li class="selected">ความคิดเห็น</li>'
+    else: html = html + '<li><a href="%s">ความคิดเห็น</a></li>' % reverse('view_budget_comments', args=[schedule.id])
     
     return _generate_tabs(html)

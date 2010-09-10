@@ -16,7 +16,6 @@ $(document).ready(function() {
             
             var tdObject = $(this).closest("td");
             var numberObject = tdObject.find(".number");
-            var scheduleLink = numberObject.find("a").attr("href");
             numberObject.html('<img src="{{MEDIA_URL}}/images/loading.gif" />');
             
             var splitted = tdObject.attr("id").split("-");
@@ -25,19 +24,19 @@ $(document).ready(function() {
             
             number = parseInt(number, 10);
             
-            var target = '';
-            if(number_type == 'target') target = number;
+            var grant = '';
+            if(number_type == 'grant') grant = number;
             
-            var result = '';
-            if(number_type == 'result') result = number;
+            var claim = '';
+            if(number_type == 'claim') claim = number;
             
-            $.post("/ajax/finance/update/", {'schedule_id':schedule_id, 'target':target, 'result':result}, function(result) {
+            $.post("{% url ajax_update_budget_schedule %}", {'schedule_id':schedule_id, 'grant':grant, 'claim':claim}, function(result) {
                 if(result == 'invalid') {
                     alert("ข้อมูลไม่อยู่ในรูปแบบที่ถูกต้อง");
                 } else if(result == 'denied') {
                     alert("คุณไม่มีสิทธิ์เพียงพอที่จะแก้ไขข้อมูลนี้");
                 } else {
-                    numberObject.html('<a href="' + scheduleLink + '">' + number + '</a>');
+                    numberObject.html(digit_grouping(number));
                 }
             });
         }
@@ -73,19 +72,19 @@ $(document).ready(function() {
         <tr>
         	<td class="link_column"><img src="{{MEDIA_URL}}/images/icons/link_to.png" class="icon"/> <a href="{% url view_budget_overview schedule.id %}">หน้างวดเบิกจ่าย</a></td>
             <td class="schedule_on_column">{{schedule.schedule_on|abbr_date}}</td>
-            <td class="grant_column" id="schedule-target-{{schedule.id}}">
+            <td class="grant_column" id="schedule-grant-{{schedule.id}}">
                 <div><span class="number">{{schedule.grant_budget|intcomma}}</span> <span class="unit">บาท</span></div>
-                {% access user 'project finance update target' program %}
+                {% access user 'program budget edit grant' program %}
                 <div class="edit"><a href="#" class="edit-number">แก้ไข</a></div>
                 {% endaccess %}
             </td>
-            <td class="claim_column" id="schedule-result-{{schedule.id}}">
+            <td class="claim_column" id="schedule-claim-{{schedule.id}}">
                 <div><span class="number">{{schedule.claim_budget|intcomma}}</span> <span class="unit">บาท</span></div>
-                {% access user 'project finance update result' program %}
+                {% access user 'program budget edit claim' program %}
                 <div class="edit"><a href="#" class="edit-number">แก้ไข</a></div>
                 {% endaccess %}
             </td>
-            <td class="status_column"></td>
+            <td class="status_column">{% display_budget_schedule_status schedule %}</td>
 			<td></td>
         </tr>
         {% endfor %}

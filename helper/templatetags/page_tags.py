@@ -62,6 +62,45 @@ def list_responsibility_depts(responsibility):
     return html
 
 #
+# BUDGET
+#
+@register.simple_tag
+def display_budget_schedule_status(schedule):
+    from budget.functions import determine_schedule_status
+    status = determine_schedule_status(schedule)
+    
+    if status == 'today':
+        return 'กำหนดเบิกจ่ายในวันนี้'
+    elif status == 'future':
+        return '<span class="future">ยังไม่ถึงวันเบิก</span>'
+    elif status == 'late':
+        return unicode('<span class="late">เลยวันที่เบิกมาแล้ว<br/>%s</span>', 'utf-8') % utilities.week_elapse_text(schedule.schedule_on)
+    elif status == 'claimed_higher' or status == 'claimed_equal' or status == 'claimed_lower':
+        return unicode('<span class="claimed">เบิกเมื่อวันที่<br/>%s</span>', 'utf-8') % utilities.format_abbr_date(schedule.schedule_on)
+    else:
+        return 'ไม่มีข้อมูล'
+
+@register.simple_tag
+def display_full_budget_schedule_status(schedule):
+    from budget.functions import determine_schedule_status
+    status = determine_schedule_status(schedule)
+    
+    if status == 'today':
+        return 'กำหนดเบิกจ่ายในวันนี้'
+    elif status == 'future':
+        return '<span class="future">ยังไม่ถึงวันเบิก</span>'
+    elif status == 'late':
+        return unicode('<span class="late">เลยวันที่เบิกมาแล้ว<br/>%s</span>', 'utf-8') % utilities.week_elapse_text(schedule.schedule_on)
+    elif status == 'claimed_higher' or status == 'claimed_equal' or status == 'claimed_lower':
+        return unicode('<span class="claimed">เบิกเมื่อวันที่<br/>%s</span>', 'utf-8') % utilities.format_abbr_date(schedule.schedule_on)
+    else:
+        return 'ไม่มีข้อมูล'
+
+@register.simple_tag
+def display_budget_schedule_revision(revision):
+    pass
+
+#
 # REPORT
 #
 

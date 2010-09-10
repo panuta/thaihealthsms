@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect
 
+from budget import functions as budget_functions
 from models import *
 
 from budget.models import BudgetSchedule
@@ -134,8 +135,7 @@ def view_master_plan_manage_program_budget(request, program_id):
 @login_required
 def view_program_budget(request, program_id):
     program = get_object_or_404(Program, pk=program_id)
-    schedules = []
-    #schedules = ProgramBudgetSchedule.objects.filter(program=program).order_by('schedule_on')
+    schedules = BudgetSchedule.objects.filter(program=program).order_by('-schedule_on')
     return render_page_response(request, 'budget', 'page_program/program_budget.html', {'program':program, 'schedules':schedules})
 
 #
@@ -145,6 +145,6 @@ def view_program_budget(request, program_id):
 @login_required
 def view_budget_overview(request, schedule_id):
     schedule = get_object_or_404(BudgetSchedule, pk=schedule_id)
-    return render_page_response(request, 'overview', 'page_kpi/budget_overview.html', {'schedule':schedule, })
-
-
+    references = BudgetScheduleReference.objects.filter(schedule=schedule)
+    revisions = BudgetScheduleRevision.objects.filter(schedule=schedule).order_by('-revised')
+    return render_page_response(request, 'overview', 'page_kpi/budget_overview.html', {'schedule':schedule, 'references':references, 'revisions':revisions})

@@ -5,6 +5,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
+    ('admin', 'application.testbed@gmail.com'),
     ('panuta', 'panuta@gmail.com'),
 )
 
@@ -116,6 +117,9 @@ QUARTER_INPUT_YEAR_SPAN = 5
 
 # PAGINATION
 ADMIN_MANAGE_USERS_PER_PAGE = 25
+
+# PROGRAM - OVERVIEW
+RECENT_REPORTS_ON_PROGRAM_OVERVIEW = 5
 
 # REPORT
 REPORT_SUBMIT_FILE_PATH = os.path.join(_base, 'media/report')

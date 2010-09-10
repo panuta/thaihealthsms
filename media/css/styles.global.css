@@ -83,7 +83,7 @@ a:hover {color:#FFF;background-color:#369;}
 
 /* Table */
 .ss_table {width:100%;}
-.ss_table th {border:1px solid #AAA;padding:10px 10px;background-color:#CCC;color:#333;font-size:116%;}
+.ss_table th {border:1px solid #AAA;padding:10px 10px;background-color:#DDD;color:#333;font-size:116%;}
 .ss_table td {border:1px solid #AAA;padding:8px 10px;font-size:108%;}
 
 .ss_table .controls {width:55px;text-align:center;}

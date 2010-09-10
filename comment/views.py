@@ -23,10 +23,10 @@ def view_report_comments(request, program_id, report_id, schedule_date):
     submission = get_object_or_404(ReportSubmission, pk=submission_id)
     return render_page_response(request, 'comments', 'page_program/report_comments.html', {'submission':submission, })
 
-def view_kpi_schedule_comments(request, schedule_id):
+def view_kpi_comments(request, schedule_id):
     schedule = get_object_or_404(DomainKPISchedule, pk=schedule_id)
     return render_page_response(request, 'comments', 'page_kpi/kpi_comments.html', {'schedule':schedule, })
 
-def view_budget_schedule_comments(request, schedule_id):
+def view_budget_comments(request, schedule_id):
     schedule = get_object_or_404(BudgetSchedule, pk=schedule_id)
     return render_page_response(request, 'comments', 'page_kpi/budget_comments.html', {'schedule':schedule, })

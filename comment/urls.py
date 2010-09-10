@@ -7,6 +7,6 @@ urlpatterns = patterns('comment.views',
     
     url(r'^program/(?P<program_id>\d+)/report/(?P<report_id>\d+)/(?P<schedule_date>\w+)/comments/$', 'view_report_comments', name='view_report_comments'),
     
-    url(r'^kpi/(?P<schedule_id>\d+)/comments/$', 'view_kpi_schedule_comments', name='view_kpi_schedule_comments'),
-    url(r'^budget/(?P<schedule_id>\d+)/comments/$', 'view_budget_schedule_comments', name='view_budget_schedule_comments'),
+    url(r'^kpi/(?P<schedule_id>\d+)/comments/$', 'view_kpi_comments', name='view_kpi_comments'),
+    url(r'^budget/(?P<schedule_id>\d+)/comments/$', 'view_budget_comments', name='view_budget_comments'),
 )

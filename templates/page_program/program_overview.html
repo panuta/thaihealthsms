@@ -10,8 +10,14 @@
 
 {% block body_content %}
 <div class="program_overview_page">
+	{% if overdue_report_count %}
+	<div class="notice_important">
+		มีรายงานเลยกำหนดส่ง {{overdue_report_count}} ฉบับ [ดูรายละเอียด]
+	</div>
+	{% endif %}
+	
+	<h2 class="h2">โครงการที่ดำเนินอยู่</h2>
 	<div class="projects">
-		<h3>โครงการที่ดำเนินอยู่</h3>
 		{% if current_projects %}
 		<ul>
 			{% for project in current_projects %}
@@ -21,6 +27,23 @@
 		{% else %}
 		<div class="ss_no_information">ไม่มีโครงการที่ดำเนินอยู่</div>
 		{% endif %}
+	</div>
+	
+	<h2 class="h2">รายงานล่าสุด</h2>
+	<div class="reports">
+		{% if recent_reports %}
+        <ul>
+            {% for submission in recent_reports %}
+            <li>
+            	<div class="date">ฉบับวันที่ {{submission.schedule_date|full_date}}</div>
+            	<div class="report_name"><a href="{% url view_report_overview program.id submission.report.id submission.schedule_date|dateid %}">{{submission.report.name}}</a></div>
+				<div class="details">ส่งเมื่อวันที่ {{submission.submitted_on|full_datetime}}</div>
+			</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <div class="ss_no_information">ไม่มีรายงาน</div>
+        {% endif %}
 	</div>
 </div>
 {% endblock %}

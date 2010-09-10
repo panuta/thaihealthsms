@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 import calendar
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 
 from django.conf import settings
 from django.contrib import messages
@@ -16,6 +16,8 @@ from budget.models import *
 from comment.models import *
 from kpi.models import *
 from report.models import *
+
+from report import functions as report_functions
 
 from helper import utilities, permission
 from helper.shortcuts import render_response, render_page_response, access_denied
@@ -264,7 +266,17 @@ def view_program_overview(request, program_id):
     program = get_object_or_404(Program, pk=program_id)
     current_date = date.today()
     current_projects = Project.objects.filter(program=program, start_date__lte=current_date, end_date__gte=current_date)
-    return render_page_response(request, 'overview', 'page_program/program_overview.html', {'program':program, 'current_projects':current_projects})
+    
+    recent_reports = ReportSubmission.objects.filter(program=program).filter(Q(state=APPROVED_ACTIVITY) | (Q(state=SUBMITTED_ACTIVITY) & (Q(report__need_approval=False) | Q(report__need_checkup=False)))).order_by('-submitted_on')[:settings.RECENT_REPORTS_ON_PROGRAM_OVERVIEW]
+    
+    overdue_report_count = 0
+    for assignment in ReportAssignment.objects.filter(program=program):
+        overdue_report_count = overdue_report_count + report_functions.get_sending_report_count(program, assignment.report)['overdue']
+    
+    # TODO - KPI -- Current KPI value
+    # TODO - BUDGET -- Late, Near (optional)
+    
+    return render_page_response(request, 'overview', 'page_program/program_overview.html', {'program':program, 'current_projects':current_projects, 'overdue_report_count':overdue_report_count, 'recent_reports':recent_reports})
 
 @login_required
 def view_program_projects(request, program_id):

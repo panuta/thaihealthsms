@@ -204,7 +204,7 @@ def generate_quarter_table_header(quarter_year):
         if start_month < settings.QUARTER_START_MONTH and settings.QUARTER_LOWER_YEAR_NUMBER:
             year = quarter_year + 1
         
-        html = html + '<th colspan="2">ไตรมาสที่ %d (%s - %s %d)</th>' % (i, THAI_MONTH_ABBR_NAME[start_month], THAI_MONTH_ABBR_NAME[end_month], year+543)
+        html = html + '<th colspan="2" class="quarter">ไตรมาสที่ %d (%s - %s %d)</th>' % (i, THAI_MONTH_ABBR_NAME[start_month], THAI_MONTH_ABBR_NAME[end_month], year+543)
         
         start_month = start_month + 3
         if start_month > 12: start_month = start_month - 12
@@ -249,8 +249,9 @@ def generate_quarter_month_selector(quarter, quarter_year):
 
 @register.simple_tag
 def generate_quarter_year_selector(quarter_year):
-    if not quarter_year: quarter_year = date.today().year + 543
+    if not quarter_year: quarter_year = date.today().year
     
+    quarter_year = quarter_year + 543
     year_span = settings.QUARTER_INPUT_YEAR_SPAN
     
     html = '<option value="back-%d">&lt; ปีก่อนหน้า</option>' % (quarter_year - year_span)

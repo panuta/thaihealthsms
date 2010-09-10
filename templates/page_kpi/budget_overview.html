@@ -1,0 +1,63 @@
+{% extends 'page_base.html' %}
+{% load helper_tags page_tags core_tags humanize %}
+
+{% block html_head %}
+
+{% endblock %}
+
+{% block body_title %}{% display_budget_header user schedule %}{% endblock %}
+{% block body_tabs %}{% tabs_for_budget page user schedule %}{% endblock %}
+
+{% block body_content %}
+<div class="budget_page">
+	<div class="budget_status">
+		<div class="caption">สถานะการเบิกจ่าย:</div>
+		<div class="status">{% display_full_budget_schedule_status schedule %}</div>
+	</div>
+	
+	<div class="budget_value">
+		<div><span>วันที่เบิกจ่าย:</span> {{schedule.schedule_on|full_date}}</div>
+		<div><span>คาดการณ์:</span> {{schedule.grant_budget|intcomma}} บาท</div>
+		<div><span>เบิกจ่ายจริง:</span> {{schedule.claim_budget|intcomma}} บาท</div>
+	</div>
+	
+	{% if schedule.remark %}
+    <h2 class="h2">หมายเหตุ</h2>
+    <div class="remark">{{schedule.remark}}</div>
+    {% endif %}
+	
+	<h2 class="h2">ข้อมูลประกอบ</h2>
+	{% if references %}
+	{% else %}
+	<div class="ss_no_information">ไม่มีข้อมูลประกอบ</div>
+	{% endif %}
+	
+    <h2 class="h2">ประวัติการแก้ไข</h2>
+	<table class="revisions">
+		<tr>
+            <th></th>
+			<th>วันที่เบิกจ่าย</th>
+            <th>ตัวเลขคาดการณ์</th>
+            <th>เบิกจ่ายจริง</th>
+        </tr>
+		{% for revision in revisions %}
+		    {% if forloop.last %}
+			<tr>
+	            <td class="revised_on">สร้างเมื่อ {{revision.revised|full_datetime}}</td>
+	            <td>{{revision.schedule_on|full_date}}</td>
+	            <td>{{revision.grant_budget|intcomma}} บาท</td>
+	            <td>{{revision.claim_budget|intcomma}} บาท</td>
+	        </tr>
+			{% else %}
+			<tr>
+	            <td class="revised_on">แก้ไขเมื่อ {{revision.revised|full_datetime}}</td>
+	            <td>{{revision.schedule_on|full_date}}</td>
+	            <td>{{revision.grant_budget|intcomma}} บาท</td>
+	            <td>{{revision.claim_budget|intcomma}} บาท</td>
+	        </tr>
+			{% endif %}
+		{% endfor %}
+		
+	</table>
+</div>
+{% endblock %}

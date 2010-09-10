@@ -22,6 +22,11 @@ function is_number(str) {
     return true;
 }
 
+function digit_grouping(num_str) {
+	num_str = num_str + '';
+	return num_str.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+}
+
 function to_number(str) {
     if(str.indexOf(".") != -1) {
         str = str.substring(0, str.indexOf("."));

@@ -1,4 +1,5 @@
 # -*- encoding: utf-8 -*-
+from datetime import date
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -59,8 +60,9 @@ def view_master_plan_manage_program_kpi(request, program_id):
             try:
                 (kpi_id, schedule_id, target, quarter_year, quarter_month) = schedule.split(',')
                 target = int(target)
+                quarter_year = int(quarter_year) - 543
             except:
-                set_message(request, u"ข้อมูลไม่อยู่ในรูปแบบที่ถูกต้อง กรุณากรอกใหม่อีกครั้ง")
+                messages.error(request, 'ข้อมูลไม่อยู่ในรูปแบบที่ถูกต้อง กรุณากรอกใหม่อีกครั้ง')
                 return redirect('view_master_plan_manage_program_kpi', (program.id))
             else:
                 kpi = DomainKPI.objects.get(pk=kpi_id)
@@ -262,10 +264,43 @@ def view_master_plan_manage_kpi_delete_category(request, kpi_category_id):
 @login_required
 def view_program_kpi(request, program_id):
     program = get_object_or_404(Program, pk=program_id)
+    current_year = date.today().year
     
-    # TODO
+    years = [dict['kpi__year'] for dict in DomainKPISchedule.objects.filter(program=program).values('kpi__year').distinct()]
     
-    return render_page_response(request, 'kpi', 'page_program/program_kpi.html', {'program':program, })
+    categories = []
+    category_ids = DomainKPISchedule.objects.filter(program=program).values('kpi__category').distinct()
+    
+    print category_ids
+    
+    for category_id in category_ids:
+        if category_id['kpi__category']:
+            category = DomainKPICategory.objects.get(pk=category_id['kpi__category'])
+            kpi_ids = DomainKPISchedule.objects.filter(program=program, kpi__category=category).order_by('kpi__ref_no').values('kpi').distinct()
+        else:
+            category = DomainKPICategory()
+            kpi_ids = DomainKPISchedule.objects.filter(program=program, kpi__category=None).order_by('kpi__ref_no').values('kpi').distinct()
+        
+        kpis = []
+        for kpi_id in kpi_ids:
+            kpi = DomainKPI.objects.get(id=kpi_id['kpi'])
+            
+            schedules = {}
+            for i in range(1, 5):
+                try:
+                    schedules[str(i)] = DomainKPISchedule.objects.get(kpi=kpi, program=program, quarter_year=current_year, quarter=i)
+                    print schedules[str(i)]
+                except:
+                    schedules[str(i)] = ''
+                    print 'empty'
+            
+            kpi.schedules = schedules
+            kpis.append(kpi)
+        
+        category.kpis = kpis
+        categories.append(category)
+    
+    return render_page_response(request, 'kpi', 'page_program/program_kpi.html', {'program':program, 'categories':categories, 'years':years, 'current_year':current_year})
 
 #
 # KPI SCHEDULE #######################################################################
@@ -274,7 +309,5 @@ def view_program_kpi(request, program_id):
 @login_required
 def view_kpi_overview(request, schedule_id):
     schedule = get_object_or_404(DomainKPISchedule, pk=schedule_id)
-    
-    # TODO
-    
-    return render_page_response(request, 'overview', 'page_kpi/kpi_overview.html', {'schedule':schedule, })
+    references = DomainKPIScheduleReference.objects.filter(schedule=schedule)
+    return render_page_response(request, 'overview', 'page_kpi/kpi_overview.html', {'schedule':schedule, 'references':references})

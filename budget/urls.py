@@ -10,3 +10,7 @@ urlpatterns = patterns('budget.views',
     
     url(r'^budget/(?P<schedule_id>\d+)/$', 'view_budget_overview', name='view_budget_overview'),
 )
+
+urlpatterns += patterns('budget.ajax',
+    url(r'^ajax/budget/schedule/update/$', 'ajax_update_budget_schedule', name="ajax_update_budget_schedule"),
+)
