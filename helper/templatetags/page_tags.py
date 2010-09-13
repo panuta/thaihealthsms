@@ -10,6 +10,7 @@ from helper import permission, utilities
 
 from accounts.models import UserRoleResponsibility, RoleDetails
 from domain.models import SectorMasterPlan
+from kpi.models import DomainKPI, DomainKPISchedule
 
 #
 # ADMIN PAGE
@@ -139,3 +140,30 @@ def display_report_sending_notice(submission):
     elif submission.this_is == 'rejected':
         return unicode('<div class="notice rejected">รายงานถูกตีกลับเมื่อวันที่ ', 'utf-8') + utilities.format_abbr_datetime(submission.approval_date) + '</div>'
     return ''
+
+#
+# KPI -------------------------------------------------------------------------
+#
+
+@register.simple_tag
+def print_program_kpis(program):
+    ret = ''
+    kpis = DomainKPI.objects.filter(program=program) 
+    for kpi in kpis:
+        ret += kpi.abbr_name + ' '
+    return ret.strip()
+
+@register.simple_tag
+def print_master_plan_quarter_kpi_target(master_plan, quarter_no):
+    ret = '' 
+    kpis = DomainKPI.objects.filter(program=program) 
+    for kpi in kpis:
+        kpi_schemas = DomainKPISchema.objects.filter(kpi=kpi, quarter=quarter_no)
+        for kpi_schema in kpi_schemas:
+            ret += kpi_schema.target
+    return quarter_no
+
+@register.simple_tag
+def print_master_plan_quarter_kpi_result(master_plan, quarter_no):
+    return quarter_no
+

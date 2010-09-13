@@ -12,12 +12,28 @@
 	<!-- Master Plan -->
 	<div class="master_plans">
 		<ul>
-			{% for master_plan in master_plans %}
+			{% for master_plan in sector.master_plans %}
 			<li>แผน {{master_plan.ref_no}} {{master_plan.name}}</li>
 			{% endfor %}
 		</ul>
 	</div>
-	
+
+	<table border="1" width="100%">
+		<th rowspan="2">กิจกรรมที่สำนักต้องดำเนินการ</th>
+		{% generate_quarter_table_header quarter_year %}
+		<tr>
+			{% for i in 4|get_range %}
+			<td>คาดการณ์</td>
+			<td>ผลที่เกิด</td>
+			{% endfor %}
+		</tr>
+		{% for master_plan in sector.master_plans %}
+		<tr>
+			<td>{{ master_plan.name }}</td>
+			<td></td>
+		</tr>
+		{% endfor %}
+	</table>
 	
 </div>
 {% endblock %}

@@ -44,6 +44,13 @@ def abbr_month_year(datetime):
 def week_elapse(value):
     return utilities.week_elapse_text(value)
 
+# Utilities ############################################################
+
+@register.filter
+def get_range(value):
+    # credit: http://djangosnippets.org/snippets/1357/
+    return range(value)
+
 # FORM #################################################################
 
 @register.simple_tag

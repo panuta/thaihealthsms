@@ -16,6 +16,9 @@ class DomainKPI(models.Model):
     year = models.IntegerField(default=0) # gregorian calendar year
     unit_name = models.CharField(max_length=300)
 
+    class Meta:
+        ordering = ['id']
+
 class DomainKPISchedule(models.Model):
     kpi = models.ForeignKey('DomainKPI')
     program = models.ForeignKey('domain.Program', null=True)
