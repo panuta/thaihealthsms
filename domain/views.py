@@ -267,16 +267,17 @@ def view_program_overview(request, program_id):
     current_date = date.today()
     current_projects = Project.objects.filter(program=program, start_date__lte=current_date, end_date__gte=current_date)
     
+    # REPORT
+    (late_report_count, rejected_report_count) = report_functions.get_late_rejected_report_count(program)
     recent_reports = ReportSubmission.objects.filter(program=program).filter(Q(state=APPROVED_ACTIVITY) | (Q(state=SUBMITTED_ACTIVITY) & (Q(report__need_approval=False) | Q(report__need_checkup=False)))).order_by('-submitted_on')[:settings.RECENT_REPORTS_ON_PROGRAM_OVERVIEW]
     
-    overdue_report_count = 0
-    for assignment in ReportAssignment.objects.filter(program=program):
-        overdue_report_count = overdue_report_count + report_functions.get_sending_report_count(program, assignment.report)['overdue']
+    # BUDGET
+    late_budget_schedules = BudgetSchedule.objects.filter(program=program, schedule_on__lt=current_date, claimed_on=None)
     
     # TODO - KPI -- Current KPI value
     # TODO - BUDGET -- Late, Near (optional)
     
-    return render_page_response(request, 'overview', 'page_program/program_overview.html', {'program':program, 'current_projects':current_projects, 'overdue_report_count':overdue_report_count, 'recent_reports':recent_reports})
+    return render_page_response(request, 'overview', 'page_program/program_overview.html', {'program':program, 'current_projects':current_projects, 'late_report_count':late_report_count, 'rejected_report_count':rejected_report_count, 'recent_reports':recent_reports, 'late_budget_schedules':late_budget_schedules})
 
 @login_required
 def view_program_projects(request, program_id):

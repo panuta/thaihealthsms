@@ -118,6 +118,8 @@ def after_syncdb(sender, **kwargs):
     
     PermissionName.objects.get_or_create(permission='master_plan manage', name='จัดการแผนหลัก')
     
+    PermissionName.objects.get_or_create(permission='program reports late-rejected', name='ดูรายงานที่เลยกำหนดหรือถูกตีกลับของแผนงาน')
+    
     # KPI
     PermissionName.objects.get_or_create(permission='program kpi edit target', name='แก้ไขตัวเลขคาดการณ์ตัวชี้วัด')
     PermissionName.objects.get_or_create(permission='program kpi edit result', name='แก้ไขตัวเลขผลที่เกิดของตัวชี้วัด')
@@ -136,6 +138,8 @@ def after_syncdb(sender, **kwargs):
     
     
     # FOR SECTOR MANAGER
+    UserPermission.objects.get_or_create(permission='program reports late-rejected', role=sector_manager_role, only_responsible=True)
+    
     UserPermission.objects.get_or_create(permission='program kpi edit target', role=sector_manager_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program kpi edit result', role=sector_manager_role, only_responsible=True)
     
@@ -146,6 +150,8 @@ def after_syncdb(sender, **kwargs):
     UserPermission.objects.get_or_create(permission='report submission approve', role=sector_manager_role, only_responsible=True)
     
     # FOR SECTOR MANAGER ASSISTANT
+    UserPermission.objects.get_or_create(permission='program reports late-rejected', role=sector_manager_assistant_role, only_responsible=True)
+    
     UserPermission.objects.get_or_create(permission='program kpi edit target', role=sector_manager_assistant_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program kpi edit result', role=sector_manager_assistant_role, only_responsible=True)
     
@@ -156,6 +162,8 @@ def after_syncdb(sender, **kwargs):
     UserPermission.objects.get_or_create(permission='report submission approve', role=sector_manager_assistant_role, only_responsible=True)
     
     # FOR SECTOR SPECIALIST
+    UserPermission.objects.get_or_create(permission='program reports late-rejected', role=sector_specialist_role, only_responsible=True)
+    
     UserPermission.objects.get_or_create(permission='program kpi edit target', role=sector_specialist_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program kpi edit result', role=sector_specialist_role, only_responsible=True)
     
@@ -166,10 +174,14 @@ def after_syncdb(sender, **kwargs):
     UserPermission.objects.get_or_create(permission='report submission approve', role=sector_specialist_role, only_responsible=True)
     
     # FOR PROGRAM MANAGER
+    UserPermission.objects.get_or_create(permission='program reports late-rejected', role=program_manager_role, only_responsible=True)
+    
     UserPermission.objects.get_or_create(permission='report submission edit', role=program_manager_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='report submission submit', role=program_manager_role, only_responsible=True)
     
     # FOR PROGRAM MANAGER ASSISTANT
+    UserPermission.objects.get_or_create(permission='program reports late-rejected', role=program_manager_assistant_role, only_responsible=True)
+    
     UserPermission.objects.get_or_create(permission='report submission edit', role=program_manager_assistant_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='report submission submit', role=program_manager_assistant_role, only_responsible=True)
     

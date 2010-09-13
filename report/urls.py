@@ -8,7 +8,10 @@ urlpatterns = patterns('report.views',
     url(r'^master_plan/manage/report/(?P<report_id>\d+)/edit/$', 'view_master_plan_manage_report_edit_report', name='view_master_plan_manage_report_edit_report'),
     url(r'^master_plan/manage/report/(?P<report_id>\d+)/delete/$', 'view_master_plan_manage_report_delete_report', name='view_master_plan_manage_report_delete_report'),
     
-    url(r'^program/(?P<program_id>\d+)/reports/$', 'view_program_reports', name='view_program_reports'),
+    
+    url(r'^program/(?P<program_id>\d+)/reports/$', 'view_program_reports', {'year_number':''}, name='view_program_reports'),
+    url(r'^program/(?P<program_id>\d+)/reports/(?P<year_number>\d+)/$', 'view_program_reports', name='view_program_reports_year'),
+    
     url(r'^program/(?P<program_id>\d+)/reports/send/$', 'view_program_reports_send_list', name='view_program_reports_send_list'),
     url(r'^program/(?P<program_id>\d+)/reports/send/(?P<report_id>\d+)/$', 'view_program_reports_send_report', name='view_program_reports_send_report'),
     

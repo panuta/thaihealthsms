@@ -19,3 +19,9 @@ def determine_schedule_status(schedule):
             return 'future'
         else:
             return 'today'
+
+def get_late_budget_schedule_for_program(program):
+    current_date = date.today()
+    schedules = BudgetSchedule.objects.filter(program=program, schedule_on__lt=current_date, claimed_on=None)
+    
+    

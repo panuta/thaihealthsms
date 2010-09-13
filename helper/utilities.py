@@ -76,25 +76,39 @@ def make_random_user_password():
     return ''.join([choice(allow_password_chars) for i in range(random_password_length)])
 
 # MASTER PLAN YEAR
-def master_plan_current_year_span(master_plan):
+def master_plan_current_year_span():
     today = date.today()
-    month_span = master_plan.month_span
     
-    if month_span.start_month == 1:
+    if settings.QUARTER_START_MONTH == 1:
         return (date(today.year, 1, 1), date(today.year, 12, 31))
     else:
-        if today.month >= month_span.start_month:
+        if today.month >= settings.QUARTER_START_MONTH:
             return (
-                date(today.year, month_span.start_month, 1),
-                date(today.year+1, month_span.start_month-1, calendar.monthrange(today.year+1, month_span.start_month-1)[1])
+                date(today.year, settings.QUARTER_START_MONTH, 1),
+                date(today.year+1, settings.QUARTER_START_MONTH-1, calendar.monthrange(today.year+1, settings.QUARTER_START_MONTH-1)[1])
                 )
         else:
             return (
-                date(today.year-1, month_span.start_month, 1),
-                date(today.year, month_span.start_month-1, calendar.monthrange(today.year, month_span.start_month-1)[1])
+                date(today.year-1, settings.QUARTER_START_MONTH, 1),
+                date(today.year, settings.QUARTER_START_MONTH-1, calendar.monthrange(today.year, settings.QUARTER_START_MONTH-1)[1])
                 )
 
-def master_plan_current_year_number(master_plan):
+def master_plan_year_span(year_number):
+    if settings.QUARTER_START_MONTH == 1:
+        return (date(year_number, 1, 1), date(year_number, 12, 31))
+    else:
+        if settings.QUARTER_LOWER_YEAR_NUMBER:
+            return (
+                date(year_number, settings.QUARTER_START_MONTH, 1),
+                date(year_number+1, settings.QUARTER_START_MONTH-1, calendar.monthrange(year_number+1, settings.QUARTER_START_MONTH-1)[1])
+                )
+        else:
+            return (
+                date(year_number-1, settings.QUARTER_START_MONTH, 1),
+                date(year_number, settings.QUARTER_START_MONTH-1, calendar.monthrange(year_number, settings.QUARTER_START_MONTH-1)[1])
+                )
+        
+def master_plan_current_year_number():
     today = date.today()
     
     if settings.QUARTER_START_MONTH == 1:

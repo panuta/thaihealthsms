@@ -23,6 +23,7 @@ $(document).ready(function() {
 </div>
 
 <div class="program_reports_page_send">
+	{% if submissions %}
     <ul class="submissions">
     {% for submission in submissions %}
         <li>
@@ -31,5 +32,8 @@ $(document).ready(function() {
         </li>
     {% endfor %}
     </ul>
+	{% else %}
+	<div class="ss_no_information">ไม่มีกำหนดส่งรายงาน</div>
+	{% endif %}
 </div>
 {% endblock %}

@@ -2,7 +2,14 @@
 {% load helper_tags page_tags core_tags %}
 
 {% block html_head %}
-
+<script type="text/javascript">
+$(document).ready(function() {
+    $(".toggle-notice-panel").click(function(e) {
+		e.preventDefault();
+		$(this).closest("div.notice_panel").find("ul").slideToggle();
+    });
+});
+</script>
 {% endblock %}
 
 {% block body_title %}{% display_program_header user program %}{% endblock %}
@@ -17,6 +24,43 @@
 </div>
 
 <div class="program_reports_page">
+	
+	{% if late_submissions %}
+	<div class="notice_panel">
+		<div class="headline">มีรายงานเลยกำหนดส่ง {{late_submissions|length}} รายงาน [ <a href="#" class="toggle-notice-panel">แสดง/ซ่อนรายละเอียด</a> ]</div>
+		<ul style="display:none;">
+			{% for submission in late_submissions %}
+			<li>
+				<div class="name"><a href="{% url view_report_overview submission.program.id submission.report.id submission.schedule_date|dateid %}">{{submission.schedule_date|abbr_date}} - {{submission.report.name}}</a></div>
+				<div class="date">เลยกำหนดส่งมาแล้ว {{submission.schedule_date|week_elapse}}</div>
+			</li>
+			{% endfor %}
+		</ul>
+	</div>
+	{% endif %}
+	
+	{% if rejected_submissions %}
+	<div class="notice_panel">
+		<div class="headline">มีรายงานถูกตีกลับ {{rejected_submissions|length}} รายงาน [ <a href="#" class="toggle-notice-panel">แสดง/ซ่อนรายละเอียด</a> ]</div>
+		<ul style="display:none;">
+            {% for submission in rejected_submissions %}
+            <li>
+                <div class="name"><a href="{% url view_report_overview submission.program.id submission.report.id submission.schedule_date|dateid %}">{{submission.schedule_date|abbr_date}} - {{submission.report.name}}</a></div>
+                <div class="date">ถูกตีกลับเมื่อวันที่ {{submission.approval_on|full_date}}</div>
+            </li>
+            {% endfor %}
+        </ul>
+	</div>
+    {% endif %}
+	
+	<div class="year_choices">
+		<span class="caption">รายงานในปี</span>
+		{% for year in year_choices %}
+		{% if year_number == year %}<span>{{year|add:543}}</span>{% else %}<a href="{% url view_program_reports_year program.id year|add:543 %}">{{year|add:543}}</a>{% endif %} |
+		{% endfor %}
+	</div>
+	<div class="date_span">รายงานในช่วงวันที่ {{start_date|full_date}} ถึงวันที่ {{end_date|full_date}}</div>
+	
     {% if submissions %}
         <ul>
         {% for submission in submissions %}

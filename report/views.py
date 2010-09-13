@@ -248,25 +248,22 @@ def view_master_plan_manage_report_delete_report(request, report_id):
 #
 
 @login_required
-def view_program_reports(request, program_id):
+def view_program_reports(request, program_id, year_number):
     program = get_object_or_404(Program, id=program_id)
     
-    """
-    if kpi_year:
-        year_number = int(year) - 543
+    if year_number:
+        year_number = int(year_number) - 543
     else:
-        year_number = utilities.master_plan_current_year_number(program.plan.master_plan)
+        year_number = utilities.master_plan_current_year_number()
     
-    utilities.master_plan_current_year_span(program.plan.master_plan)
+    year_choices = []
+    for i in range(1, -3, -1):
+        year_choices.append(year_number + i)
     
-    submissions = ReportSubmission.objects.filter(program=program).filter(Q(state=APPROVED_ACTIVITY) | (Q(state=SUBMITTED_ACTIVITY) & (Q(report__need_approval=False) | Q(report__need_checkup=False)))).order_by('-schedule_date')
-    """
+    (start_date, end_date) = utilities.master_plan_year_span(year_number)
+    (submissions, late_submissions, rejected_submissions) = report_functions.get_reports_for_program_reports_page(program, start_date, end_date, request.user)
     
-    # TODO Categorize by year and report type
-    
-    submissions = ReportSubmission.objects.filter(program=program).filter(Q(state=APPROVED_ACTIVITY) | (Q(state=SUBMITTED_ACTIVITY) & (Q(report__need_approval=False) | Q(report__need_checkup=False)))).order_by('-schedule_date')
-    
-    return render_page_response(request, 'reports', 'page_program/program_reports.html', {'program':program, 'submissions':submissions})
+    return render_page_response(request, 'reports', 'page_program/program_reports.html', {'program':program, 'submissions':submissions, 'late_submissions':late_submissions, 'rejected_submissions':rejected_submissions, 'start_date':start_date, 'end_date':end_date, 'year_number':year_number, 'year_choices':year_choices})
 
 #
 # PROGRAM REPORTS - SEND
@@ -615,6 +612,8 @@ def view_report_reference(request, program_id, report_id, schedule_dateid):
     ref_kpi_schedules = []
     ref_budget_schedules = []
     
+    kpi_set = set()
+    
     try:
         submission = ReportSubmission.objects.get(program=program, report=report, schedule_date=schedule_date)
         references = ReportSubmissionReference.objects.filter(submission=submission)
@@ -624,6 +623,7 @@ def view_report_reference(request, program_id, report_id, schedule_dateid):
                 ref_projects.append(reference)
                 
             elif reference.kpi_schedule:
+                kpi_set.add(reference.kpi_schedule.kpi)
                 ref_kpi_schedules.append(reference)
                 
             elif reference.budget_schedule:
@@ -632,7 +632,17 @@ def view_report_reference(request, program_id, report_id, schedule_dateid):
     except:
         submission = ReportSubmission(program=program, report=report, schedule_date=schedule_date)
     
-    return render_page_response(request, 'reference', 'page_report/report_reference.html', {'submission':submission, 'ref_projects':ref_projects, 'ref_kpi_schedules':ref_kpi_schedules, 'ref_budget_schedules':ref_budget_schedules})
+    kpis = []
+    for kpi in kpi_set:
+        references = []
+        for reference in ref_kpi_schedules:
+            if reference.kpi_schedule.kpi == kpi:
+                references.append(reference)
+        
+        kpi.references = references
+        kpis.append(kpi)
+    
+    return render_page_response(request, 'reference', 'page_report/report_reference.html', {'submission':submission, 'ref_projects':ref_projects, 'kpis':kpis, 'ref_budget_schedules':ref_budget_schedules})
 
 @login_required
 def view_report_reference_edit_reference(request, program_id, report_id, schedule_dateid):
@@ -640,11 +650,78 @@ def view_report_reference_edit_reference(request, program_id, report_id, schedul
     report = get_object_or_404(Report, pk=report_id)
     schedule_date = utilities.convert_dateid_to_date(schedule_dateid)
     
-    print schedule_date
-    
     try:
         submission = ReportSubmission.objects.get(program=program, report=report, schedule_date=schedule_date)
     except:
         submission = ReportSubmission(program=program, report=report, schedule_date=schedule_date)
     
-    return render_page_response(request, 'reference', 'page_report/report_reference_edit.html', {'submission':submission,})
+    if request.method == 'POST':
+        for form_project in request.POST.getlist('project'):
+            try:
+                project = Project.objects.get(pk=form_project)
+            except Project.DoesNotExist:
+                pass
+            else:
+                if not submission.id: submission.save()
+                (reference, created) = ReportSubmissionReference.objects.get_or_create(submission=submission, project=project)
+                reference.description = request.POST.get('desc_project_%d' % project.id)
+                reference.save()
+        
+        for form_kpi in request.POST.getlist('kpi'):
+            try:
+                kpi_schedule = DomainKPISchedule.objects.get(pk=form_kpi)
+            except DomainKPISchedule.DoesNotExist:
+                pass
+            else:
+                if not submission.id: submission.save()
+                (reference, created) = ReportSubmissionReference.objects.get_or_create(submission=submission, kpi_schedule=kpi_schedule)
+                reference.description = request.POST.get('desc_kpi_%d' % kpi_schedule.id)
+                reference.save()
+        
+        for form_budget in request.POST.getlist('budget'):
+            try:
+                budget_schedule = BudgetSchedule.objects.get(pk=form_budget)
+            except DomainbudgetSchedule.DoesNotExist:
+                pass
+            else:
+                if not submission.id: submission.save()
+                (reference, created) = ReportSubmissionReference.objects.get_or_create(submission=submission, budget_schedule=budget_schedule)
+                reference.description = request.POST.get('desc_budget_%d' % budget_schedule.id)
+                reference.save()
+        
+        return redirect('view_report_reference', program.id, report.id, schedule_dateid)
+    
+    projects = Project.objects.filter(program=program).order_by('name')
+    
+    kpis = []
+    for dict in DomainKPISchedule.objects.filter(program=program).values('kpi').distinct():
+        kpi = DomainKPI.objects.get(pk=dict['kpi'])
+        kpi.schedules = DomainKPISchedule.objects.filter(program=program, kpi=kpi).order_by('quarter_year', 'quarter')
+        kpis.append(kpi)
+    
+    budget_schedules = BudgetSchedule.objects.filter(program=program).order_by('schedule_on')
+    
+    if submission.id:
+        submission = ReportSubmission.objects.get(program=program, report=report, schedule_date=schedule_date)
+        
+        for reference in ReportSubmissionReference.objects.filter(submission=submission):
+            if reference.project:
+                for project in projects:
+                    if project.id == reference.project.id:
+                        project.has_reference = True
+                        project.reference_description = reference.description
+                        
+            elif reference.kpi_schedule:
+                for kpi in kpis:
+                    for schedule in kpi.schedules:
+                        if schedule.id == reference.kpi_schedule.id:
+                            schedule.has_reference = True
+                            schedule.reference_description = reference.description
+                
+            elif reference.budget_schedule:
+                for schedule in budget_schedules:
+                    if schedule.id == reference.budget_schedule.id:
+                        schedule.has_reference = True
+                        schedule.reference_description = reference.description
+    
+    return render_page_response(request, 'reference', 'page_report/report_reference_edit.html', {'submission':submission, 'projects':projects, 'kpis':kpis, 'budget_schedules':budget_schedules})

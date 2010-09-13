@@ -10,11 +10,27 @@
 
 {% block body_content %}
 <div class="program_overview_page">
-	{% if overdue_report_count %}
-	<div class="notice_important">
-		มีรายงานเลยกำหนดส่ง {{overdue_report_count}} ฉบับ [ดูรายละเอียด]
+	
+	{% if late_budget_schedules %}
+	{% for schedule in late_budget_schedules %}
+	<div class="notice_panel">
+		<div class="headline">เลยกำหนดการเบิกจ่ายงวดวันที่ {{schedule.schedule_on|abbr_date}} มาแล้ว {{schedule.schedule_on|week_elapse}} [ <a href="{% url view_budget_overview schedule.id %}">หน้างวดเบิกจ่าย</a> ]</div>
 	</div>
+	{% endfor %}
 	{% endif %}
+	
+	{% if late_report_count %}
+    <div class="notice_panel">
+        <div class="headline">มีรายงานเลยกำหนดส่ง {{late_report_count}} รายงาน [ <a href="{% url view_program_reports program.id %}">ดูรายละเอียดที่หน้ารายงาน</a> ]</div>
+    </div>
+    {% endif %}
+	
+	{% if rejected_report_count %}
+    <div class="notice_panel">
+        <div class="headline">มีรายงานถูกตีกลับ {{rejected_report_count}} รายงาน [ <a href="{% url view_program_reports program.id %}">ดูรายละเอียดที่หน้ารายงาน</a> ]</div>
+    </div>
+    {% endif %}
+	
 	
 	<h2 class="h2">โครงการที่ดำเนินอยู่</h2>
 	<div class="projects">
@@ -35,8 +51,8 @@
         <ul>
             {% for submission in recent_reports %}
             <li>
-            	<div class="date">ฉบับวันที่ {{submission.schedule_date|full_date}}</div>
             	<div class="report_name"><a href="{% url view_report_overview program.id submission.report.id submission.schedule_date|dateid %}">{{submission.report.name}}</a></div>
+				<div class="date">ฉบับวันที่ {{submission.schedule_date|full_date}}</div>
 				<div class="details">ส่งเมื่อวันที่ {{submission.submitted_on|full_datetime}}</div>
 			</li>
             {% endfor %}

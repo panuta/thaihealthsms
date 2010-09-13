@@ -13,7 +13,8 @@ from django.conf import settings
 from accounts.models import *
 from domain.models import *
 from report.models import *
-from helper import utilities
+
+from helper import utilities, permission
 
 # For creating report
 def generate_report_schedule_start(start_now, schedule_monthly_date):
@@ -33,6 +34,90 @@ def generate_report_schedule_start(start_now, schedule_monthly_date):
             schedule_start = date(current_date.year, current_date.month+1, schedule_monthly_date)
     
     return schedule_start
+
+# Used in Program Overview page
+def get_late_rejected_report_count(program):
+    current_date = date.today()
+    
+    late_count = 0
+    for assignment in ReportAssignment.objects.filter(program=program):
+        report = assignment.report
+        
+        if report.due_type == REPORT_REPEAT_DUE:
+            repeatable = ReportDueRepeatable.objects.get(report=report)
+            
+            next_date = repeatable.schedule_start
+            while next_date < current_date:
+                try:
+                    submission = ReportSubmission.objects.get(report=report, program=program, schedule_date=next_date)
+                    if submission.state == NO_ACTIVITY or submission.state == EDITING_ACTIVITY:
+                        late_count = late_count + 1
+                except ReportSubmission.DoesNotExist:
+                    late_count = late_count + 1
+                
+                next_date = _get_next_schedule(next_date, repeatable)
+        
+        elif report.due_type == REPORT_DUE_DATES:
+            for due_date in ReportDueDates.objects.filter(report=report, due_date__lt=current_date):
+                try:
+                    submission = ReportSubmission.objects.get(report=report, program=program, schedule_date=due_date.due_date)
+                    if (submission.state == NO_ACTIVITY or submission.state == EDITING_ACTIVITY) and due_date.due_date < current_date:
+                        late_count = late_count + 1
+                except ReportSubmission.DoesNotExist:
+                    late_count = late_count + 1
+    
+    rejected_count = ReportSubmission.objects.filter(program=program, state=REJECTED_ACTIVITY).count()
+    
+    return (late_count, rejected_count)
+
+def get_reports_for_program_reports_page(program, start_date, end_date, request_user):
+    submissions = ReportSubmission.objects.filter(program=program, schedule_date__gte=start_date, schedule_date__lte=end_date).filter(Q(state=APPROVED_ACTIVITY) | (Q(state=SUBMITTED_ACTIVITY) & (Q(report__need_approval=False) | Q(report__need_checkup=False)))).order_by('-schedule_date')
+    late_submissions = []
+    rejected_submissions = []
+    
+    if permission.access_obj(request_user, 'program reports late-rejected', program):
+        current_date = date.today()
+        
+        for assignment in ReportAssignment.objects.filter(program=program):
+            report = assignment.report
+            
+            if report.due_type == REPORT_REPEAT_DUE:
+                repeatable = ReportDueRepeatable.objects.get(report=report)
+                
+                next_date = repeatable.schedule_start
+                while next_date < current_date:
+                    try:
+                        submission = ReportSubmission.objects.get(report=report, program=program, schedule_date=next_date)
+                    except:
+                        submission = ReportSubmission(report=report, program=program, schedule_date=next_date)
+                    
+                    if submission.state == NO_ACTIVITY or submission.state == EDITING_ACTIVITY:
+                        late_submissions.append(submission)
+                    
+                    next_date = _get_next_schedule(next_date, repeatable)
+                
+                for submission in ReportSubmission.objects.filter(report=report, program=program, state=REJECTED_ACTIVITY):
+                    rejected_submissions.append(submission)
+            
+            elif report.due_type == REPORT_DUE_DATES:
+                for due_date in ReportDueDates.objects.filter(report=report, due_date__lt=current_date):
+                    try:
+                        submission = ReportSubmission.objects.get(report=report, program=program, schedule_date=due_date.due_date)
+                    except:
+                        submission = ReportSubmission(report=report, program=program, schedule_date=due_date.due_date)
+                    
+                    if (submission.state == NO_ACTIVITY or submission.state == EDITING_ACTIVITY) and due_date.due_date < current_date:
+                        late_submissions.append(submission)
+                        
+                    elif submission.state == REJECTED_ACTIVITY:
+                        rejected_submissions.append(submission)
+    
+    submissions = list(submissions)
+    submissions.sort(key=lambda item:item.schedule_date, reverse=True)
+    late_submissions.sort(key=lambda item:item.schedule_date, reverse=False)
+    rejected_submissions.sort(key=lambda item:item.schedule_date, reverse=False)
+    
+    return (submissions, late_submissions, rejected_submissions)
 
 #
 # SEND REPORT PAGE
@@ -137,7 +222,7 @@ def get_sending_report(program, report):
         
         for due_date in ReportDueDates.objects.filter(report=report).order_by('due_date'):
             try:
-                submission = ReportSubmission.objects.get(report=report, program=program, schedule_date=next_date)
+                submission = ReportSubmission.objects.get(report=report, program=program, schedule_date=due_date.due_date)
             except:
                 submission = ReportSubmission(report=report, program=program, schedule_date=due_date.due_date)
             

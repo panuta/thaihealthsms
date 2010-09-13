@@ -46,6 +46,20 @@ class PlanChoiceField(forms.ModelChoiceField):
 	def label_from_instance(self, obj):
 		return unicode('%s %s', 'utf-8') % (obj.ref_no, obj.name)
 
+class ProjectMultipleChoiceField(forms.ModelMultipleChoiceField):
+    widget = forms.CheckboxSelectMultiple
+    
+    def __init__(self, *args, **kwargs):
+        kwargs['empty_label'] = None
+        kwargs['queryset'] = Project.objects.all().order_by('ref_no')
+        forms.ModelChoiceField.__init__(self, *args, **kwargs)
+    
+    def label_from_instance(self, obj):
+    	if obj.ref_no:
+    		return '(' + obj.ref_no + ') ' + obj.name
+     	else:
+     		return obj.name
+
 # FORM CLASSES
 
 class PlanModifyForm(forms.Form):

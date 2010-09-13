@@ -220,11 +220,14 @@ h2.h2 {font-size:138.5%;padding-bottom:5px;margin-bottom:10px;color:#2D8659;bord
 .program_overview_page .projects {margin:10px 0px 20px;}
 .program_overview_page .projects li {list-style:disc;margin-left:20px;}
 
+.program_overview_page .notice_panel {background-color:#FCC;border:1px solid #999;padding:10px;margin-bottom:20px;}
+.program_overview_page .notice_panel .headline {font-size:108%;}
+
 .program_overview_page .reports {margin:15px 0px 20px;}
 .program_overview_page .reports li {list-style:disc;margin:0px 0px 15px 20px;}
 .program_overview_page .reports li a {font-size:108%;}
-.program_overview_page .reports .date {color:#666;font-weight:bold;font-size:116%;margin-bottom:5px;}
-.program_overview_page .reports .report_name {color:#333;margin-bottom:8px;}
+.program_overview_page .reports .date {color:#666;font-weight:bold;font-size:108%;margin-bottom:5px;}
+.program_overview_page .reports .report_name {color:#333;margin-bottom:8px;font-size:108%;}
 .program_overview_page .reports .details {color:#666;}
 
 
@@ -275,9 +278,20 @@ h2.h2 {font-size:138.5%;padding-bottom:5px;margin-bottom:10px;color:#2D8659;bord
 .program_projects_page .ss_table .end_date {width:120px;text-align:center;}
 
 /* PROGRAM - REPORT */
+.program_reports_page .notice_panel {background-color:#FCC;border:1px solid #999;padding:10px;margin-bottom:20px;}
+.program_reports_page .notice_panel .headline {font-size:108%;}
+.program_reports_page .notice_panel ul {margin:10px 0px 0px 30px;}
+.program_reports_page .notice_panel li {margin-bottom:10px;}
+.program_reports_page .notice_panel li .date {color:#666;margin-top:5px;}
+
+.program_reports_page .year_choices {font-size:108%;}
+.program_reports_page .year_choices span.caption {margin-right:10px;}
+.program_reports_page .year_choices span {font-weight:bold;}
+.program_reports_page .date_span {font-size:123.1%;color:#333;margin:10px 0px 20px;}
+
 .program_reports_page h2 {font-size:138.5%;margin:5px 0px 10px;border-bottom:1px dashed #CCC;padding-bottom:5px;}
 .program_reports_page ul {margin:0px 0px 20px 30px;}
-.program_reports_page ul li {margin-bottom:25px;list-style:disc;}
+.program_reports_page ul li {margin-bottom:20px;list-style:disc;}
 .program_reports_page .ss_no_information {margin-left:15px;}
 
 .program_reports_page .report_period {font-size:116%;margin-bottom:15px;}
@@ -389,12 +403,20 @@ h2.h2 {font-size:138.5%;padding-bottom:5px;margin-bottom:10px;color:#2D8659;bord
 #upload-file-dialog button {margin-top:10px;padding:3px 10px;border-top:1px solid #CCC;border-left:1px solid #CCC;border-bottom:1px solid #999;border-right:1px solid #999;background-color:#369;cursor:pointer;color:#FFF;}
 
 .report_reference_page {}
-.report_reference_page h3 {font-size:123.1%;color:#2D8659;border-bottom:3px solid #999;padding:10px 0px;margin-bottom:10px;}
+.report_reference_page h3 {font-size:108%;margin-bottom:10px;color:#666;}
 .report_reference_page ul {margin:0px 0px 20px 15px;}
-.report_reference_page li {font-size:108%;margin-bottom:10px;}
-.report_reference_page li label {}
+.report_reference_page li {font-size:108%;margin:0px 0px 20px 15px;list-style:disc;}
+.report_reference_page li .description {background-color:#FFC;margin-top:8px;border:1px solid #CCC;padding:4px 8px;}
 
-.report_reference_edit_page {}
+.report_reference_edit_page .ss_form .button_panel {margin-left:0px;}
+.report_reference_edit_page h2 {font-size:123.1%;background-color:#666;color:#FFF;margin-bottom:10px;padding:5px 10px;}
+.report_reference_edit_page h3 {font-size:108%;margin-bottom:10px;color:#2D8659;}
+.report_reference_edit_page ul {margin-bottom:25px;}
+.report_reference_edit_page li {margin-bottom:15px;}
+.report_reference_edit_page li input {vertical-align:10%;margin-right:7px;}
+.report_reference_edit_page li.project {margin:10px 0px 10px 0px;font-size:108%;}
+.report_reference_edit_page li .description input {margin:5px 0px 0px 25px;width:550px;}
+
 
 /*
  * KPI
@@ -415,8 +437,8 @@ h2.h2 {font-size:138.5%;padding-bottom:5px;margin-bottom:10px;color:#2D8659;bord
 .budget_page .budget_status .caption {color:#666;margin-bottom:7px;}
 .budget_page .budget_status .status {border:1px dashed #999;padding:7px 10px;}
 
-.budget_page .budget_status .budget_status .future {color:#999;}
-.budget_page .budget_status .budget_status .late {color:#C30;}
+.budget_page .budget_status .status .future {color:#999;}
+.budget_page .budget_status .status .late {color:#C30;}
 
 .budget_page .budget_value {border:1px solid #CCC;background-color:#EEE;padding:10px 10px 0px;font-size:123.1%;margin-bottom:20px;}
 .budget_page .budget_value div {margin-bottom:10px;}
