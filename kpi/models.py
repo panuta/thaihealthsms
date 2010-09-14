@@ -6,14 +6,15 @@ class DomainKPICategory(models.Model):
     name = models.CharField(max_length=300)
 
 class DomainKPI(models.Model):
+    master_plan = models.ForeignKey('domain.MasterPlan', null=True)
+    plan = models.ForeignKey('domain.Plan', null=True)
+    program = models.ForeignKey('domain.Program', null=True)
+    category = models.ForeignKey('DomainKPICategory', null=True)
     ref_no = models.CharField(max_length=100)
     name = models.CharField(max_length=1000)
     abbr_name = models.CharField(max_length=200, default='')
     year = models.IntegerField(default=0) # gregorian calendar year
     unit_name = models.CharField(max_length=300)
-    category = models.ForeignKey('DomainKPICategory', null=True)
-    master_plan = models.ForeignKey('domain.MasterPlan', null=True)
-    program = models.ForeignKey('domain.Program', null=True)
 
 class DomainKPISchedule(models.Model):
     kpi = models.ForeignKey('DomainKPI')
