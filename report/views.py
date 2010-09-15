@@ -600,8 +600,25 @@ def view_report_overview(request, program_id, report_id, schedule_dateid):
         
     submission.files = ReportSubmissionFileResponse.objects.filter(submission=submission)
     
-    return render_page_response(request, 'overview', 'page_report/report_overview.html', {'submission':submission, 'REPORT_SUBMIT_FILE_URL':settings.REPORT_SUBMIT_FILE_URL})
+    # REFERENCE
+    ref_projects = []
+    ref_kpi_schedules = []
+    ref_budget_schedules = []
+    
+    if submission.id:
+        for reference in ReportSubmissionReference.objects.filter(submission=submission):
+            if reference.project:
+                ref_projects.append(reference)
+                
+            elif reference.kpi_schedule:
+                ref_kpi_schedules.append(reference)
+                
+            elif reference.budget_schedule:
+                ref_budget_schedules.append(reference)
+    
+    return render_page_response(request, 'overview', 'page_report/report_overview.html', {'submission':submission, 'REPORT_SUBMIT_FILE_URL':settings.REPORT_SUBMIT_FILE_URL, 'ref_projects':ref_projects, 'ref_kpi_schedules':ref_kpi_schedules, 'ref_budget_schedules':ref_budget_schedules})
 
+"""
 @login_required
 def view_report_reference(request, program_id, report_id, schedule_dateid):
     program = get_object_or_404(Program, pk=program_id)
@@ -642,10 +659,11 @@ def view_report_reference(request, program_id, report_id, schedule_dateid):
         kpi.references = references
         kpis.append(kpi)
     
-    return render_page_response(request, 'reference', 'page_report/report_reference.html', {'submission':submission, 'ref_projects':ref_projects, 'kpis':kpis, 'ref_budget_schedules':ref_budget_schedules})
+    return render_page_response(request, 'reference', 'page_report/report_reference.html', {'submission':submission, 'ref_projects':ref_projects, 'kpis':kpis, 'ref_kpi_schedules':ref_kpi_schedules, 'ref_budget_schedules':ref_budget_schedules})
+"""
 
 @login_required
-def view_report_reference_edit_reference(request, program_id, report_id, schedule_dateid):
+def view_report_overview_edit_reference(request, program_id, report_id, schedule_dateid):
     program = get_object_or_404(Program, pk=program_id)
     report = get_object_or_404(Report, pk=report_id)
     schedule_date = utilities.convert_dateid_to_date(schedule_dateid)
@@ -689,7 +707,7 @@ def view_report_reference_edit_reference(request, program_id, report_id, schedul
                 reference.description = request.POST.get('desc_budget_%d' % budget_schedule.id)
                 reference.save()
         
-        return redirect('view_report_reference', program.id, report.id, schedule_dateid)
+        return redirect('view_report_overview', program.id, report.id, schedule_dateid)
     
     projects = Project.objects.filter(program=program).order_by('name')
     
@@ -702,8 +720,6 @@ def view_report_reference_edit_reference(request, program_id, report_id, schedul
     budget_schedules = BudgetSchedule.objects.filter(program=program).order_by('schedule_on')
     
     if submission.id:
-        submission = ReportSubmission.objects.get(program=program, report=report, schedule_date=schedule_date)
-        
         for reference in ReportSubmissionReference.objects.filter(submission=submission):
             if reference.project:
                 for project in projects:
@@ -724,4 +740,4 @@ def view_report_reference_edit_reference(request, program_id, report_id, schedul
                         schedule.has_reference = True
                         schedule.reference_description = reference.description
     
-    return render_page_response(request, 'reference', 'page_report/report_reference_edit.html', {'submission':submission, 'projects':projects, 'kpis':kpis, 'budget_schedules':budget_schedules})
+    return render_page_response(request, 'overview', 'page_report/report_overview_edit_reference.html', {'submission':submission, 'projects':projects, 'kpis':kpis, 'budget_schedules':budget_schedules})

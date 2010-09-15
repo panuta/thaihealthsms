@@ -22,8 +22,7 @@ urlpatterns = patterns('report.views',
     url(r'^program/reports/manage/(?P<report_id>\d+)/delete/$', 'view_program_reports_manage_report_delete_report', name='view_program_reports_manage_report_delete_report'),
     
     url(r'^program/(?P<program_id>\d+)/report/(?P<report_id>\d+)/(?P<schedule_dateid>\w+)/$', 'view_report_overview', name='view_report_overview'),
-    url(r'^program/(?P<program_id>\d+)/report/(?P<report_id>\d+)/(?P<schedule_dateid>\w+)/reference/$', 'view_report_reference', name='view_report_reference'),
-    url(r'^program/(?P<program_id>\d+)/report/(?P<report_id>\d+)/(?P<schedule_dateid>\w+)/reference/edit/$', 'view_report_reference_edit_reference', name='view_report_reference_edit_reference'),
+    url(r'^program/(?P<program_id>\d+)/report/(?P<report_id>\d+)/(?P<schedule_dateid>\w+)/reference/edit/$', 'view_report_overview_edit_reference', name='view_report_overview_edit_reference'),
 )
 
 urlpatterns += patterns('report.ajax',

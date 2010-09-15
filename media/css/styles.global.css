@@ -34,8 +34,10 @@ a:hover {color:#FFF;background-color:#369;}
 #body-tabs li {color:#ED6912;background-color:#888;font-size:108%;font-weight:bold;height:20px;padding:6px 15px 4px;display:block;float:left;margin-right:10px;}
 #body-tabs li.right_item {float:right;margin-right:0px;margin-left:10px;}
 #body-tabs li.selected {background-color:#FFF;}
-#body-tabs li a:link, #body-tabs li a:visited, #body-tabs li a:active {color:#FFF;text-decoration:none;}
+#body-tabs li a {color:#FFF;text-decoration:none;}
 #body-tabs li a:hover {color:#F39659;text-decoration:underline;background:none;}
+#body-tabs li.selected a {color:#ED6912;}
+#body-tabs li.selected a:hover {color:#ED6912;}
 #body-tabs li img {vertical-align:middle;margin-right:8px;}
 
 #body-content {padding:15px;}
@@ -66,6 +68,12 @@ a:hover {color:#FFF;background-color:#369;}
 .ss_control_panel ul li img {margin-right:5px;vertical-align:middle;}
 .ss_control_panel ul li a {color:#333 !important;}
 .ss_control_panel ul li a:hover {color:#FFF !important;}
+
+.ss_sub_control_panel {margin-bottom:15px;}
+.ss_sub_control_panel ul {border-bottom:1px solid #999;}
+.ss_sub_control_panel ul li {font-size:108%;color:#333;padding:0px 15px 8px;display:inline-block;display:-moz-inline-stack;*display:inline;list-style:none;zoom:1;}
+.ss_sub_control_panel ul li img {margin-right:5px;vertical-align:middle;}
+
 
 /* Page Section */
 .ss_section {margin:0px 0px 20px;border-bottom:1px solid #CCC;}

@@ -26,11 +26,37 @@
     <div class="remark">{{schedule.remark}}</div>
     {% endif %}
 	
+	<div class="reference_section">
 	<h2 class="h2">ข้อมูลประกอบ</h2>
-	{% if references %}
+	<div class="ss_sub_control_panel">
+		<ul>
+	        <li><img src="{{MEDIA_URL}}/images/toolbar/edit_reference.png" class="icon"/><a href="{% url view_budget_overview_edit_reference schedule.id %}">แก้ไขข้อมูลประกอบ</a></li>
+	    </ul>
+	</div>
+	
+	{% if ref_projects or ref_report_submissions %}
+	<ul class="ss_reference_list">
+		{% for reference in ref_projects %}
+        <li>
+        	<div class="project_name"><a href="{% url view_project_overview reference.project.id %}">{{reference.project.name}}</a></div>
+			{% if reference.description %}<div class="description">{{reference.description}}</div>{% endif %}
+        </li>
+        {% endfor %}
+		
+		{% for reference in ref_report_submissions %}
+		<li>
+            <div>
+            	<div class="report_name"><a href="{% url view_report_overview reference.report_submission.program.id reference.report_submission.report.id reference.report_submission.schedule_date|dateid %}">{{reference.report_submission.report.name}}</a></div>
+				<div class="report_date">ฉบับวันที่ {{reference.report_submission.schedule_date|abbr_date}}</div>
+			</div>
+            {% if reference.description %}<div class="description">{{reference.description}}</div>{% endif %}
+        </li>
+		{% endfor %}
+	</ul>
 	{% else %}
 	<div class="ss_no_information">ไม่มีข้อมูลประกอบ</div>
 	{% endif %}
+	</div>
 	
     <h2 class="h2">ประวัติการแก้ไข</h2>
 	<table class="revisions">

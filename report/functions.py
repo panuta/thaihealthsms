@@ -247,6 +247,17 @@ def get_sending_report(program, report):
 
 # END -- SEND REPORT PAGE
 
+def get_reports_for_edit_reference(program):
+    reports = []
+    for assignment in ReportAssignment.objects.filter(program=program, is_active=True):
+        report = assignment.report
+        report.submissions = ReportSubmission.objects.filter(program=program, report=report).filter(Q(state=APPROVED_ACTIVITY) | (Q(state=SUBMITTED_ACTIVITY) & (Q(report__need_approval=False) | Q(report__need_checkup=False)))).order_by('-schedule_date')
+        
+        if report.submissions:
+            reports.append(report)
+    
+    return reports
+
 #
 # REPORT NOTIFICATION
 #

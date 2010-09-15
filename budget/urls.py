@@ -9,6 +9,7 @@ urlpatterns = patterns('budget.views',
     url(r'^program/(?P<program_id>\d+)/budget/$', 'view_program_budget', name='view_program_budget'),
     
     url(r'^budget/(?P<schedule_id>\d+)/$', 'view_budget_overview', name='view_budget_overview'),
+    url(r'^budget/(?P<schedule_id>\d+)/reference/edit/$', 'view_budget_overview_edit_reference', name='view_budget_overview_edit_reference'),
 )
 
 urlpatterns += patterns('budget.ajax',

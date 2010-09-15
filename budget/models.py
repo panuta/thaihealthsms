@@ -20,3 +20,4 @@ class BudgetScheduleReference(models.Model):
     schedule = models.ForeignKey('BudgetSchedule', related_name='schedule')
     project = models.ForeignKey('domain.Project', null=True)
     report_submission = models.ForeignKey('report.ReportSubmission', null=True)
+    description = models.CharField(max_length=1000, blank=True)

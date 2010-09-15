@@ -28,5 +28,6 @@ class DomainKPISchedule(models.Model):
 class DomainKPIScheduleReference(models.Model):
     schedule = models.ForeignKey('DomainKPISchedule', related_name='schedule')
     project = models.ForeignKey('domain.Project', null=True)
-    kpi_schedule = models.ForeignKey('DomainKPISchedule', null=True, related_name='kpi_schedule_source')
+    kpi_schedule = models.ForeignKey('DomainKPISchedule', null=True, related_name='kpi_schedule_source') # NOT CURRENTLY USED
     report_submission = models.ForeignKey('report.ReportSubmission', null=True)
+    description = models.CharField(max_length=1000, blank=True)

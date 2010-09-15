@@ -175,6 +175,47 @@ $(document).ready(function() {
             {% endif %}
         {% endif %}
     </div>
+	
+	<div class="reference_section">
+    <h2 class="h2">ข้อมูลประกอบ</h2>
+    <div class="ss_sub_control_panel">
+        <ul>
+            <li><img src="{{MEDIA_URL}}/images/toolbar/edit_reference.png" class="icon"/><a href="{% url view_report_overview_edit_reference submission.program.id submission.report.id submission.schedule_date|dateid %}">แก้ไขข้อมูลประกอบ</a></li>
+        </ul>
+    </div>
+	
+	{% if ref_projects or ref_kpi_schedules or ref_budget_schedules %}
+    <ul class="ss_reference_list">
+        {% for reference in ref_projects %}
+        <li>
+            <div><a href="{% url view_project_overview reference.project.id %}">{{reference.project.name}}</a></div>
+            {% if reference.description %}<div class="description">{{reference.description}}</div>{% endif %}
+        </li>
+        {% endfor %}
+        
+        {% for reference in ref_kpi_schedules %}
+        <li>
+            <div>
+                <div><a href="{% url view_kpi_overview reference.kpi_schedule.id %}">{{reference.kpi_schedule.kpi.name}}</a></div>
+                <div class="details">ไตรมาสที่ {{reference.kpi_schedule.quarter}} ปี {{reference.kpi_schedule.quarter_year|add:543}} | คาดการณ์ {{reference.kpi_schedule.target}} {{reference.kpi_schedule.kpi.unit_name}} | เกิดขึ้นจริง {{reference.kpi_schedule.result}} {{reference.kpi_schedule.kpi.unit_name}}</div>
+            </div>
+            {% if reference.description %}<div class="description">{{reference.description}}</div>{% endif %}
+        </li>
+        {% endfor %}
+		
+		{% for reference in ref_budget_schedules %}
+        <li>
+            <div>
+            	<div><a href="{% url view_budget_overview reference.budget_schedule.id %}">งวดเบิกจ่ายวันที่ {{reference.budget_schedule.schedule_on|abbr_date}}</a></div>
+				<div class="details">ตากการณ์ {{reference.budget_schedule.grant_budget}} เบิกจ่ายจริง {{reference.budget_schedule.claim_budget}}</div>
+            </div>
+            {% if reference.description %}<div class="description">{{reference.description}}</div>{% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <div class="ss_no_information">ไม่มีข้อมูลประกอบ</div>
+    {% endif %}
 </div>
 <div id="upload-file-dialog">
     <form method="post" action="." enctype="multipart/form-data">

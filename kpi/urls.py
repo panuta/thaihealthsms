@@ -22,6 +22,7 @@ urlpatterns = patterns('kpi.views',
     
     # KPI Schedule
     url(r'^kpi/(?P<schedule_id>\d+)/$', 'view_kpi_overview', name='view_kpi_overview'),
+    url(r'^kpi/(?P<schedule_id>\d+)/reference/edit/$', 'view_kpi_overview_edit_reference', name='view_kpi_overview_edit_reference'),
 )
 
 urlpatterns += patterns('kpi.ajax',

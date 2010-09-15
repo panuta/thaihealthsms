@@ -1,0 +1,50 @@
+{% extends 'page_base.html' %}
+{% load helper_tags page_tags core_tags humanize %}
+
+{% block html_head %}
+
+{% endblock %}
+
+{% block body_title %}{% display_kpi_header user schedule %}{% endblock %}
+{% block body_tabs %}{% tabs_for_kpi page user schedule %}{% endblock %}
+
+{% block body_content %}
+<div class="ss_breadcrumbs">
+    <div class="breadcrumbs"><a href="{% url view_budget_overview schedule.id %}">หน้าตัวชี้วัด</a> &#187;</div>
+    <h2>แก้ไขข้อมูลประกอบ</h2>
+</div>
+
+<div class="ss_edit_reference_page">
+    <form class="ss_form" method="post" action=".">
+        {% csrf_token %}
+        
+        <h2>โครงการ</h2>
+        <ul>
+        {% for project in projects %}
+            <li class="project">
+                <div><input type="checkbox" id="project_{{project.id}}" name="project" value="{{project.id}}" {% if project.has_reference %}checked="checked"{% endif %}/> <label for="project_{{project.id}}">{{project.name}}</label></div>
+                <div class="description">หมายเหตุ: <input type="text" value="{{project.reference_description}}" name="desc_project_{{project.id}}"/></div>
+            </li>
+        {% endfor %}
+        </ul>
+        
+        <h2>รายงาน</h2>
+        {% for report in reports %}
+            <h3>{{report.name}}</h3>
+            <ul>
+                {% for submission in report.submissions %}
+                <li class="report">
+                    <div><input type="checkbox" id="report_{{submission.id}}" name="report" value="{{submission.id}}" {% if submission.has_reference %}checked="checked"{% endif %}/> <label for="report_{{submission.id}}">ฉบับวันที่ {{submission.schedule_date|abbr_date}}</label></div>
+                    <div class="description">หมายเหตุ: <input type="text" value="{{submission.reference_description}}" name="desc_report_{{submission.id}}"/></div>
+                </li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+        {% if not reports %}
+        <div class="ss_no_information">ไม่มีรายงาน</div>
+        {% endif %}
+        
+        <div class="button_panel"><button class="submit-button">บันทึกการแก้ไข</button></div>
+    </form>
+</div>
+{% endblock %}

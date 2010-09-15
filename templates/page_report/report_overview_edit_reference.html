@@ -10,11 +10,11 @@
 
 {% block body_content %}
 <div class="ss_breadcrumbs">
-    <div class="breadcrumbs"><a href="{% url view_report_reference submission.program.id submission.report.id submission.schedule_date|dateid %}">หน้าข้อมูลประกอบรายงาน</a> &#187;</div>
+    <div class="breadcrumbs"><a href="{% url view_report_overview submission.program.id submission.report.id submission.schedule_date|dateid %}">เนื้อหารายงาน</a> &#187;</div>
     <h2>แก้ไขข้อมูลประกอบ</h2>
 </div>
 
-<div class="report_reference_edit_page">
+<div class="ss_edit_reference_page">
     <form class="ss_form" method="post" action=".">
     	{% csrf_token %}
 		
@@ -23,7 +23,7 @@
 		{% for project in projects %}
 		    <li class="project">
 		    	<div><input type="checkbox" id="project_{{project.id}}" name="project" value="{{project.id}}" {% if project.has_reference %}checked="checked"{% endif %}/> <label for="project_{{project.id}}">{{project.name}}</label></div>
-				<div class="description"><input type="text" value="{{project.reference_description}}" name="desc_project_{{project.id}}"/></div>
+				<div class="description">หมายเหตุ: <input type="text" value="{{project.reference_description}}" name="desc_project_{{project.id}}"/></div>
 		    </li>
 		{% endfor %}
 		</ul>
@@ -35,21 +35,28 @@
             	{% for schedule in kpi.schedules %}
 				<li class="kpi">
 					<div><input type="checkbox" id="kpi_{{schedule.id}}" name="kpi" value="{{schedule.id}}" {% if schedule.has_reference %}checked="checked"{% endif %}/> <label for="kpi_{{schedule.id}}">ไตรมาสที่ {{schedule.quarter}} ปี {{schedule.quarter_year}} | คาดการณ์ {{schedule.target}} {{kpi.unit_name}} | ผลที่เกิด {{schedule.result}} {{kpi.unit_name}}</label></div>
-					<div class="description"><input type="text" value="{{schedule.reference_description}}" name="desc_kpi_{{schedule.id}}"/></div>
+					<div class="description">หมายเหตุ: <input type="text" value="{{schedule.reference_description}}" name="desc_kpi_{{schedule.id}}"/></div>
 				</li>
 				{% endfor %}
 			</ul>
 		{% endfor %}
+		{% if not kpis %}
+		<div class="ss_no_information">แผนงานไม่มีข้อมูลการชี้วัด</div>
+		{% endif %}
 		
 		<h2>การเบิกจ่าย</h2>
+		{% if budget_schedules %}
 		<ul>
         {% for schedule in budget_schedules %}
            <li class="budget">
                <div><input type="checkbox" id="budget_{{schedule.id}}" name="budget" value="{{schedule.id}}" {% if schedule.has_reference %}checked="checked"{% endif %}/> <label for="budget_{{schedule.id}}">เบิกจ่ายวันที่ {{schedule.schedule_on|abbr_date}} | คาดการณ์ {{schedule.grant_budget}} บาท | เบิกจ่ายจริง {{schedule.claim_budget}} บาท</label></div>
-			   <div class="description"><input type="text" value="{{schedule.reference_description}}" name="desc_budget_{{schedule.id}}"/></div>
+			   <div class="description">หมายเหตุ: <input type="text" value="{{schedule.reference_description}}" name="desc_budget_{{schedule.id}}"/></div>
 		    </li>
         {% endfor %}
         </ul>
+		{% else %}
+        <div class="ss_no_information">แผนงานไม่มีข้อมูลแผนการเงิน</div>
+        {% endif %}
 		
         <div class="button_panel"><button class="submit-button">บันทึกการแก้ไข</button></div>
 	</form>

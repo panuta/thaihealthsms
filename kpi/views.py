@@ -8,7 +8,10 @@ from django.shortcuts import get_object_or_404, redirect
 from forms import *
 from models import *
 
-from domain.models import Sector, MasterPlan, Program
+from report import functions as report_functions
+
+from domain.models import Sector, MasterPlan, Program, Project
+from report.models import ReportAssignment, ReportSubmission
 
 from helper import utilities, permission
 from helper.shortcuts import render_response, render_page_response, access_denied
@@ -309,5 +312,60 @@ def view_program_kpi(request, program_id):
 @login_required
 def view_kpi_overview(request, schedule_id):
     schedule = get_object_or_404(DomainKPISchedule, pk=schedule_id)
-    references = DomainKPIScheduleReference.objects.filter(schedule=schedule)
-    return render_page_response(request, 'overview', 'page_kpi/kpi_overview.html', {'schedule':schedule, 'references':references})
+    
+    ref_projects = []
+    ref_report_submissions = []
+    
+    for reference in DomainKPIScheduleReference.objects.filter(schedule=schedule):
+        if reference.project:
+            ref_projects.append(reference)
+        elif reference.report_submission:
+            ref_report_submissions.append(reference)
+    
+    return render_page_response(request, 'overview', 'page_kpi/kpi_overview.html', {'schedule':schedule, 'ref_projects':ref_projects, 'ref_report_submissions':ref_report_submissions})
+
+@login_required
+def view_kpi_overview_edit_reference(request, schedule_id):
+    schedule = get_object_or_404(DomainKPISchedule, pk=schedule_id)
+    
+    if request.method == 'POST':
+        for form_project in request.POST.getlist('project'):
+            try:
+                project = Project.objects.get(pk=form_project)
+            except Project.DoesNotExist:
+                pass
+            else:
+                (reference, created) = DomainKPIScheduleReference.objects.get_or_create(schedule=schedule, project=project)
+                reference.description = request.POST.get('desc_project_%d' % project.id)
+                reference.save()
+        
+        for form_report in request.POST.getlist('report'):
+            try:
+                report_submission = ReportSubmission.objects.get(pk=form_report)
+            except ReportSubmission.DoesNotExist:
+                pass
+            else:
+                (reference, created) = DomainKPIScheduleReference.objects.get_or_create(schedule=schedule, report_submission=report_submission)
+                reference.description = request.POST.get('desc_report_%d' % report_submission.id)
+                reference.save()
+        
+        return redirect('view_kpi_overview', schedule.id)
+    
+    projects = Project.objects.filter(program=schedule.program).order_by('name')
+    reports = report_functions.get_reports_for_edit_reference(schedule.program)
+    
+    for reference in DomainKPIScheduleReference.objects.filter(schedule=schedule):
+        if reference.project:
+            for project in projects:
+                if project.id == reference.project.id:
+                    project.has_reference = True
+                    project.reference_description = reference.description
+        
+        elif reference.report_submission:
+            for report in reports:
+                for submission in report.submissions:
+                    if submission.id == reference.report_submission.id:
+                        submission.has_reference = True
+                        submission.reference_description = reference.description
+    
+    return render_page_response(request, 'overview', 'page_kpi/kpi_overview_edit_reference.html', {'schedule':schedule, 'projects':projects, 'reports':reports})
