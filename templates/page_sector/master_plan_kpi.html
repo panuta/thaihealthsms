@@ -24,16 +24,16 @@
 					<ul>
 						<li>{{ plan.name }} ({{ plan.ref_no }})</li>
 						{% for program in plan.program_set.all %}
-							<li>{{ program.name }} [{% print_program_kpis program %}]</li>
+							<li><a href="{% url view_program_overview program.id %}">{{ program.name }}</a> [{% print_program_kpis program %}]</li>
 						{% endfor %}
 					</ul>
 				</td>
 				{% for quarter_no in 4|get_range %}
 					<td>
-						{% print_master_plan_quarter_kpi_target master_plan quarter_no %}
+						{% print_master_plan_quarter_kpi 'target' plan quarter_year quarter_no %}
 					</td>
 					<td>
-						{% print_master_plan_quarter_kpi_result master_plan quarter_no %}
+						{% print_master_plan_quarter_kpi 'result' plan quarter_year quarter_no %}
 					</td>
 				{% endfor %}
 			</tr>

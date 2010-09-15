@@ -48,8 +48,7 @@ def week_elapse(value):
 
 @register.filter
 def get_range(value):
-    # credit: http://djangosnippets.org/snippets/1357/
-    return range(value)
+    return [i+1 for i in range(value)]
 
 # FORM #################################################################
 
