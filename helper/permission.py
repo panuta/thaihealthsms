@@ -87,7 +87,7 @@ def access_obj(user, permissions, obj, at_least_one_permission=True):
         else:
             return len(permissions) == 0
 
-def role_access(user, roles):
+def has_roles(user, roles):
     user_groups = user.groups.all()
     roles = roles.split(',')
     

@@ -99,7 +99,6 @@ INSTALLED_APPS = (
     'thaihealthsms.comment',
     'thaihealthsms.domain',
     'thaihealthsms.helper',
-    'thaihealthsms.homepage',
     'thaihealthsms.kpi',
     'thaihealthsms.report',
     

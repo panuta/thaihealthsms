@@ -11,7 +11,7 @@
 <div class="program_projects_page">
 	<div class="ss_control_panel">
         <ul>
-            <li><img src="{{MEDIA_URL}}/images/toolbar/create.png" class="icon"/><a href="{% url view_program_add_project program.id %}">เพิ่มโครงการ</a></li>
+			{% access user 'program project add' program %}<li><img src="{{MEDIA_URL}}/images/toolbar/create.png" class="icon"/><a href="{% url view_program_add_project program.id %}">เพิ่มโครงการ</a></li>{% endaccess %}
 			<li><img src="{{MEDIA_URL}}/images/toolbar/calendar.png" class="icon"/><a href="#">ปฏิทินกิจกรรม</a></li>
         </ul>
     </div>
@@ -19,7 +19,9 @@
 	{% if projects %}
     <table class="ss_table">
         <tr>
-        	<th class="controls"></th>
+        	{% access user 'program project edit' program %}
+			    <th class="controls"></th>
+		    {% endaccess %}
             <th class="ref_no">รหัสโครงการ</th>
             <th class="contract_no">เลขที่สัญญา</th>
             <th class="name">ชื่อโครงการ</th>
@@ -28,9 +30,11 @@
         </tr>
         {% for project in projects %}
         <tr>
+        	{% access user 'program project edit' program %}
         	<td class="controls">
         		<a href="{% url view_program_edit_project project.id %}" title="แก้ไขโครงการ"><img src="{{MEDIA_URL}}/images/icons/edit.png" class="icon"/></a>
 			</td>
+			{% endaccess %}
             <td class="ref_no">{% if project.ref_no %}{{project.ref_no}}{% else %}-{% endif %}</td>
             <td class="contract_no">{% if project.contract_no %}{{project.contract_no}}{% else %}-{% endif %}</td>
             <td class="name"><a href="{% url view_project_overview project.id %}">{{project.name}}</a></td>

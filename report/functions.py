@@ -36,11 +36,16 @@ def generate_report_schedule_start(start_now, schedule_monthly_date):
     return schedule_start
 
 # Used in Program Overview page
-def get_late_rejected_report_count(program):
+def get_late_rejected_report_count(program, include_program_reports=False):
     current_date = date.today()
     
+    if include_program_reports:
+        assignments = ReportAssignment.objects.filter(program=program)
+    else:
+        assignments = ReportAssignment.objects.filter(program=program, report__program=None)
+    
     late_count = 0
-    for assignment in ReportAssignment.objects.filter(program=program):
+    for assignment in assignments:
         report = assignment.report
         
         if report.due_type == REPORT_REPEAT_DUE:

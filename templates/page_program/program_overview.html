@@ -48,7 +48,7 @@
 	<h2 class="h2">รายงานล่าสุด</h2>
 	<div class="reports">
 		{% if recent_reports %}
-        <ul>
+        <ul class="ss_report_submission">
             {% for submission in recent_reports %}
             <li>
             	<div class="report_name"><a href="{% url view_report_overview program.id submission.report.id submission.schedule_date|dateid %}">{{submission.report.name}}</a></div>

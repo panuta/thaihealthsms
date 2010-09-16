@@ -40,7 +40,7 @@ $(document).ready(function() {
 				{% if report.removable %}
                 <span><img src="{{MEDIA_URL}}/images/page/report_delete.png" class="icon"/> <a href="{% url view_master_plan_manage_report_delete_report report.id  %}" title="ลบหัวเรื่องรายงาน" class="delete-report">ลบ</a></span>
                 {% else %}
-                <span title="ไม่สามารถลบหัวเรื่องรายงานที่แผนงานหรือโครงการยังใช้อยู่ หรือมีการส่งรายงานไปแล้วได้"><img src="{{MEDIA_URL}}/images/page/record_delete.png" class="icon"/> ลบ</span>
+                <span title="ไม่สามารถลบหัวเรื่องรายงานที่แผนงานหรือโครงการยังใช้อยู่ หรือมีการส่งรายงานไปแล้วได้"><img src="{{MEDIA_URL}}/images/page/report_delete.png" class="icon"/> ลบ</span>
                 {% endif %}
 			</div>
         </li>

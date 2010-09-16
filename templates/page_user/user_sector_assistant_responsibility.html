@@ -1,0 +1,44 @@
+{% extends 'page_base.html' %}
+{% load helper_tags page_tags %}
+
+{% block html_head %}
+
+{% endblock %}
+
+{% block body_title %}<h1>หน้า{{primary_role.roledetails.name}}</h1>{% endblock %}
+
+{% block body_content %}
+<div class="ss_breadcrumbs">
+    <div class="breadcrumbs"><a href="{% url view_user_homepage %}">หน้า{{primary_role.roledetails.name}}</a> &#187;</div>
+    <h2>เพิ่ม/ลบแผนงานที่รับผิดชอบ</h2>
+</div>
+
+<div class="assistant_responsibility_page">
+	<form method="post" action="." class="ss_form">
+		{% csrf_token %}
+		
+        {% for master_plan in master_plans %}
+            <h2 class="h2">แผน {{master_plan.ref_no}}</h2>
+			
+			{% if master_plan.plans %}
+			{% for plan in master_plan.plans %}
+			    <h3>กลุ่มแผนงาน {{plan.name}}</h3>
+				{% if plan.programs %}
+			    <ul>
+	                {% for program in plan.programs %}
+	                <li><label><input type="checkbox" name="program" value="{{program.id}}" {% if program.responsible %}checked="checked"{% endif %}/> ({{program.ref_no}}) {{program.name}}</label></li>
+	                {% endfor %}
+	            </ul>
+				{% else %}
+				<div class="ss_no_information">ไม่มีแผนงาน</div>
+				{% endif %}
+			{% endfor %}
+			{% else %}
+			<div class="ss_no_information">ไม่มีแผนงาน</div>
+			{% endif %}
+        {% endfor %}
+        
+        <div class="button_panel"><button>แก้ไขข้อมูล</button></div>
+    </form>
+</div>
+{% endblock %}

@@ -13,15 +13,15 @@ from helper import permission, utilities
 
 @register.simple_tag
 def display_header_navigation(user):
-    html = '<a href="%s"><img src="%s/images/base/nav_home.png" class="icon"/> หน้าผู้ใช้</a>' % (reverse('view_homepage'), settings.MEDIA_URL)
+    html = '<a href="%s"><img src="%s/images/base/nav_home.png" class="icon"/> หน้าผู้ใช้</a> |' % (reverse('view_user_homepage'), settings.MEDIA_URL)
     
     if not user.is_superuser:
-        html = html + '<a href="%s"><img src="%s/images/base/nav_inbox.png" class="icon"/> ข้อความ</a>' % (reverse('view_user_inbox'), settings.MEDIA_URL)
+        html = html + '<a href="%s"><img src="%s/images/base/nav_inbox.png" class="icon"/> ข้อความ</a> |' % (reverse('view_user_inbox'), settings.MEDIA_URL)
     
     if user.is_superuser:
-        html = html + '<a href="%s"><img src="%s/images/base/nav_admin.png" class="icon"/> จัดการระบบ</a>' % (reverse('view_administration'), settings.MEDIA_URL)
+        html = html + '<a href="%s"><img src="%s/images/base/nav_admin.png" class="icon"/> จัดการระบบ</a> |' % (reverse('view_administration'), settings.MEDIA_URL)
     
-    html = html + '<a href="%s"><img src="%s/images/base/nav_org.png" class="icon"/> ผังองค์กร</a>' % (reverse('view_organization'), settings.MEDIA_URL)
+    html = html + '<a href="%s"><img src="%s/images/base/nav_org.png" class="icon"/> ผังองค์กร</a> |' % (reverse('view_organization'), settings.MEDIA_URL)
     
     return html
 
@@ -51,7 +51,12 @@ def display_program_header(user, program):
 
 @register.simple_tag
 def display_project_header(user, project):
-    return unicode('<div class="supertitle"><a href="%s">แผนงาน %s - %s</a></div><h1>โครงการ (%s) %s</h1><div class="subtitle"><img src="%s/images/icons/edit.png" class="icon"/> <a href="%s">แก้ไขโครงการ</a></div>', 'utf-8') % (reverse('view_program_overview', args=[project.program.id]), project.program.ref_no, project.program.name, project.ref_no, project.name, settings.MEDIA_URL, reverse('view_project_edit_project', args=[project.id]))
+    header_html = unicode('<div class="supertitle"><a href="%s">แผนงาน %s - %s</a></div><h1>โครงการ (%s) %s</h1>', 'utf-8') % (reverse('view_program_overview', args=[project.program.id]), project.program.ref_no, project.program.name, project.ref_no, project.name)
+    
+    if permission.access_obj(user, 'program project edit', project.program):
+        header_html = header_html + unicode('<div class="subtitle"><img src="%s/images/icons/edit.png" class="icon"/> <a href="%s">แก้ไขโครงการ</a></div>', 'utf-8') % (settings.MEDIA_URL, reverse('view_project_edit_project', args=[project.id]))
+    
+    return header_html
 
 @register.simple_tag
 def display_project_edit_header(user, project):
@@ -139,8 +144,11 @@ def tabs_for_manage_master_plan(page, master_plan):
     if page == 'report': html = html + '<li class="selected"><a href="%s">รายงาน</a></li>' % reverse('view_master_plan_manage_report', args=[master_plan.ref_no])
     else: html = html + '<li><a href="%s">รายงาน</a></li>' % reverse('view_master_plan_manage_report', args=[master_plan.ref_no])
     
-    if page == 'kpi': html = html + '<li class="selected"><a href="%s">ตัวชี้วัด</a></li>' % reverse('view_master_plan_manage_kpi', args=[master_plan.ref_no])
-    else: html = html + '<li><a href="%s">ตัวชี้วัด</a></li>' % reverse('view_master_plan_manage_kpi', args=[master_plan.ref_no])
+    if page == 'kpi': html = html + '<li class="selected"><a href="%s">ตัวชี้วัดแผนหลัก</a></li>' % reverse('view_master_plan_manage_kpi', args=[master_plan.ref_no])
+    else: html = html + '<li><a href="%s">ตัวชี้วัดแผนหลัก</a></li>' % reverse('view_master_plan_manage_kpi', args=[master_plan.ref_no])
+    
+    if page == 'kpi_category': html = html + '<li class="selected"><a href="%s">ประเภทตัวชี้วัด</a></li>' % reverse('view_master_plan_manage_kpi_category', args=[master_plan.ref_no])
+    else: html = html + '<li><a href="%s">ประเภทตัวชี้วัด</a></li>' % reverse('view_master_plan_manage_kpi_category', args=[master_plan.ref_no])
     
     return _generate_tabs(html)
 

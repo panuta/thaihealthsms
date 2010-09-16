@@ -40,6 +40,7 @@
     <div class="button_panel"><button type="submit">ตกลง</button></div>
 	
 	{% if project %}
+	{% access user 'program project delete' project.program %}
 	<div class="delete_link">
 		<img src="{{MEDIA_URL}}/images/icons/delete.png" class="icon"/>
 		
@@ -50,5 +51,6 @@
 		<div class="note">* ไม่สามารถลบโครงการที่มีกิจกรรมได้ ลบกิจกรรมออกให้หมดก่อนลบโครงการ</div>
         {% endif %}
 	</div>
+	{% endaccess %}
 	{% endif %}
 </form>

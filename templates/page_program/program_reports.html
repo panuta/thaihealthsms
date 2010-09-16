@@ -62,13 +62,14 @@ $(document).ready(function() {
 	<div class="date_span">รายงานในช่วงวันที่ {{start_date|full_date}} ถึงวันที่ {{end_date|full_date}}</div>
 	
     {% if submissions %}
-        <ul>
-        {% for submission in submissions %}
+	   <ul class="ss_report_submission">
+            {% for submission in submissions %}
             <li>
-                <div class="report_name"><a href="{% url view_report_overview submission.program.id submission.report.id submission.schedule_date|dateid %}">{{submission.schedule_date|abbr_date}} - {{submission.report.name}}</a></div>
-                <div class="metadata"><span class="submitted">ส่งเมื่อวันที่ {{submission.submitted_on|abbr_datetime}}</span>{% if submission.approval_on %}<span class="submitted">รับรองรายงานเมื่อวันที่ {{submission.approval_on|abbr_datetime}}</span>{% endif %}</div>
+                <div class="report_name"><a href="{% url view_report_overview program.id submission.report.id submission.schedule_date|dateid %}">{{submission.report.name}}</a></div>
+                <div class="date">ฉบับวันที่ {{submission.schedule_date|full_date}}</div>
+                <div class="details"><span>ส่งเมื่อวันที่ {{submission.submitted_on|full_datetime}}</span>{% if submission.approval_on %}<span>รับรองรายงานเมื่อวันที่ {{submission.approval_on|abbr_datetime}}</span>{% endif %}</div>
             </li>
-        {% endfor %}
+            {% endfor %}
         </ul>
     {% else %}
     <div class="ss_no_information">ไม่มีรายงาน</div>

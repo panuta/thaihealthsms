@@ -8,12 +8,12 @@ from models import *
 
 from helper.utilities import format_abbr_datetime
 
-def ajax_approve_report_schedule(request):
+def ajax_approve_report_submission(request):
     if request.method == 'POST':
         report_submission_id = request.POST['id']
         
         report_submission = ReportSubmission.objects.get(pk=report_submission_id)
-        report_submission.state = APPROVE_ACTIVITY
+        report_submission.state = APPROVED_ACTIVITY
         report_submission.approval_on = datetime.now()
         report_submission.save()
         
@@ -22,12 +22,12 @@ def ajax_approve_report_schedule(request):
     else:
         raise Http404
 
-def ajax_reject_report_schedule(request):
+def ajax_reject_report_submission(request):
     if request.method == 'POST':
         report_submission_id = request.POST['id']
         
         report_submission = ReportSubmission.objects.get(pk=report_submission_id)
-        report_submission.state = REJECT_ACTIVITY
+        report_submission.state = REJECTED_ACTIVITY
         report_submission.approval_on = datetime.now()
         report_submission.save()
         

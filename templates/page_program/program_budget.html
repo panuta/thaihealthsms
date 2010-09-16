@@ -49,11 +49,13 @@ $(document).ready(function() {
 {% block body_tabs %}{% tabs_for_program page user program %}{% endblock %}
 
 {% block body_content %}
+{% access user 'master_plan manage' program.plan.master_plan %}
 <div class="ss_control_panel">
     <ul>
         <li><img src="{{MEDIA_URL}}/images/icons/manage.png" class="icon"/><a href="{% url view_master_plan_manage_program_budget program.id %}?{% back_to_this request %}">จัดการแผนการเงิน</a></li>
     </ul>
 </div>
+{% endaccess %}
 
 <div class="program_budget_page">
     

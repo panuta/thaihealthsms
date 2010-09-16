@@ -17,13 +17,6 @@ $(document).ready(function() {
 {% block body_tabs %}{% tabs_for_manage_master_plan page master_plan %}{% endblock %}
 
 {% block body_content %}
-<div class="ss_section">
-    <ul>
-        <li><a href="{% url view_master_plan_manage_kpi master_plan.ref_no %}">ตัวชี้วัดแผนหลัก</a></li>
-		<li class="selected">ประเภทตัวชี้วัด</li>
-    </ul>
-</div>
-
 <div class="ss_control_panel">
     <ul>
         <li><img src="{{MEDIA_URL}}/images/icons/create.png" class="icon"/><a href="{% url view_master_plan_manage_kpi_add_category master_plan.ref_no %}">เพิ่มประเภทตัวชี้วัด</a></li>

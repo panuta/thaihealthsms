@@ -1,4 +1,4 @@
-h2.h2 {font-size:138.5%;padding-bottom:5px;margin-bottom:10px;color:#2D8659;border-bottom:3px solid #999;}
+h2.h2 {font-size:146.5%;padding-bottom:5px;margin-bottom:10px;color:#2D8659;border-bottom:3px solid #999;}
 
 .ss_report_schedule li {border:1px solid #999;margin-bottom:15px;padding:10px;}
 .ss_report_schedule h4 {font-size:116%;color:#2D8659;border-bottom:1px dashed #999;padding-bottom:5px;}
@@ -9,7 +9,14 @@ h2.h2 {font-size:138.5%;padding-bottom:5px;margin-bottom:10px;color:#2D8659;bord
 .ss_report_schedule .actions {color:#666;margin-top:10px;border-top:1px dashed #999;padding-top:8px;}
 .ss_report_schedule .actions span {margin-right:20px;}
 
-.ss_reference_list {}
+.ss_report_submission li {list-style:disc;margin:0px 0px 15px 20px;}
+.ss_report_submission li a {font-size:108%;}
+.ss_report_submission .report_name {color:#333;margin-bottom:5px;font-size:108%;}
+.ss_report_submission .date {color:#333;font-weight:bold;font-size:108%;margin-bottom:5px;}
+.ss_report_submission .details {color:#666;}
+.ss_report_submission .details span {margin-right:20px;}
+
+
 .ss_reference_list li {list-style:disc;margin:0px 0px 20px 30px;}
 .ss_reference_list .description {background-color:#FFC;margin-top:8px;border:1px solid #CCC;padding:4px 8px;}
 .ss_reference_list .report_date {margin-top:5px;font-weight:bold;color:#666;}
@@ -80,16 +87,50 @@ h2.h2 {font-size:138.5%;padding-bottom:5px;margin-bottom:10px;color:#2D8659;bord
  */
 .user_page .setting_panel {margin-bottom:40px;}
 
-.dashboard_page h2 {font-size:138.5%;padding-bottom:5px;margin-bottom:10px;color:#2D8659;border-bottom:3px solid #999;}
+/* Assistant Dashboard Page */
+.assistant_dashboard_page .right_panel {float:right;width:300px;padding-left:20px;border-left:1px solid #999;}
+.assistant_dashboard_page .right_panel .title {background-color:#777;color:#FFF;font-size:123.1%;padding:5px 10px;border-bottom:2px solid #DDD;}
+.assistant_dashboard_page .right_panel .subtitle {color:#2D8659;font-size:116%;margin:10px 0px 6px;text-align:center;font-weight:bold;}
 
-.dashboard_page .primary_responsibility {font-size:108%;margin:10px 0px 15px;color:#666;border-bottom:1px solid #CCC;padding-bottom:10px;}
-.dashboard_page .primary_responsibility .sector {margin-right:10px;}
-.dashboard_page .primary_responsibility .master_plan {padding:0px 10px;}
+.assistant_dashboard_page .right_panel .sector {margin-bottom:20px;}
+.assistant_dashboard_page .right_panel .sector div {margin-bottom:7px;border-bottom:1px dashed #CCC;padding-bottom:10px;}
 
-.dashboard_page .responsibilities {margin-bottom:30px;}
-.dashboard_page .responsibilities li {margin-bottom:10px;}
-.dashboard_page .responsibilities li h3 {font-size:116%;margin-bottom:5px;}
-.dashboard_page .responsibilities li .name {color:#666;}
+.assistant_dashboard_page .right_panel .sector ul {}
+.assistant_dashboard_page .right_panel .sector li {display:inline;padding-right:10px;}
+
+.assistant_dashboard_page .right_panel .responsibilities li {border-bottom:1px dashed #CCC;margin-bottom:10px;padding-bottom:7px;}
+.assistant_dashboard_page .right_panel .responsibilities li .name {margin-top:6px;color:#555;}
+
+.assistant_dashboard_page .right_panel .actions {text-align:center;}
+.assistant_dashboard_page .right_panel .actions a {color:#666;}
+.assistant_dashboard_page .right_panel .actions a:hover {color:#FFF;}
+
+.assistant_dashboard_page .left_panel {margin-right:340px;}
+.assistant_dashboard_page .left_panel h3 {font-size:108%;margin-bottom:10px;background-color:#CCC;padding:7px 10px;border-bottom:2px solid #DDD;}
+.assistant_dashboard_page .left_panel h3 a {color:#000;}
+.assistant_dashboard_page .left_panel h3 a:hover {color:#FFF;}
+.assistant_dashboard_page .left_panel .ss_no_information {margin-left:10px;}
+
+.assistant_dashboard_page .left_panel .notice {background-color:#FDD;padding:10px;border:1px solid #999;margin-bottom:20px;}
+.assistant_dashboard_page .left_panel .notice ul {margin-bottom:10px;}
+.assistant_dashboard_page .left_panel .notice li {list-style:disc;margin-left:15px;}
+
+.assistant_dashboard_page .left_panel .action-confirmation {background-color:#CFC;color:#555;font-size:108%;}
+
+.assistant_dashboard_page .left_panel .approving {margin-bottom:20px;}
+.assistant_dashboard_page .left_panel .approving li {border:1px dashed #999;padding:10px;}
+.assistant_dashboard_page .left_panel .approving .name {font-size:116%;}
+.assistant_dashboard_page .left_panel .approving .details {font-size:116%;color:#666;font-weight:bold;margin:8px 0px;}
+.assistant_dashboard_page .left_panel .approving .submitted {color:#666;}
+.assistant_dashboard_page .left_panel .approving .actions {margin:10px 0px 5px;}
+.assistant_dashboard_page .left_panel .approving .actions button {cursor:pointer;padding:2px 10px;margin-right:20px;border-left:1px solid #DDD;border-top:1px solid #DDD;border-right:1px solid #999;border-bottom:1px solid #999;}
+.assistant_dashboard_page .left_panel .approving .actions .approve-report {background-color:#CFC;}
+.assistant_dashboard_page .left_panel .approving .actions .reject-report {background-color:#FCC;}
+
+.assistant_responsibility_page h3 {color:#2D8659;font-size:108%;margin:10px 0px;}
+.assistant_responsibility_page ul {margin-bottom:35px;}
+.assistant_responsibility_page ul li label {display:inline;}
+.assistant_responsibility_page .ss_no_information {margin-left:25px;}
 
 .user_page li.comment {margin-bottom:20px;}
 .user_page li.comment .source a {font-style:italic;font-size:108%;}
@@ -238,12 +279,6 @@ h2.h2 {font-size:138.5%;padding-bottom:5px;margin-bottom:10px;color:#2D8659;bord
 .program_overview_page .notice_panel .headline {font-size:108%;}
 
 .program_overview_page .reports {margin:15px 0px 20px;}
-.program_overview_page .reports li {list-style:disc;margin:0px 0px 15px 20px;}
-.program_overview_page .reports li a {font-size:108%;}
-.program_overview_page .reports .date {color:#666;font-weight:bold;font-size:108%;margin-bottom:5px;}
-.program_overview_page .reports .report_name {color:#333;margin-bottom:8px;font-size:108%;}
-.program_overview_page .reports .details {color:#666;}
-
 
 /* PROGRAM - KPI */
 .program_kpi_page {}
@@ -304,17 +339,8 @@ h2.h2 {font-size:138.5%;padding-bottom:5px;margin-bottom:10px;color:#2D8659;bord
 .program_reports_page .date_span {font-size:123.1%;color:#333;margin:10px 0px 20px;}
 
 .program_reports_page h2 {font-size:138.5%;margin:5px 0px 10px;border-bottom:1px dashed #CCC;padding-bottom:5px;}
-.program_reports_page ul {margin:0px 0px 20px 30px;}
-.program_reports_page ul li {margin-bottom:20px;list-style:disc;}
+.program_reports_page ul {margin:0px 0px 20px 0px;}
 .program_reports_page .ss_no_information {margin-left:15px;}
-
-.program_reports_page .report_period {font-size:116%;margin-bottom:15px;}
-
-.program_reports_page .report_name {margin-bottom:10px;font-size:108%;}
-.program_reports_page .report_name .due {margin-right:15px;color:#555;}
-.program_reports_page .metadata {color:#555;}
-.program_reports_page .metadata span {margin-right:15px;padding:0px 6px;}
-.program_reports_page .metadata span.submitted {background-color:#CFC;}
 
 .program_reports_page_manage h3 {font-size:138.5%;margin-bottom:10px;color:#333;}
 .program_reports_page_manage .ss_no_information {margin-left:15px;}

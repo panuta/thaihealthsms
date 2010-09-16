@@ -68,16 +68,3 @@ class MasterPlanProgramReportsForm(forms.Form):
             self.fields["reports"].queryset = Report.objects.filter(master_plan=master_plan).order_by('name')
     
     reports = ReportChoiceField(label='รายงาน', required=False)
-
-class ReportReferenceForm(forms.Form):
-    def __init__(self, *args, **kwargs):
-        program = kwargs.pop('program', None)
-        forms.Form.__init__(self, *args, **kwargs)
-        
-        if program:
-            self.fields['projects'].queryset = Project.objects.filter(program=program).order_by('ref_no')
-            self.program = program
-    
-    projects = ProjectMultipleChoiceField(label='โครงการ', required=False)
-    #kpi_schedules = ReportProjectChoiceField(label='โครงการ', required=False)
-    #budget_schedules = ReportProjectChoiceField(label='โครงการ', required=False)

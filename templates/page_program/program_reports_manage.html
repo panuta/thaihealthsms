@@ -47,7 +47,7 @@ $(document).ready(function() {
                 {% if report.removable %}
                 <span><img src="{{MEDIA_URL}}/images/page/report_delete.png" class="icon"/> <a href="{% url view_program_reports_manage_report_delete_report report.id  %}" title="ลบรอบการส่งรายงาน" class="delete-report">ลบ</a></span>
                 {% else %}
-                <span title="ไม่สามารถลบรายงานที่มีการส่งรายงานแล้วได้"><img src="{{MEDIA_URL}}/images/page/record_delete.png" class="icon"/> ลบ</span>
+                <span title="ไม่สามารถลบรายงานที่มีการส่งรายงานแล้วได้"><img src="{{MEDIA_URL}}/images/page/report_delete.png" class="icon"/> ลบ</span>
                 {% endif %}
             </div>
         </li>

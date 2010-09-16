@@ -20,7 +20,7 @@ urlpatterns = patterns('',
     
     (r'^admin/(.*)', admin.site.root),
     
-    url(r'^$', 'homepage.views.view_homepage', name='view_homepage'),
+    url(r'^$', 'accounts.views.view_user_homepage', name='view_user_homepage'),
 )
 
 if settings.DEBUG:

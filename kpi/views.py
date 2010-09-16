@@ -106,10 +106,13 @@ def view_master_plan_manage_program_kpi(request, program_id):
 def view_master_plan_manage_kpi(request, master_plan_ref_no, kpi_year):
     master_plan = get_object_or_404(MasterPlan, ref_no=master_plan_ref_no)
     
+    if not permission.access_obj(request.user, 'master_plan manage', master_plan):
+        return access_denied(request)
+    
     if kpi_year:
         year_number = int(kpi_year) - 543
     else:
-        year_number = utilities.master_plan_current_year_number(master_plan)
+        year_number = utilities.master_plan_current_year_number()
     
     kpi_categories = []
     for dict in DomainKPI.objects.filter(master_plan=master_plan, year=year_number).values('category').distinct():
@@ -141,6 +144,9 @@ def view_master_plan_manage_kpi(request, master_plan_ref_no, kpi_year):
 def view_master_plan_manage_kpi_add_kpi(request, master_plan_ref_no):
     master_plan = get_object_or_404(MasterPlan, ref_no=master_plan_ref_no)
     
+    if not permission.access_obj(request.user, 'master_plan manage', master_plan):
+        return access_denied(request)
+    
     if request.method == 'POST':
         form = DomainKPIModifyForm(request.POST, master_plan=master_plan)
         if form.is_valid():
@@ -167,6 +173,9 @@ def view_master_plan_manage_kpi_edit_kpi(request, kpi_id):
     kpi = get_object_or_404(DomainKPI, pk=kpi_id)
     master_plan = kpi.master_plan
     
+    if not permission.access_obj(request.user, 'master_plan manage', master_plan):
+        return access_denied(request)
+    
     if request.method == 'POST':
         form = DomainKPIModifyForm(request.POST, master_plan=master_plan)
         if form.is_valid():
@@ -191,6 +200,9 @@ def view_master_plan_manage_kpi_delete_kpi(request, kpi_id):
     kpi = get_object_or_404(DomainKPI, pk=kpi_id)
     master_plan = kpi.master_plan
     
+    if not permission.access_obj(request.user, 'master_plan manage', master_plan):
+        return access_denied(request)
+    
     if not DomainKPISchedule.objects.filter(kpi=kpi).count():
         kpi.delete()
         messages.success(request, 'ลบตัวชี้วัดเรียบร้อย')
@@ -206,14 +218,20 @@ def view_master_plan_manage_kpi_category(request, master_plan_ref_no):
     master_plan = get_object_or_404(MasterPlan, ref_no=master_plan_ref_no)
     categories = DomainKPICategory.objects.filter(master_plan=master_plan).order_by('name')
     
+    if not permission.access_obj(request.user, 'master_plan manage', master_plan):
+        return access_denied(request)
+    
     for category in categories:
         category.removable = DomainKPI.objects.filter(category=category).count() == 0
     
-    return render_page_response(request, 'kpi', 'page_sector/manage_master_plan/manage_kpi_category.html', {'master_plan':master_plan, 'categories':categories})
+    return render_page_response(request, 'kpi_category', 'page_sector/manage_master_plan/manage_kpi_category.html', {'master_plan':master_plan, 'categories':categories})
 
 @login_required
 def view_master_plan_manage_kpi_add_category(request, master_plan_ref_no):
     master_plan = get_object_or_404(MasterPlan, pk=master_plan_ref_no)
+    
+    if not permission.access_obj(request.user, 'master_plan manage', master_plan):
+        return access_denied(request)
     
     if request.method == 'POST':
         form = DomainKPICategoryModifyForm(request.POST)
@@ -226,12 +244,15 @@ def view_master_plan_manage_kpi_add_category(request, master_plan_ref_no):
     else:
         form = DomainKPICategoryModifyForm()
     
-    return render_page_response(request, 'organization', 'page_sector/manage_master_plan/manage_kpi_modify_category.html', {'master_plan':master_plan, 'form':form})
+    return render_page_response(request, 'kpi_category', 'page_sector/manage_master_plan/manage_kpi_modify_category.html', {'master_plan':master_plan, 'form':form})
 
 @login_required
 def view_master_plan_manage_kpi_edit_category(request, kpi_category_id):
     kpi_category = get_object_or_404(DomainKPICategory, pk=kpi_category_id)
     master_plan = kpi_category.master_plan
+    
+    if not permission.access_obj(request.user, 'master_plan manage', master_plan):
+        return access_denied(request)
     
     if request.method == 'POST':
         form = DomainKPICategoryModifyForm(request.POST)
@@ -245,12 +266,15 @@ def view_master_plan_manage_kpi_edit_category(request, kpi_category_id):
     else:
         form = DomainKPICategoryModifyForm(initial={'name':kpi_category.name})
     
-    return render_page_response(request, 'organization', 'page_sector/manage_master_plan/manage_kpi_modify_category.html', {'master_plan':master_plan, 'form':form, 'kpi_category':kpi_category})
+    return render_page_response(request, 'kpi_category', 'page_sector/manage_master_plan/manage_kpi_modify_category.html', {'master_plan':master_plan, 'form':form, 'kpi_category':kpi_category})
 
 @login_required
 def view_master_plan_manage_kpi_delete_category(request, kpi_category_id):
     kpi_category = get_object_or_404(DomainKPICategory, pk=kpi_category_id)
     master_plan = kpi_category.master_plan
+    
+    if not permission.access_obj(request.user, 'master_plan manage', master_plan):
+        return access_denied(request)
     
     if not DomainKPI.objects.filter(category=kpi_category).count():
         kpi_category.delete()

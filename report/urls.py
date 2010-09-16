@@ -26,7 +26,7 @@ urlpatterns = patterns('report.views',
 )
 
 urlpatterns += patterns('report.ajax',
-    url(r'^ajax/report/submission/approve/$', 'ajax_approve_report_schedule', name='ajax_approve_report_schedule'),
-    url(r'^ajax/report/submission/reject/$', 'ajax_reject_report_schedule', name='ajax_reject_report_schedule'),
+    url(r'^ajax/report/submission/approve/$', 'ajax_approve_report_submission', name='ajax_approve_report_submission'),
+    url(r'^ajax/report/submission/reject/$', 'ajax_reject_report_submission', name='ajax_reject_report_submission'),
     url(r'^ajax/report/submission/file/delete/$', 'ajax_delete_report_file', name='ajax_delete_report_file'),
 )
