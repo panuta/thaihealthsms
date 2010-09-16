@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404, redirect
 from forms import *
 from models import *
 
-from domain.models import Sector, MasterPlan, Program
+from domain.models import MasterPlan, Program, Sector, SectorMasterPlan
 from kpi.models import DomainKPI, DomainKPISchedule
 
 from helper import utilities, permission
@@ -21,9 +21,12 @@ from helper.shortcuts import render_response, render_page_response, access_denie
 @login_required
 def view_sector_kpi(request, sector_ref_no):
     sector = get_object_or_404(Sector, ref_no=sector_ref_no)
-    #quarter_year = master_plan_current_year_number(sector)
-    quarter_year = 2010
-    ctx = {'sector': sector, 'quarter_year': quarter_year}
+    sector_master_plans = SectorMasterPlan.objects.filter(sector=sector)
+    master_plans = []
+    for sm in sector_master_plans:
+        master_plans.append(sm.master_plan)
+    quarter_year = utilities.master_plan_current_year_number()
+    ctx = {'sector': sector, 'master_plans': master_plans, 'quarter_year': quarter_year}
     return render_page_response(request, 'kpi', 'page_sector/sector_kpi.html', ctx)
 
 #
@@ -33,7 +36,7 @@ def view_sector_kpi(request, sector_ref_no):
 @login_required
 def view_master_plan_kpi(request, master_plan_ref_no):
     master_plan = get_object_or_404(MasterPlan, ref_no=master_plan_ref_no)
-    quarter_year = utilities.master_plan_current_year_number(master_plan)
+    quarter_year = utilities.master_plan_current_year_number()
     ctx = {'master_plan': master_plan, 'quarter_year': quarter_year}
     return render_page_response(request, 'kpi', 'page_sector/master_plan_kpi.html', ctx)
 

@@ -148,10 +148,16 @@ def display_report_sending_notice(submission):
 @register.simple_tag
 def print_program_kpis(program):
     ret = ''
-    kpis = DomainKPI.objects.filter(program=program) 
+    kpis = DomainKPI.objects.filter(program=program)
     for kpi in kpis:
-        ret += kpi.abbr_name + ' '
-    return ret.strip()
+        kpi_schedules = DomainKPISchedule.objects.filter(kpi=kpi)
+        for kpi_schedule in kpi_schedules:
+            ret += '<a href="' + \
+                   reverse('view_kpi_overview', args=[kpi_schedule.id]) +'">'+ \
+                   kpi.abbr_name + '</a>, '
+    if ret != '':
+        ret = '(%s)' % (ret[:-2])
+    return ret
 
 @register.simple_tag
 def print_master_plan_quarter_kpi(kpi_type, plan, quarter_year, quarter_no):
