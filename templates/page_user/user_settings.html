@@ -9,7 +9,7 @@
 {% block body_content %}
 <div class="user_page">
 	<div class="setting_panel">
-		<h2>ข้อมูลผู้ใช้</h2>
+		<h2 class="h2">ข้อมูลผู้ใช้</h2>
 		<form action='.' method='POST' class="ss_form">
 			{% csrf_token %}
             <ul>
@@ -29,7 +29,7 @@
 	</div>
 	
 	<div class="setting_panel">
-		<h2>เปลี่ยนรหัสผ่าน</h2>
+		<h2 class="h2">เปลี่ยนรหัสผ่าน</h2>
 	    <form action='.' method='POST' class="ss_form">
 	    	{% csrf_token %}
 	        <ul>
