@@ -18,6 +18,9 @@ class Plan(models.Model):
     name = models.CharField(max_length=500)
     created = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['ref_no']
+
 class Program(models.Model):
     plan = models.ForeignKey('Plan')
     ref_no = models.CharField(max_length=100)
@@ -29,6 +32,9 @@ class Program(models.Model):
     end_date = models.DateField(null=True)
     status = models.IntegerField(default=0)
     created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['ref_no']
 
 class Project(models.Model):
     """
@@ -48,6 +54,9 @@ class Project(models.Model):
     status = models.IntegerField(default=0)
     created = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey('accounts.UserAccount')
+
+    class Meta:
+        ordering = ['ref_no']
 
 class Activity(models.Model):
     project = models.ForeignKey('Project')

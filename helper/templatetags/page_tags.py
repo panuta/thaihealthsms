@@ -10,6 +10,7 @@ from helper import permission, utilities
 
 from accounts.models import UserRoleResponsibility, RoleDetails
 from domain.models import SectorMasterPlan
+from kpi.models import DomainKPI, DomainKPISchedule
 
 #
 # ADMIN PAGE
@@ -139,3 +140,39 @@ def display_report_sending_notice(submission):
     elif submission.this_is == 'rejected':
         return unicode('<div class="notice rejected">รายงานถูกตีกลับเมื่อวันที่ ', 'utf-8') + utilities.format_abbr_datetime(submission.approval_date) + '</div>'
     return ''
+
+#
+# KPI -------------------------------------------------------------------------
+#
+
+@register.simple_tag
+def print_program_kpis(program):
+    ret = ''
+    kpis = DomainKPI.objects.filter(program=program)
+    for kpi in kpis:
+        kpi_schedules = DomainKPISchedule.objects.filter(kpi=kpi)
+        for kpi_schedule in kpi_schedules:
+            ret += '<a href="' + \
+                   reverse('view_kpi_overview', args=[kpi_schedule.id]) +'">'+ \
+                   kpi.abbr_name + '</a>, '
+    if ret != '':
+        ret = '(%s)' % (ret[:-2])
+    return ret
+
+@register.simple_tag
+def print_master_plan_quarter_kpi(kpi_type, plan, quarter_year, quarter_no):
+    ret = '<ul>'
+    for program in plan.program_set.all():
+        kpis = DomainKPI.objects.filter(program=program, year=quarter_year)
+        for kpi in kpis:
+            kpi_schedules = DomainKPISchedule.objects.filter(kpi=kpi, quarter=quarter_no)
+            for kpi_schedule in kpi_schedules:
+                if kpi_type == 'target' and kpi_schedule.target != 0:
+                    ret += '<li><a href="'+ reverse('view_kpi_overview', args=[kpi_schedule.id]) +'">%s</a> (%s %s)</li>' \
+                        % (kpi.abbr_name, str(kpi_schedule.target), kpi.unit_name)
+                elif kpi_type == 'result' and kpi_schedule.result != 0:
+                    ret += '<li><a href="'+ reverse('view_kpi_overview', args=[kpi_schedule.id]) +'">%s</a> (%s %s)</li>' \
+                        % (kpi.abbr_name, str(kpi_schedule.result), kpi.unit_name)
+    ret += '</ul>'
+    return ret
+

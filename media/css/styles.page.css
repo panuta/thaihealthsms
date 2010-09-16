@@ -1,5 +1,9 @@
 h2.h2 {font-size:146.5%;padding-bottom:5px;margin-bottom:10px;color:#2D8659;border-bottom:3px solid #999;}
 
+th {font-size:123.1%;text-align:center;}
+.bold {font-weight:bold;}
+.center {text-align:center;}
+
 .ss_report_schedule li {border:1px solid #999;margin-bottom:15px;padding:10px;}
 .ss_report_schedule h4 {font-size:116%;color:#2D8659;border-bottom:1px dashed #999;padding-bottom:5px;}
 .ss_report_schedule .property {margin:10px 0px;}
@@ -149,11 +153,20 @@ h2.h2 {font-size:146.5%;padding-bottom:5px;margin-bottom:10px;color:#2D8659;bord
 .sector_overview_page .master_plans li {margin-bottom:8px;font-size:108%;}
 .sector_overview_page .master_plans {}
 
+.sector_overview_page .kpi td {padding:10px 5px;}
+.sector_overview_page .kpi li.master_plan {font-size:138.5%;font-weight:bold;padding:5px 0;}
+.sector_overview_page .kpi li.plan {font-size:123.1%;padding:3px 10px;}
+.sector_overview_page .kpi li.program {list-style-type:disc;margin-left:30px;padding:3px;}
+
 /*
  * MASTER PLAN
  */
 
 /* Master Plan - Overview Page */
+
+.master_plan_overview_page .kpi td {padding:10px 5px;}
+.master_plan_overview_page .kpi li.plan {font-size:123.1%;padding:3px;}
+.master_plan_overview_page .kpi li.program {list-style-type:disc;margin-left:30px;padding:3px;}
 
 /* Master Plan - Programs Page */
 .master_plan_programs_page {}

@@ -10,7 +10,7 @@ from models import *
 
 from report import functions as report_functions
 
-from domain.models import Sector, MasterPlan, Program, Project
+from domain.models import Sector, MasterPlan, SectorMasterPlan, Program, Project
 from report.models import ReportAssignment, ReportSubmission
 
 from helper import utilities, permission
@@ -23,10 +23,13 @@ from helper.shortcuts import render_response, render_page_response, access_denie
 @login_required
 def view_sector_kpi(request, sector_ref_no):
     sector = get_object_or_404(Sector, ref_no=sector_ref_no)
-    
-    # TODO
-    
-    return render_page_response(request, 'kpi', 'page_sector/sector_kpi.html', {'sector':sector, })
+    sector_master_plans = SectorMasterPlan.objects.filter(sector=sector)
+    master_plans = []
+    for sm in sector_master_plans:
+        master_plans.append(sm.master_plan)
+    quarter_year = utilities.master_plan_current_year_number()
+    ctx = {'sector': sector, 'master_plans': master_plans, 'quarter_year': quarter_year}
+    return render_page_response(request, 'kpi', 'page_sector/sector_kpi.html', ctx)
 
 #
 # MASTER PLAN #######################################################################
@@ -35,10 +38,9 @@ def view_sector_kpi(request, sector_ref_no):
 @login_required
 def view_master_plan_kpi(request, master_plan_ref_no):
     master_plan = get_object_or_404(MasterPlan, ref_no=master_plan_ref_no)
-    
-    # TODO
-    
-    return render_page_response(request, 'kpi', 'page_sector/master_plan_kpi.html', {'master_plan':master_plan, })
+    quarter_year = utilities.master_plan_current_year_number()
+    ctx = {'master_plan': master_plan, 'quarter_year': quarter_year}
+    return render_page_response(request, 'kpi', 'page_sector/master_plan_kpi.html', ctx)
 
 #
 # MASTER PLAN MANAGEMENT #######################################################################
