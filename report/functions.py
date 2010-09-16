@@ -75,12 +75,12 @@ def get_late_rejected_report_count(program, include_program_reports=False):
     
     return (late_count, rejected_count)
 
-def get_reports_for_program_reports_page(program, start_date, end_date, request_user):
+def get_reports_for_program_reports_page(program, start_date, end_date, query_late_rejected=False):
     submissions = ReportSubmission.objects.filter(program=program, schedule_date__gte=start_date, schedule_date__lte=end_date).filter(Q(state=APPROVED_ACTIVITY) | (Q(state=SUBMITTED_ACTIVITY) & (Q(report__need_approval=False) | Q(report__need_checkup=False)))).order_by('-schedule_date')
     late_submissions = []
     rejected_submissions = []
     
-    if permission.access_obj(request_user, 'program reports late-rejected', program):
+    if query_late_rejected:
         current_date = date.today()
         
         for assignment in ReportAssignment.objects.filter(program=program):

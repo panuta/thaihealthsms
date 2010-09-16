@@ -2,6 +2,7 @@
 {% load helper_tags page_tags core_tags humanize %}
 
 {% block html_head %}
+{% access user 'program kpi target edit,program kpi result edit' program %}
 <script type="text/javascript">
 $(document).ready(function() {
     $(".edit-number").click(function(e) {
@@ -44,6 +45,7 @@ $(document).ready(function() {
     });
 });
 </script>
+{% endaccess %}
 {% endblock %}
 
 {% block body_title %}{% display_program_header user program %}{% endblock %}
@@ -86,7 +88,7 @@ $(document).ready(function() {
             <td class="target" id="schedule-target-{{kpi.schedules.1.id}}">
                 {% if kpi.schedules.1 %}
                 <div class="number"><a href="{% url view_kpi_overview kpi.schedules.1.id %}">{{kpi.schedules.1.target|intcomma}}</a></div><div class="unit">{{kpi.schedules.1.kpi.unit_name}}</div>
-                {% access user 'program kpi edit target' program %}
+                {% access user 'program kpi target edit' program %}
                 <div class="edit"><a href="#" class="edit-number">แก้ไข</a></div>
                 {% endaccess %}
                 {% else %}-{% endif %}
@@ -94,7 +96,7 @@ $(document).ready(function() {
             <td class="result" id="schedule-result-{{kpi.schedules.1.id}}">
                 {% if kpi.schedules.1 %}
                 <div class="number"><a href="{% url view_kpi_overview kpi.schedules.1.id %}">{{kpi.schedules.1.result|intcomma}}</a></div><div class="unit">{{kpi.schedules.1.kpi.unit_name}}</div>
-                {% access user 'program kpi edit result' program %}
+                {% access user 'program kpi result edit' program %}
                 <div class="edit"><a href="#" class="edit-number">แก้ไข</a></div>
                 {% endaccess %}
                 {% else %}-{% endif %}
@@ -103,7 +105,7 @@ $(document).ready(function() {
             <td class="target" id="schedule-target-{{kpi.schedules.2.id}}">
                 {% if kpi.schedules.2 %}
                 <div class="number"><a href="{% url view_kpi_overview kpi.schedules.2.id %}">{{kpi.schedules.2.target|intcomma}}</a></div><div class="unit">{{kpi.schedules.2.kpi.unit_name}}</div>
-                {% access user 'program kpi edit target' program %}
+                {% access user 'program kpi target edit' program %}
                 <div class="edit"><a href="#" class="edit-number">แก้ไข</a></div>
                 {% endaccess %}
                 {% else %}-{% endif %}
@@ -111,7 +113,7 @@ $(document).ready(function() {
             <td class="result" id="schedule-result-{{kpi.schedules.2.id}}">
                 {% if kpi.schedules.2 %}
                 <div class="number"><a href="{% url view_kpi_overview kpi.schedules.2.id %}">{{kpi.schedules.2.result|intcomma}}</a></div><div class="unit">{{kpi.schedules.2.kpi.unit_name}}</div>
-                {% access user 'program kpi edit result' program %}
+                {% access user 'program kpi result edit' program %}
                 <div class="edit"><a href="#" class="edit-number">แก้ไข</a></div>
                 {% endaccess %}
                 {% else %}-{% endif %}
@@ -120,7 +122,7 @@ $(document).ready(function() {
             <td class="target" id="schedule-target-{{kpi.schedules.3.id}}">
                 {% if kpi.schedules.3 %}
                 <div class="number"><a href="{% url view_kpi_overview kpi.schedules.3.id %}">{{kpi.schedules.3.target|intcomma}}</a></div><div class="unit">{{kpi.schedules.3.kpi.unit_name}}</div>
-                {% access user 'program kpi edit target' program %}
+                {% access user 'program kpi target edit' program %}
                 <div class="edit"><a href="#" class="edit-number">แก้ไข</a></div>
                 {% endaccess %}
                 {% else %}-{% endif %}
@@ -128,7 +130,7 @@ $(document).ready(function() {
             <td class="result" id="schedule-result-{{kpi.schedules.3.id}}">
                 {% if kpi.schedules.3 %}
                 <div class="number"><a href="{% url view_kpi_overview kpi.schedules.3.id %}">{{kpi.schedules.3.result|intcomma}}</a></div><div class="unit">{{kpi.schedules.3.kpi.unit_name}}</div>
-                {% access user 'program kpi edit result' program %}
+                {% access user 'program kpi result edit' program %}
                 <div class="edit"><a href="#" class="edit-number">แก้ไข</a></div>
                 {% endaccess %}
                 {% else %}-{% endif %}
@@ -137,7 +139,7 @@ $(document).ready(function() {
             <td class="target" id="schedule-target-{{kpi.schedules.4.id}}">
                 {% if kpi.schedules.4 %}
                 <div class="number"><a href="{% url view_kpi_overview kpi.schedules.4.id %}">{{kpi.schedules.4.target|intcomma}}</a></div><div class="unit">{{kpi.schedules.4.kpi.unit_name}}</div>
-                {% access user 'program kpi edit target' program %}
+                {% access user 'program kpi target edit' program %}
                 <div class="edit"><a href="#" class="edit-number">แก้ไข</a></div>
                 {% endaccess %}
                 {% else %}-{% endif %}
@@ -145,7 +147,7 @@ $(document).ready(function() {
             <td class="result" id="schedule-result-{{kpi.schedules.4.id}}">
                 {% if kpi.schedules.4 %}
                 <div class="number"><a href="{% url view_kpi_overview kpi.schedules.4.id %}">{{kpi.schedules.4.result|intcomma}}</a></div><div class="unit">{{kpi.schedules.4.kpi.unit_name}}</div>
-                {% access user 'program kpi edit result' program %}
+                {% access user 'program kpi result edit' program %}
                 <div class="edit"><a href="#" class="edit-number">แก้ไข</a></div>
                 {% endaccess %}
                 {% else %}-{% endif %}

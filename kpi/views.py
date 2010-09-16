@@ -298,8 +298,6 @@ def view_program_kpi(request, program_id):
     categories = []
     category_ids = DomainKPISchedule.objects.filter(program=program).values('kpi__category').distinct()
     
-    print category_ids
-    
     for category_id in category_ids:
         if category_id['kpi__category']:
             category = DomainKPICategory.objects.get(pk=category_id['kpi__category'])
@@ -316,10 +314,8 @@ def view_program_kpi(request, program_id):
             for i in range(1, 5):
                 try:
                     schedules[str(i)] = DomainKPISchedule.objects.get(kpi=kpi, program=program, quarter_year=current_year, quarter=i)
-                    print schedules[str(i)]
                 except:
                     schedules[str(i)] = ''
-                    print 'empty'
             
             kpi.schedules = schedules
             kpis.append(kpi)
@@ -351,6 +347,9 @@ def view_kpi_overview(request, schedule_id):
 @login_required
 def view_kpi_overview_edit_reference(request, schedule_id):
     schedule = get_object_or_404(DomainKPISchedule, pk=schedule_id)
+    
+    if not permission.access_obj(request.user, 'program kpi reference edit', schedule.program):
+        return access_denied(request)
     
     if request.method == 'POST':
         for form_project in request.POST.getlist('project'):

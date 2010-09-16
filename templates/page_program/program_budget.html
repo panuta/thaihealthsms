@@ -2,6 +2,7 @@
 {% load helper_tags page_tags core_tags humanize %}
 
 {% block html_head %}
+{% access user 'program budget grant edit,program budget claim edit' program %}
 <script type="text/javascript">
 $(document).ready(function() {
     $(".edit-number").click(function(e) {
@@ -43,6 +44,7 @@ $(document).ready(function() {
     });
 });
 </script>
+{% endaccess %}
 {% endblock %}
 
 {% block body_title %}{% display_program_header user program %}{% endblock %}
@@ -76,13 +78,13 @@ $(document).ready(function() {
             <td class="schedule_on_column">{{schedule.schedule_on|abbr_date}}</td>
             <td class="grant_column" id="schedule-grant-{{schedule.id}}">
                 <div><span class="number">{{schedule.grant_budget|intcomma}}</span> <span class="unit">บาท</span></div>
-                {% access user 'program budget edit grant' program %}
+                {% access user 'program budget grant edit' program %}
                 <div class="edit"><a href="#" class="edit-number">แก้ไข</a></div>
                 {% endaccess %}
             </td>
             <td class="claim_column" id="schedule-claim-{{schedule.id}}">
                 <div><span class="number">{{schedule.claim_budget|intcomma}}</span> <span class="unit">บาท</span></div>
-                {% access user 'program budget edit claim' program %}
+                {% access user 'program budget claim edit' program %}
                 <div class="edit"><a href="#" class="edit-number">แก้ไข</a></div>
                 {% endaccess %}
             </td>

@@ -25,7 +25,7 @@ def ajax_update_kpi_schedule(request):
         is_changed = False
         
         if new_target:
-            if not permission.access_obj(request.user, 'program kpi edit target', kpi_schedule.program):
+            if not permission.access_obj(request.user, 'program kpi target edit', kpi_schedule.program):
                 return HttpResponse(simplejson.dumps({'error':'denied'}))
             
             try:
@@ -42,7 +42,7 @@ def ajax_update_kpi_schedule(request):
             target = kpi_schedule.target
         
         if new_result:
-            if not permission.access_obj(request.user, 'program kpi edit result', kpi_schedule.program):
+            if not permission.access_obj(request.user, 'program kpi result edit', kpi_schedule.program):
                 return HttpResponse(simplejson.dumps({'error':'denied'}))
             
             try:

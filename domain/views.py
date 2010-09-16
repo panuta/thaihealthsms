@@ -271,7 +271,7 @@ def view_program_overview(request, program_id):
     late_report_count = []
     rejected_report_count = []
     
-    if permission.access_obj(request.user, 'program reports late-rejected', program):
+    if permission.access_obj(request.user, 'program report view late-rejected', program):
         (late_report_count, rejected_report_count) = report_functions.get_late_rejected_report_count(program)
     
     recent_reports = ReportSubmission.objects.filter(program=program).filter(Q(state=APPROVED_ACTIVITY) | (Q(state=SUBMITTED_ACTIVITY) & (Q(report__need_approval=False) | Q(report__need_checkup=False)))).order_by('-submitted_on')[:settings.RECENT_REPORTS_ON_PROGRAM_OVERVIEW]
@@ -292,6 +292,9 @@ def view_program_projects(request, program_id):
 @login_required
 def view_program_add_project(request, program_id):
     program = get_object_or_404(Program, pk=program_id)
+    
+    if not permission.access_obj(request.user, 'program project add', program):
+        return access_denied(request)
     
     if request.method == 'POST':
         form = ProjectModifyForm(request.POST)
@@ -319,6 +322,9 @@ def view_program_add_project(request, program_id):
 def view_program_edit_project(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     program = project.program
+    
+    if not permission.access_obj(request.user, 'program project edit', program):
+        return access_denied(request)
     
     if request.method == 'POST':
         form = ProjectModifyForm(request.POST)
@@ -357,6 +363,9 @@ def view_project_edit_project(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     program = project.program
     
+    if not permission.access_obj(request.user, 'program project edit', program):
+        return access_denied(request)
+    
     if request.method == 'POST':
         form = ProjectModifyForm(request.POST)
         if form.is_valid():
@@ -382,6 +391,9 @@ def view_project_delete_project(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     program = project.program
     
+    if not permission.access_obj(request.user, 'program project delete', program):
+        return access_denied(request)
+    
     if not Activity.objects.filter(project=project).count():
         project.delete()
         messages.success(request, u'ลบโครงการเรียบร้อย')
@@ -399,6 +411,9 @@ def view_project_activities(request, project_id):
 @login_required
 def view_project_add_activity(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
+    
+    if not permission.access_obj(request.user, 'program activity add', project.program):
+        return access_denied(request)
     
     if request.method == 'POST':
         form = ActivityModifyForm(request.POST)
@@ -426,6 +441,9 @@ def view_project_add_activity(request, project_id):
 def view_project_edit_activity(request, activity_id):
     activity = get_object_or_404(Activity, pk=activity_id)
     project = activity.project
+    
+    if not permission.access_obj(request.user, 'program activity edit', project.program):
+        return access_denied(request)
     
     if request.method == 'POST':
         form = ActivityModifyForm(request.POST)
@@ -461,6 +479,9 @@ def view_activity_edit_activity(request, activity_id):
     activity = get_object_or_404(Activity, pk=activity_id)
     project = activity.project
     
+    if not permission.access_obj(request.user, 'program activity edit', project.program):
+        return access_denied(request)
+    
     if request.method == 'POST':
         form = ActivityModifyForm(request.POST)
         if form.is_valid():
@@ -485,6 +506,9 @@ def view_activity_edit_activity(request, activity_id):
 def view_activity_delete_activity(request, activity_id):
     activity = get_object_or_404(Activity, pk=activity_id)
     project = activity.project
+    
+    if not permission.access_obj(request.user, 'program activity delete', project.program):
+        return access_denied(request)
     
     activity.delete()
     messages.success(request, u'ลบโครงการเรียบร้อย')

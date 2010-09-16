@@ -2,6 +2,7 @@
 {% load helper_tags page_tags core_tags %}
 
 {% block html_head %}
+{% access user 'program report submission edit' submission %}
 <script type="text/javascript" src="{{MEDIA_URL}}/ckeditor/ckeditor.js"></script>
 <script type="text/javascript" src="{{MEDIA_URL}}/ckeditor/adapters/jquery.js"></script>
 
@@ -70,6 +71,7 @@ $(document).ready(function() {
     
 });
 </script>
+{% endaccess %}
 {% endblock %}
 
 {% block body_title %}{% display_report_header user submission %}{% endblock %}
@@ -84,7 +86,7 @@ $(document).ready(function() {
                 {% if submission.status_code == 'overdue' %}<span class="overdue">รายงานยังไม่ถูกส่ง และเลยกำหนดส่งมาแล้ว {{submission.schedule_date|week_elapse}}</span>{% endif %}
 			    {% if submission.status_code == 'not_submitted' %}<span class="not_submitted">รายงานยังไม่ถูกส่ง</span>{% endif %}
                 
-			    {% access user 'report submission submit' submission %}
+			    {% access user 'program report submission submit' submission %}
 				{% if submission.files or submission.text_response.text %}
                 <form method="post" action=".">
                     {% csrf_token %}
@@ -100,7 +102,7 @@ $(document).ready(function() {
             {% ifequal submission.status_code 'submitted' %}<span class="submitted">ส่งเมื่อวันที่ {{submission.submitted_on|abbr_datetime}}</span>{% endifequal %}
             {% ifequal submission.status_code 'waiting' %}
                 <span class="waiting">ส่งเมื่อวันที่ {{submission.submitted_on|abbr_datetime}}  และกำลังรอการอนุมัติ</span>
-				{% access user 'report submission approve' submission %}
+				{% access user 'program report submission approve' submission %}
 				<form method="post" action=".">
                     {% csrf_token %}
                     <input type="hidden" name="schedule_id" value="{{submission.id}}" />
@@ -112,7 +114,7 @@ $(document).ready(function() {
             {% ifequal submission.status_code 'rejected' %}
                 <span class="rejected">ส่งเมื่อวันที่ {{submission.submitted_on|abbr_datetime}} และถูกตีกลับเมื่อวันที่ {{submission.approval_on|abbr_datetime}}</span>
 				
-				{% access user 'report submission submit' submission %}
+				{% access user 'program report submission submit' submission %}
                 <form method="post" action=".">
                 	{% csrf_token %}
                     <input type="hidden" name="schedule_id" value="{{submission.id}}" />
@@ -123,7 +125,7 @@ $(document).ready(function() {
         </div>
     </div>
     
-	{% access user 'report submission edit' submission %}
+	{% access user 'program report submission edit' submission %}
     {% if submission.allow_modifying %}
     <div class="ss_control_panel">
         <ul>
@@ -164,9 +166,10 @@ $(document).ready(function() {
                         <li>
                             <div class="filename"><a href="{{REPORT_SUBMIT_FILE_URL}}{{submission.report.id}}/{{submission.id}}/{{file.filename}}">{{file.filename}}</a></div>
                             <div class="metadata">จัดเก็บเมื่อวันที่ {{file.uploaded|abbr_datetime}} โดย {{file.uploaded_by.first_name}} {{file.uploaded_by.last_name}}
-							<!-- CHECK ACCESS -->
+							
+							{% access user 'program report submission edit' submission %}
                             {% if submission.allow_modifying %}<span class="actions">| <a href="#" rel="{{file.id}}" class="delete-report-file">ลบไฟล์</a></span>{% endif %}
-                            <!-- END CHECK ACCESS -->
+                            {% endaccess %}
                             </div>
                         </li>
                         {% endfor %}
@@ -178,11 +181,13 @@ $(document).ready(function() {
 	
 	<div class="reference_section">
     <h2 class="h2">ข้อมูลประกอบ</h2>
+	{% access user 'program report submission reference edit' submission %}
     <div class="ss_sub_control_panel">
         <ul>
             <li><img src="{{MEDIA_URL}}/images/toolbar/edit_reference.png" class="icon"/><a href="{% url view_report_overview_edit_reference submission.program.id submission.report.id submission.schedule_date|dateid %}">แก้ไขข้อมูลประกอบ</a></li>
         </ul>
     </div>
+	{% endaccess %}
 	
 	{% if ref_projects or ref_kpi_schedules or ref_budget_schedules %}
     <ul class="ss_reference_list">
@@ -217,6 +222,7 @@ $(document).ready(function() {
     <div class="ss_no_information">ไม่มีข้อมูลประกอบ</div>
     {% endif %}
 </div>
+{% access user 'program report submission edit' submission %}
 <div id="upload-file-dialog">
     <form method="post" action="." enctype="multipart/form-data">
     	{% csrf_token %}
@@ -226,4 +232,5 @@ $(document).ready(function() {
         <input type="hidden" name="schedule_id" value="{{submission.id}}" />
     </form>
 </div>
+{% endaccess %}
 {% endblock %}

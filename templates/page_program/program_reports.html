@@ -16,12 +16,20 @@ $(document).ready(function() {
 {% block body_tabs %}{% tabs_for_program page user program %}{% endblock %}
 
 {% block body_content %}
+
+{% access user 'program report schedule add,program report schedule edit,program report schedule delete,program report submission edit,program report submission submit' program %}
 <div class="ss_control_panel">
     <ul>
+    	{% access user 'program report submission edit,program report submission submit' program %}
         <li><img src="{{MEDIA_URL}}/images/toolbar/report_send.png" class="icon"/><a href="{% url view_program_reports_send_list program.id %}">ส่งรายงาน</a></li>
-        <li><img src="{{MEDIA_URL}}/images/toolbar/list.png" class="icon"/><a href="{% url view_program_reports_manage_report program.id %}">จัดการหัวเรื่องรายงาน</a></li>
+        {% endaccess %}
+		
+		{% access user 'program report schedule add,program report schedule edit,program report schedule delete' program %}
+		<li><img src="{{MEDIA_URL}}/images/toolbar/list.png" class="icon"/><a href="{% url view_program_reports_manage_report program.id %}">จัดการหัวเรื่องรายงาน</a></li>
+		{% endaccess %}
     </ul>
 </div>
+{% endaccess %}
 
 <div class="program_reports_page">
 	

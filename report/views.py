@@ -261,7 +261,7 @@ def view_program_reports(request, program_id, year_number):
         year_choices.append(year_number + i)
     
     (start_date, end_date) = utilities.master_plan_year_span(year_number)
-    (submissions, late_submissions, rejected_submissions) = report_functions.get_reports_for_program_reports_page(program, start_date, end_date, request.user)
+    (submissions, late_submissions, rejected_submissions) = report_functions.get_reports_for_program_reports_page(program, start_date, end_date, query_late_rejected=permission.access_obj(request.user, 'program report view late-rejected', program))
     
     return render_page_response(request, 'reports', 'page_program/program_reports.html', {'program':program, 'submissions':submissions, 'late_submissions':late_submissions, 'rejected_submissions':rejected_submissions, 'start_date':start_date, 'end_date':end_date, 'year_number':year_number, 'year_choices':year_choices})
 
@@ -272,6 +272,9 @@ def view_program_reports(request, program_id, year_number):
 @login_required
 def view_program_reports_send_list(request, program_id):
     program = get_object_or_404(Program, id=program_id)
+    
+    if not permission.access_obj(request.user, ('program report submission edit', 'program report submission submit'), program):
+        return access_denied(request)
     
     reports = []
     for assignment in ReportAssignment.objects.filter(program=program, is_active=True):
@@ -284,6 +287,10 @@ def view_program_reports_send_list(request, program_id):
 @login_required
 def view_program_reports_send_report(request, program_id, report_id):
     program = get_object_or_404(Program, id=program_id)
+    
+    if not permission.access_obj(request.user, ('program report submission edit', 'program report submission submit'), program):
+        return access_denied(request)
+    
     report = get_object_or_404(Report, id=report_id)
     submissions = report_functions.get_sending_report(program, report)
     return render_page_response(request, 'reports', 'page_program/program_reports_send_report.html', {'program':program, 'report':report, 'submissions':submissions})
@@ -296,23 +303,30 @@ def view_program_reports_send_report(request, program_id, report_id):
 def view_program_reports_manage_report(request, program_id):
     program = get_object_or_404(Program, id=program_id)
     
-    assignments = ReportAssignment.objects.filter(program=program, is_active=True)
-    reports_from_master_plan = []
-    reports_from_program = []
+    if permission.access_obj(request.user, ('program report schedule add', 'program report schedule edit', 'program report schedule delete'), program):
+        assignments = ReportAssignment.objects.filter(program=program, is_active=True)
+        reports_from_master_plan = []
+        reports_from_program = []
+        
+        for assignment in assignments:
+            if assignment.report.master_plan:
+                reports_from_master_plan.append(assignment.report)
+            else:
+                report = assignment.report
+                report.removable = ReportSubmission.objects.filter(report=report).exclude(Q(state=NO_ACTIVITY) | Q(state=EDITING_ACTIVITY)).count() == 0
+                reports_from_program.append(report)
+        
+        return render_page_response(request, 'reports', 'page_program/program_reports_manage.html', {'program':program, 'reports_from_master_plan':reports_from_master_plan, 'reports_from_program':reports_from_program})
     
-    for assignment in assignments:
-        if assignment.report.master_plan:
-            reports_from_master_plan.append(assignment.report)
-        else:
-            report = assignment.report
-            report.removable = ReportSubmission.objects.filter(report=report).exclude(Q(state=NO_ACTIVITY) | Q(state=EDITING_ACTIVITY)).count() == 0
-            reports_from_program.append(report)
-    
-    return render_page_response(request, 'reports', 'page_program/program_reports_manage.html', {'program':program, 'reports_from_master_plan':reports_from_master_plan, 'reports_from_program':reports_from_program})
+    else:
+        return access_denied(request)
 
 @login_required
 def view_program_reports_manage_report_add_report(request, program_id):
     program = get_object_or_404(Program, id=program_id)
+    
+    if not permission.access_obj(request.user, 'program report schedule add', program):
+        return access_denied(request)
     
     if request.method == 'POST':
         report_due_type = REPORT_DUE_TYPE[request.POST.get('report_due_type')]
@@ -369,12 +383,14 @@ def view_program_reports_manage_report_add_report(request, program_id):
 @login_required
 def view_program_reports_manage_report_edit_report(request, report_id):
     report = get_object_or_404(Report, pk=report_id)
+    program = report.program
+    
+    if not permission.access_obj(request.user, 'program report schedule edit', program):
+        return access_denied(request)
     
     if report.master_plan:
         messages.error(request, 'ไม่สามารถแก้ไขรายงานของแผนหลักได้จากหน้านี้')
         return redirect('view_program_reports_manage_report', (program.id))
-    
-    program = report.program
     
     if request.method == 'POST':
         report_due_type = REPORT_DUE_TYPE[request.POST.get('report_due_type')]
@@ -452,12 +468,14 @@ def view_program_reports_manage_report_edit_report(request, report_id):
 @login_required
 def view_program_reports_manage_report_delete_report(request, report_id):
     report = get_object_or_404(Report, pk=report_id)
+    program = report.program
+    
+    if not permission.access_obj(request.user, 'program report schedule delete', program):
+        return access_denied(request)
     
     if report.master_plan:
         messages.error(request, 'ไม่สามารถแก้ไขรายงานของแผนหลักได้จากหน้านี้')
         return redirect('view_program_reports_manage_report', (program.id))
-    
-    program = report.program
     
     if ReportSubmission.objects.filter(report=report).exclude(Q(state=NO_ACTIVITY) | Q(state=EDITING_ACTIVITY)).count() == 0:
         ReportDueRepeatable.objects.filter(report=report).delete()
@@ -487,7 +505,7 @@ def view_report_overview(request, program_id, report_id, schedule_dateid):
         submit_type = request.POST.get('submit')
         
         if submit_type == 'submit-file':
-            if not permission.access_obj(request.user, 'report submission edit', submission):
+            if not permission.access_obj(request.user, 'program report submission edit', submission):
                 return access_denied(request)
             
             if not submission.id: submission.save()
@@ -531,7 +549,7 @@ def view_report_overview(request, program_id, report_id, schedule_dateid):
             submission.save()
         
         elif submit_type == 'submit-text':
-            if not permission.access_obj(request.user, 'report submission edit', submission):
+            if not permission.access_obj(request.user, 'program report submission edit', submission):
                 return access_denied(request)
             
             text = request.POST.get("text")
@@ -550,7 +568,7 @@ def view_report_overview(request, program_id, report_id, schedule_dateid):
             submission.save()
             
         elif submit_type == 'submit-report':
-            if not permission.access_obj(request.user, 'report submission submit', submission):
+            if not permission.access_obj(request.user, 'program report submission submit', submission):
                 return access_denied(request)
             
             submission.state = SUBMITTED_ACTIVITY
@@ -559,7 +577,7 @@ def view_report_overview(request, program_id, report_id, schedule_dateid):
             submission.save()
             
         elif submit_type == 'approve-report':
-            if not permission.access_obj(request.user, 'report submission approve', submission):
+            if not permission.access_obj(request.user, 'program report submission approve', submission):
                 return access_denied(request)
             
             submission.state = APPROVED_ACTIVITY
@@ -618,50 +636,6 @@ def view_report_overview(request, program_id, report_id, schedule_dateid):
     
     return render_page_response(request, 'overview', 'page_report/report_overview.html', {'submission':submission, 'REPORT_SUBMIT_FILE_URL':settings.REPORT_SUBMIT_FILE_URL, 'ref_projects':ref_projects, 'ref_kpi_schedules':ref_kpi_schedules, 'ref_budget_schedules':ref_budget_schedules})
 
-"""
-@login_required
-def view_report_reference(request, program_id, report_id, schedule_dateid):
-    program = get_object_or_404(Program, pk=program_id)
-    report = get_object_or_404(Report, pk=report_id)
-    schedule_date = utilities.convert_dateid_to_date(schedule_dateid)
-    
-    ref_projects = []
-    ref_kpi_schedules = []
-    ref_budget_schedules = []
-    
-    kpi_set = set()
-    
-    try:
-        submission = ReportSubmission.objects.get(program=program, report=report, schedule_date=schedule_date)
-        references = ReportSubmissionReference.objects.filter(submission=submission)
-        
-        for reference in references:
-            if reference.project:
-                ref_projects.append(reference)
-                
-            elif reference.kpi_schedule:
-                kpi_set.add(reference.kpi_schedule.kpi)
-                ref_kpi_schedules.append(reference)
-                
-            elif reference.budget_schedule:
-                ref_budget_schedules.append(reference)
-        
-    except:
-        submission = ReportSubmission(program=program, report=report, schedule_date=schedule_date)
-    
-    kpis = []
-    for kpi in kpi_set:
-        references = []
-        for reference in ref_kpi_schedules:
-            if reference.kpi_schedule.kpi == kpi:
-                references.append(reference)
-        
-        kpi.references = references
-        kpis.append(kpi)
-    
-    return render_page_response(request, 'reference', 'page_report/report_reference.html', {'submission':submission, 'ref_projects':ref_projects, 'kpis':kpis, 'ref_kpi_schedules':ref_kpi_schedules, 'ref_budget_schedules':ref_budget_schedules})
-"""
-
 @login_required
 def view_report_overview_edit_reference(request, program_id, report_id, schedule_dateid):
     program = get_object_or_404(Program, pk=program_id)
@@ -672,6 +646,9 @@ def view_report_overview_edit_reference(request, program_id, report_id, schedule
         submission = ReportSubmission.objects.get(program=program, report=report, schedule_date=schedule_date)
     except:
         submission = ReportSubmission(program=program, report=report, schedule_date=schedule_date)
+    
+    if not permission.access_obj(request.user, 'program report submission reference edit', submission):
+        return access_denied(request)
     
     if request.method == 'POST':
         for form_project in request.POST.getlist('project'):

@@ -38,38 +38,34 @@ def access_obj(user, permissions, obj, at_least_one_permission=True):
                     if not user_permission.only_responsible:
                         has_access = True
                     else:
-                        has_responsibility = False
-                        
                         if type(obj).__name__ == 'Sector':
                             if obj in responsibility.sectors.all():
-                                has_responsibility = True
+                                has_access = True
                             
                             if user.get_profile().sector.id == obj.id:
-                                has_responsibility = True
+                                has_access = True
                                 
                         elif type(obj).__name__ == 'MasterPlan':
-                            has_responsibility = SectorMasterPlan.objects.filter(sector__in=responsibility.sectors.all(), master_plan=obj).count() > 0
+                            has_access = SectorMasterPlan.objects.filter(sector__in=responsibility.sectors.all(), master_plan=obj).count() > 0
                             
                         elif type(obj).__name__ == 'Program':
                             if responsibility.role.name == 'sector_manager':
                                 obj_sectors = [smp.sector for smp in SectorMasterPlan.objects.filter(master_plan=obj.plan.master_plan)]
                                 if set(obj_sectors).intersection(set(responsibility.sectors.all())):
-                                    has_responsibility = True
+                                    has_access = True
                             else:
                                 if obj in responsibility.programs.all():
-                                    has_responsibility = True
+                                    has_access = True
                         
                         elif type(obj).__name__ == 'ReportSubmission':
                             if responsibility.role.name == 'sector_manager':
                                 obj_sectors = [smp.sector for smp in SectorMasterPlan.objects.filter(master_plan=obj.program.plan.master_plan)]
                                 if set(obj_sectors).intersection(set(responsibility.sectors.all())):
-                                    has_responsibility = True
+                                    has_access = True
                             else:
                                 if obj.program in responsibility.programs.all():
-                                    has_responsibility = True
+                                    has_access = True
                         
-                        if has_responsibility:
-                            has_access = has_responsibility
                 except:
                     pass
                 

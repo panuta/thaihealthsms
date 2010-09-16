@@ -25,7 +25,7 @@ def ajax_update_budget_schedule(request):
         is_changed = False
         
         if new_grant:
-            if not permission.access_obj(request.user, 'program budget edit grant', budget_schedule.program):
+            if not permission.access_obj(request.user, 'program budget grant edit', budget_schedule.program):
                 return HttpResponse(simplejson.dumps({'error':'denied'}))
             
             try:
@@ -42,7 +42,7 @@ def ajax_update_budget_schedule(request):
             grant = budget_schedule.grant_budget
         
         if new_claim:
-            if not permission.access_obj(request.user, 'program budget edit claim', budget_schedule.program):
+            if not permission.access_obj(request.user, 'program budget claim edit', budget_schedule.program):
                 return HttpResponse(simplejson.dumps({'error':'denied'}))
             
             try:

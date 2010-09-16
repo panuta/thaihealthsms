@@ -28,11 +28,14 @@
 	
 	<div class="reference_section">
 	<h2 class="h2">ข้อมูลประกอบ</h2>
+	
+	{% access user 'program budget reference edit' schedule.program %}
 	<div class="ss_sub_control_panel">
 		<ul>
 	        <li><img src="{{MEDIA_URL}}/images/toolbar/edit_reference.png" class="icon"/><a href="{% url view_budget_overview_edit_reference schedule.id %}">แก้ไขข้อมูลประกอบ</a></li>
 	    </ul>
 	</div>
+	{% endaccess %}
 	
 	{% if ref_projects or ref_report_submissions %}
 	<ul class="ss_reference_list">

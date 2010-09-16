@@ -164,6 +164,9 @@ def view_budget_overview(request, schedule_id):
 def view_budget_overview_edit_reference(request, schedule_id):
     schedule = get_object_or_404(BudgetSchedule, pk=schedule_id)
     
+    if not permission.access_obj(request.user, 'program budget reference edit', schedule.program):
+        return access_denied(request)
+    
     if request.method == 'POST':
         for form_project in request.POST.getlist('project'):
             try:

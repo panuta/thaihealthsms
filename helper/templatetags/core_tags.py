@@ -64,7 +64,12 @@ def display_project_edit_header(user, project):
 
 @register.simple_tag
 def display_activity_header(user, activity):
-    return unicode('<div class="supertitle"><a href="%s">แผนงาน %s</a> &#187; <a href="%s">โครงการ %s - %s</a></div><h1>กิจกรรม %s</h1><div class="subtitle"><img src="%s/images/icons/edit.png" class="icon"/> <a href="%s">แก้ไขกิจกรรม</a></div>', 'utf-8') % (reverse('view_program_overview', args=[activity.project.program.id]), activity.project.program.ref_no, reverse('view_project_overview', args=[activity.project.id]), activity.project.ref_no, activity.project.name, activity.name, settings.MEDIA_URL, reverse('view_activity_edit_activity', args=[activity.id]))
+    header_html = unicode('<div class="supertitle"><a href="%s">แผนงาน %s</a> &#187; <a href="%s">โครงการ %s - %s</a></div><h1>กิจกรรม %s</h1>', 'utf-8') % (reverse('view_program_overview', args=[activity.project.program.id]), activity.project.program.ref_no, reverse('view_project_overview', args=[activity.project.id]), activity.project.ref_no, activity.project.name, activity.name)
+    
+    if permission.access_obj(user, 'program activity edit', activity.project.program):
+        header_html = header_html + unicode('<div class="subtitle"><img src="%s/images/icons/edit.png" class="icon"/> <a href="%s">แก้ไขกิจกรรม</a></div>', 'utf-8') % (settings.MEDIA_URL, reverse('view_activity_edit_activity', args=[activity.id]))
+    
+    return header_html
 
 @register.simple_tag
 def display_activity_edit_header(user, activity):
