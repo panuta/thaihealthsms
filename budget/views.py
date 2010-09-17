@@ -10,7 +10,7 @@ from budget import functions as budget_functions
 from models import *
 
 from budget.models import BudgetSchedule
-from domain.models import Sector, MasterPlan, Plan, Program
+from domain.models import Sector, MasterPlan, SectorMasterPlan, Plan, Program
 
 from helper import utilities, permission
 from helper.shortcuts import render_page_response, access_denied
@@ -22,18 +22,18 @@ from helper.shortcuts import render_page_response, access_denied
 @login_required
 def view_sector_budget(request, sector_ref_no):
     sector = get_object_or_404(Sector, ref_no=sector_ref_no)
-    return render_page_response(request, 'budget', 'page_sector/sector_budget.html', {'sector':sector, })
+    sector_master_plans = SectorMasterPlan.objects.filter(sector=sector)
+    master_plans = []
+    for sm in sector_master_plans:
+        master_plans.append(sm.master_plan)
+    quarter_year = utilities.master_plan_current_year_number()
+    ctx = {'sector': sector, 'master_plans': master_plans, 'quarter_year': quarter_year}
+    return render_page_response(request, 'budget', 'page_sector/sector_budget.html', ctx)
 
 #
 # MASTER PLAN #######################################################################
 #
 
-@login_required
-def view_master_plan_budget(request, master_plan_ref_no):
-    master_plan = get_object_or_404(MasterPlan, ref_no=master_plan_ref_no)
-    return render_page_response(request, 'budget', 'page_sector/master_plan_budget.html', {'master_plan':master_plan})
-
-"""
 @login_required
 def view_master_plan_budget(request, master_plan_ref_no):
     master_plan = get_object_or_404(MasterPlan, ref_no=master_plan_ref_no)
@@ -47,7 +47,7 @@ def view_master_plan_budget(request, master_plan_ref_no):
         
         for program in programs:
             quarters = {1:{'grant':0,'claim':0}, 2:{'grant':0,'claim':0}, 3:{'grant':0,'claim':0}, 4:{'grant':0,'claim':0}}
-            for schedule in ProgramBudgetSchedule.objects.filter(program=program, schedule_on__year=current_year):
+            for schedule in BudgetSchedule.objects.filter(program=program, schedule_on__year=current_year):
                 quarter_number = utilities.find_quarter_number(schedule.schedule_on)
                 quarters[quarter_number]['grant'] = quarters[quarter_number]['grant'] + schedule.grant_budget
                 quarters[quarter_number]['claim'] = quarters[quarter_number]['claim'] + schedule.claim_budget
@@ -58,7 +58,6 @@ def view_master_plan_budget(request, master_plan_ref_no):
         plan.programs = programs
     
     return render_page_response(request, 'budget', 'page_sector/master_plan_budget.html', {'current_year':current_year, 'master_plan':master_plan, 'plans':plans, 'has_programs':has_programs})
-"""
 
 #
 # MASTER PLAN MANAGEMENT #######################################################################
