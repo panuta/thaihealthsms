@@ -8,16 +8,65 @@
 {% block body_tabs %}{% tabs_for_sector page user sector %}{% endblock %}
 
 {% block body_content %}
-<div class="sector_overview_page">
-	<!-- Master Plan -->
+<div class="sector_budget_page">
 	<div class="master_plans">
 		<ul>
-			{% for master_plan in master_plans %}
-			<li>แผน {{master_plan.ref_no}} {{master_plan.name}}</li>
-			{% endfor %}
+		{% for master_plan in master_plans %}
+			<li><a href="{% url view_master_plan_overview master_plan.ref_no %}">แผน {{master_plan.ref_no}} {{master_plan.name}}</a></li>
+		{% endfor %}
 		</ul>
 	</div>
-	
-	
+
+	<div class="budget">
+		<table class="ss_table">
+			<th rowspan="2">แผนงาน</th>
+			{% generate_quarter_table_header quarter_year %}
+			<tr>
+			{% for i in 4|get_range %}
+				<th>คาดการณ์</th>
+				<th>เบิกจ่ายจริง</th>
+			{% endfor %}
+			</tr>
+			{% for master_plan in master_plans %}
+				<tr>
+					<td colspan="9" class="master_plan">
+						แผน {{ master_plan.ref_no }} {{ master_plan.name }}
+					</td>
+				</tr>
+				{% for plan in master_plan.plan_set.all %}
+					<tr>
+						<td colspan="9" class="plan">
+							{{ plan.name }} ({{ plan.ref_no }})
+						</td>
+					</tr>
+					{% for program in plan.program_set.all %}
+						<tr>
+							<td class="program">
+								<div>
+									<a href="{% url view_program_budget program.id %}" title="{{program.name}}">แผนงานเลขที่ {{program.ref_no}}</a>
+								</div>
+								<div class="abbr_name">
+									{% if program.abbr_name %}({{program.abbr_name}}){% endif %}
+								</div>
+							</td>
+							{% for quarter_no in 4|get_range %}
+								<td class="grant_budget">
+									<div class="number">
+									{% print_master_plan_quarter_budget 'grant' program quarter_year quarter_no %}
+									</div>
+									<div class="unit">บาท</div>
+								</td>
+								<td class="claim_budget">
+									{% print_master_plan_quarter_budget 'claim' program quarter_year quarter_no %}
+									<div class="unit">บาท</div>
+								</td>
+							{% endfor %}
+						</tr>
+					{% endfor %}
+					</tr>
+				{% endfor %}
+			{% endfor %}
+		</table>
+	</div>	
 </div>
 {% endblock %}

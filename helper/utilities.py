@@ -68,6 +68,18 @@ def find_quarter_number(date):
     if month_elapse < 0: month_elapse = month_elapse + 12
     return month_elapse / 3 + 1
 
+def find_quarter_months(quarter):
+    start_month = settings.QUARTER_START_MONTH
+    months = {}
+    months['start'] = (((quarter - 1) * 3) + start_month) % 12
+    months['end'] = (months['start'] + 2) % 12
+    if months['start'] == 0:
+        months['start'] = 12
+    if months['end'] == 0:
+        months['end'] = 12
+    return months
+
+
 # AUTH UTILITIES
 allow_password_chars = '0123456789'
 random_password_length = 6

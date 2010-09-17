@@ -9,6 +9,13 @@
 
 {% block body_content %}
 <div class="sector_overview_page">
+	<div class="master_plans">
+		<ul>
+			{% for master_plan in master_plans %}
+			<li><a href="{% url view_master_plan_overview master_plan.ref_no %}">แผน {{master_plan.ref_no}} {{master_plan.name}}</a></li>
+			{% endfor %}
+		</ul>
+	</div>
 	<div class="kpi">
 		<table border="1" width="100%">
 			<th rowspan="2">กิจกรรมที่สำนักต้องดำเนินการ</th>
