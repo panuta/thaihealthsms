@@ -8,43 +8,52 @@
 {% block body_tabs %}{% tabs_for_sector page user sector %}{% endblock %}
 
 {% block body_content %}
-<div class="sector_overview_page">
+<div class="sector_kpi_page">
 	<div class="master_plans">
 		<ul>
 			{% for master_plan in master_plans %}
-			<li><a href="{% url view_master_plan_overview master_plan.ref_no %}">แผน {{master_plan.ref_no}} {{master_plan.name}}</a></li>
+				<li><a href="{% url view_master_plan_kpi master_plan.ref_no %}">แผน {{master_plan.ref_no}} {{master_plan.name}}</a></li>
 			{% endfor %}
 		</ul>
 	</div>
 	<div class="kpi">
-		<table border="1" width="100%">
-			<th rowspan="2">กิจกรรมที่สำนักต้องดำเนินการ</th>
+		<table class="ss_table">
+			<th rowspan="2">แผนงาน</th>
 			{% generate_quarter_table_header quarter_year %}
 			<tr>
 				{% for i in 4|get_range %}
-				<td>คาดการณ์</td>
-				<td>ผลที่เกิด</td>
+					<th>คาดการณ์</th>
+					<th>ผลที่เกิด</th>
 				{% endfor %}
 			</tr>
 			{% for master_plan in master_plans %}
 				{% for plan in master_plan.plan_set.all %}
+					{% if forloop.first %}
+						<tr>
+							<td class="master_plan" colspan="9">
+								แผน {{ master_plan.ref_no }} {{ master_plan.name }}
+							</td>
+						</tr>
+					{% endif %}
+				<tr>
+					<td class="plan" colspan="9">
+						กลุ่มแผนงาน: ({{ plan.ref_no }}) {{ plan.name }}
+					</td>
+				</tr>
 				<tr>
 					<td>
 						<ul>
-							{% if forloop.first %}
-								<li class="master_plan">แผน {{ master_plan.ref_no }} {{ master_plan.name }}</li>
-							{% endif %}
-							<li class="plan">{{ plan.name }} ({{ plan.ref_no }})</li>
 							{% for program in plan.program_set.all %}
-								<li class="program"><a href="{% url view_program_overview program.id %}">{{ program.name }}</a> {% print_program_kpis program %}</li>
+								<li class="program">
+									<a href="{% url view_program_kpi program.id %}" title="{{ program.name }}">แผนงานเลขที่ {{ program.ref_no }}</a> {% print_program_kpis program %}</li>
 							{% endfor %}
 						</ul>
 					</td>
 					{% for quarter_no in 4|get_range %}
-						<td>
+						<td class="target_kpi">
 							{% print_master_plan_quarter_kpi 'target' plan quarter_year quarter_no %}
 						</td>
-						<td>
+						<td class="result_kpi">
 							{% print_master_plan_quarter_kpi 'result' plan quarter_year quarter_no %}
 						</td>
 					{% endfor %}

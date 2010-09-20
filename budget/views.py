@@ -25,11 +25,31 @@ from helper.shortcuts import render_page_response, access_denied
 def view_sector_budget(request, sector_ref_no):
     sector = get_object_or_404(Sector, ref_no=sector_ref_no)
     sector_master_plans = SectorMasterPlan.objects.filter(sector=sector)
+
+    current_year = date.today().year
+    has_programs = False
     master_plans = []
+
     for sm in sector_master_plans:
-        master_plans.append(sm.master_plan)
-    quarter_year = utilities.master_plan_current_year_number()
-    ctx = {'sector': sector, 'master_plans': master_plans, 'quarter_year': quarter_year}
+        master_plan = sm.master_plan
+        plans = Plan.objects.filter(master_plan=master_plan)
+        for plan in plans:
+            programs = Program.objects.filter(plan=plan)
+            for program in programs:
+                quarters = {1:{'grant':0,'claim':0}, 2:{'grant':0,'claim':0},
+                            3:{'grant':0,'claim':0}, 4:{'grant':0,'claim':0}}
+                for schedule in BudgetSchedule.objects.filter(program=program, schedule_on__year=current_year):
+                    quarter_number = utilities.find_quarter_number(schedule.schedule_on)
+                    quarters[quarter_number]['grant'] = quarters[quarter_number]['grant'] + schedule.grant_budget
+                    quarters[quarter_number]['claim'] = quarters[quarter_number]['claim'] + schedule.claim_budget
+                program.quarters = quarters
+            if programs: has_programs = True
+            plan.programs = programs
+        master_plan.plans = plans
+        master_plans.append(master_plan)
+        
+    ctx = {'current_year': current_year, 'sector': sector, 'master_plans': master_plans,
+           'has_programs': has_programs} 
     return render_page_response(request, 'budget', 'page_sector/sector_budget.html', ctx)
 
 #

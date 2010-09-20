@@ -181,32 +181,3 @@ def print_master_plan_quarter_kpi(kpi_type, plan, quarter_year, quarter_no):
     if ret != '':
         ret = '<ul>%s</ul>' % (ret)
     return ret
-
-#
-# BUDGET -------------------------------------------------------------------------
-#
-
-@register.simple_tag
-def print_master_plan_quarter_budget(budget_type, program, quarter_year, quarter_no):
-    from django.contrib.humanize.templatetags import humanize
-
-    ret = ''
-    months = utilities.find_quarter_months(quarter_no)
-    if budget_type == 'grant':
-        budget = BudgetSchedule.objects.filter(program=program,
-                    schedule_on__year=quarter_year,
-                    schedule_on__gte=datetime(quarter_year, months['start'], 1),
-                    schedule_on__lte=datetime(quarter_year, months['end'], 
-                        calendar.monthrange(quarter_year, months['end'])[1]))
-        if budget:
-            ret = budget[0].grant_budget
-    elif budget_type == 'claim':
-        budget = BudgetSchedule.objects.filter(program=program,
-                    claimed_on__year=quarter_year,
-                    claimed_on__gte=datetime(quarter_year, months['start'], 1),
-                    claimed_on__lte=datetime(quarter_year, months['end'],
-                        calendar.monthrange(quarter_year, months['end'])[1]))
-        if budget:
-            ret = budget[0].claim_budget
-    return humanize.intcomma(ret)
-
