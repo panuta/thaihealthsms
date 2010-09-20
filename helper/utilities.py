@@ -68,6 +68,7 @@ def find_quarter_number(date):
     if month_elapse < 0: month_elapse = month_elapse + 12
     return month_elapse / 3 + 1
 
+
 # AUTH UTILITIES
 allow_password_chars = '0123456789'
 random_password_length = 6

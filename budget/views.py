@@ -11,7 +11,7 @@ from report import functions as report_functions
 from models import *
 
 from budget.models import BudgetSchedule
-from domain.models import Sector, MasterPlan, Plan, Program, Project
+from domain.models import Sector, MasterPlan, SectorMasterPlan, Plan, Program
 from report.models import ReportAssignment, ReportSubmission
 
 from helper import utilities, permission
@@ -24,18 +24,38 @@ from helper.shortcuts import render_page_response, access_denied
 @login_required
 def view_sector_budget(request, sector_ref_no):
     sector = get_object_or_404(Sector, ref_no=sector_ref_no)
-    return render_page_response(request, 'budget', 'page_sector/sector_budget.html', {'sector':sector, })
+    sector_master_plans = SectorMasterPlan.objects.filter(sector=sector)
+
+    current_year = date.today().year
+    has_programs = False
+    master_plans = []
+
+    for sm in sector_master_plans:
+        master_plan = sm.master_plan
+        plans = Plan.objects.filter(master_plan=master_plan)
+        for plan in plans:
+            programs = Program.objects.filter(plan=plan)
+            for program in programs:
+                quarters = {1:{'grant':0,'claim':0}, 2:{'grant':0,'claim':0},
+                            3:{'grant':0,'claim':0}, 4:{'grant':0,'claim':0}}
+                for schedule in BudgetSchedule.objects.filter(program=program, schedule_on__year=current_year):
+                    quarter_number = utilities.find_quarter_number(schedule.schedule_on)
+                    quarters[quarter_number]['grant'] = quarters[quarter_number]['grant'] + schedule.grant_budget
+                    quarters[quarter_number]['claim'] = quarters[quarter_number]['claim'] + schedule.claim_budget
+                program.quarters = quarters
+            if programs: has_programs = True
+            plan.programs = programs
+        master_plan.plans = plans
+        master_plans.append(master_plan)
+        
+    ctx = {'current_year': current_year, 'sector': sector, 'master_plans': master_plans,
+           'has_programs': has_programs} 
+    return render_page_response(request, 'budget', 'page_sector/sector_budget.html', ctx)
 
 #
 # MASTER PLAN #######################################################################
 #
 
-@login_required
-def view_master_plan_budget(request, master_plan_ref_no):
-    master_plan = get_object_or_404(MasterPlan, ref_no=master_plan_ref_no)
-    return render_page_response(request, 'budget', 'page_sector/master_plan_budget.html', {'master_plan':master_plan})
-
-"""
 @login_required
 def view_master_plan_budget(request, master_plan_ref_no):
     master_plan = get_object_or_404(MasterPlan, ref_no=master_plan_ref_no)
@@ -49,7 +69,7 @@ def view_master_plan_budget(request, master_plan_ref_no):
         
         for program in programs:
             quarters = {1:{'grant':0,'claim':0}, 2:{'grant':0,'claim':0}, 3:{'grant':0,'claim':0}, 4:{'grant':0,'claim':0}}
-            for schedule in ProgramBudgetSchedule.objects.filter(program=program, schedule_on__year=current_year):
+            for schedule in BudgetSchedule.objects.filter(program=program, schedule_on__year=current_year):
                 quarter_number = utilities.find_quarter_number(schedule.schedule_on)
                 quarters[quarter_number]['grant'] = quarters[quarter_number]['grant'] + schedule.grant_budget
                 quarters[quarter_number]['claim'] = quarters[quarter_number]['claim'] + schedule.claim_budget
@@ -60,7 +80,6 @@ def view_master_plan_budget(request, master_plan_ref_no):
         plan.programs = programs
     
     return render_page_response(request, 'budget', 'page_sector/master_plan_budget.html', {'current_year':current_year, 'master_plan':master_plan, 'plans':plans, 'has_programs':has_programs})
-"""
 
 #
 # MASTER PLAN MANAGEMENT #######################################################################
@@ -158,53 +177,4 @@ def view_budget_overview(request, schedule_id):
             ref_report_submissions.append(reference)
     
     revisions = BudgetScheduleRevision.objects.filter(schedule=schedule).order_by('-revised')
-    return render_page_response(request, 'overview', 'page_kpi/budget_overview.html', {'schedule':schedule, 'ref_projects':ref_projects, 'ref_report_submissions':ref_report_submissions, 'revisions':revisions})
-
-@login_required
-def view_budget_overview_edit_reference(request, schedule_id):
-    schedule = get_object_or_404(BudgetSchedule, pk=schedule_id)
-    
-    if not permission.access_obj(request.user, 'program budget reference edit', schedule.program):
-        return access_denied(request)
-    
-    if request.method == 'POST':
-        for form_project in request.POST.getlist('project'):
-            try:
-                project = Project.objects.get(pk=form_project)
-            except Project.DoesNotExist:
-                pass
-            else:
-                (reference, created) = BudgetScheduleReference.objects.get_or_create(schedule=schedule, project=project)
-                reference.description = request.POST.get('desc_project_%d' % project.id)
-                reference.save()
-        
-        for form_report in request.POST.getlist('report'):
-            try:
-                report_submission = ReportSubmission.objects.get(pk=form_report)
-            except ReportSubmission.DoesNotExist:
-                pass
-            else:
-                (reference, created) = BudgetScheduleReference.objects.get_or_create(schedule=schedule, report_submission=report_submission)
-                reference.description = request.POST.get('desc_report_%d' % report_submission.id)
-                reference.save()
-        
-        return redirect('view_budget_overview', schedule.id)
-    
-    projects = Project.objects.filter(program=schedule.program).order_by('name')
-    reports = report_functions.get_reports_for_edit_reference(schedule.program)
-    
-    for reference in BudgetScheduleReference.objects.filter(schedule=schedule):
-        if reference.project:
-            for project in projects:
-                if project.id == reference.project.id:
-                    project.has_reference = True
-                    project.reference_description = reference.description
-                    
-        elif reference.report_submission:
-            for report in reports:
-                for submission in report.submissions:
-                    if submission.id == reference.report_submission.id:
-                        submission.has_reference = True
-                        submission.reference_description = reference.description
-    
-    return render_page_response(request, 'overview', 'page_kpi/budget_overview_edit_reference.html', {'schedule':schedule, 'projects':projects, 'reports':reports})
+    return render_page_response(request, 'overview', 'page_kpi/budget_overview.html', {'schedule':schedule, 'references':references, 'revisions':revisions})

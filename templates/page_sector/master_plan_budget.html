@@ -17,14 +17,10 @@
             {% generate_quarter_table_header current_year %}
         </tr>
         <tr>
-            <th>คาดการณ์</th>
-            <th>เบิกจ่ายจริง</th>
-            <th>คาดการณ์</th>
-            <th>เบิกจ่ายจริง</th>
-            <th>คาดการณ์</th>
-            <th>เบิกจ่ายจริง</th>
-            <th>คาดการณ์</th>
-            <th>เบิกจ่ายจริง</th>
+			{% for i in 4|get_range %}
+				<th>คาดการณ์</th>
+				<th>เบิกจ่ายจริง</th>
+			{% endfor %}
         </tr>
         {% for plan in plans %}
             <tr>

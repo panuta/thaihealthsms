@@ -1,5 +1,8 @@
 # -*- encoding: utf-8 -*-
 
+import calendar
+from datetime import datetime
+
 from django import template
 register = template.Library()
 
@@ -9,6 +12,7 @@ from django.core.urlresolvers import reverse
 from helper import permission, utilities
 
 from accounts.models import UserRoleResponsibility, RoleDetails
+from budget.models import BudgetSchedule
 from domain.models import SectorMasterPlan
 from kpi.models import DomainKPI, DomainKPISchedule
 
@@ -152,28 +156,30 @@ def print_program_kpis(program):
     for kpi in kpis:
         kpi_schedules = DomainKPISchedule.objects.filter(kpi=kpi)
         for kpi_schedule in kpi_schedules:
-            ret += '<a href="' + \
-                   reverse('view_kpi_overview', args=[kpi_schedule.id]) +'">'+ \
-                   kpi.abbr_name + '</a>, '
+            ret += '<a href="%s">%s</a>, ' \
+                   % (reverse('view_kpi_overview', args=[kpi_schedule.id]), kpi.abbr_name)
     if ret != '':
-        ret = '(%s)' % (ret[:-2])
+        ret = '(%s)' % (ret[:-2]) # strip ', '
     return ret
 
 @register.simple_tag
 def print_master_plan_quarter_kpi(kpi_type, plan, quarter_year, quarter_no):
-    ret = '<ul>'
+    ret = ''
     for program in plan.program_set.all():
         kpis = DomainKPI.objects.filter(program=program, year=quarter_year)
         for kpi in kpis:
             kpi_schedules = DomainKPISchedule.objects.filter(kpi=kpi, quarter=quarter_no)
             for kpi_schedule in kpi_schedules:
                 if kpi_type == 'target' and kpi_schedule.target != 0:
-                    ret += '<li><a href="'+ reverse('view_kpi_overview', args=[kpi_schedule.id]) +'">%s</a> (%s %s)</li>' \
-                        % (kpi.abbr_name, str(kpi_schedule.target), kpi.unit_name)
+                    ret += '<li><a href="%s">%s</a> (%s %s)</li>' \
+                        % (reverse('view_kpi_overview', args=[kpi_schedule.id]),
+                           kpi.abbr_name, kpi_schedule.target, kpi.unit_name)
                 elif kpi_type == 'result' and kpi_schedule.result != 0:
-                    ret += '<li><a href="'+ reverse('view_kpi_overview', args=[kpi_schedule.id]) +'">%s</a> (%s %s)</li>' \
-                        % (kpi.abbr_name, str(kpi_schedule.result), kpi.unit_name)
-    ret += '</ul>'
+                    ret += '<li><a href="%s">%s</a> (%s %s)</li>' \
+                        % (reverse('view_kpi_overview', args=[kpi_schedule.id]),
+                           kpi.abbr_name, kpi_schedule.result, kpi.unit_name)
+    if ret != '':
+        ret = '<ul>%s</ul>' % (ret)
     return ret
 
 #
