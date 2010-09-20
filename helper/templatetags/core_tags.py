@@ -16,7 +16,9 @@ def display_header_navigation(user):
     html = '<a href="%s"><img src="%s/images/base/nav_home.png" class="icon"/> หน้าผู้ใช้</a> |' % (reverse('view_user_homepage'), settings.MEDIA_URL)
     
     if not user.is_superuser:
-        html = html + '<a href="%s"><img src="%s/images/base/nav_inbox.png" class="icon"/> ข้อความ</a> |' % (reverse('view_user_inbox'), settings.MEDIA_URL)
+        from comment.functions import get_user_unread_comment_count
+        
+        html = html + '<a href="%s"><img src="%s/images/base/nav_inbox.png" class="icon"/> ข้อความ (%d)</a> |' % (reverse('view_user_inbox'), settings.MEDIA_URL, get_user_unread_comment_count(user.get_profile()))
     
     if user.is_superuser:
         html = html + '<a href="%s"><img src="%s/images/base/nav_admin.png" class="icon"/> จัดการระบบ</a> |' % (reverse('view_administration'), settings.MEDIA_URL)

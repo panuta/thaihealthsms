@@ -241,7 +241,7 @@ def view_administration_users_add(request):
     sectors = Sector.objects.all().order_by('ref_no')
     master_plans = MasterPlan.objects.all().order_by('ref_no')
     
-    responsible_sector = ''
+    responsible_sector = 'first_item' # Can be any string
     if 'responsible_sector' in request.POST:
         sector_id = request.POST.get('responsible_sector')
         responsible_sector = Sector.objects.get(pk=sector_id)

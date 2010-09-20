@@ -7,9 +7,52 @@
 
 {% block body_title %}
 <h1>กล่องข้อความ</h1>
-<div class="subtitle">3 ข้อความใหม่</div>
+<div class="subtitle">{{unread_count}} ข้อความใหม่</div>
 {% endblock %}
 
 {% block body_content %}
-
+<div class="user_inbox_page">
+	{% if object_comments %}
+	<ol class="objects">
+        {% for object_comment in object_comments %}
+		<li class="object">
+			<div class="context">{% display_comment_object_title object_comment.object_name object_comment.object_id %}</div>
+			
+			<ol class="comments">
+				{% for comment in object_comment.comments %}
+				<li class="comment">
+					<div class="message new">
+		                <div class="metadata">จาก <span class="name">{{comment.sent_by.firstname}} {{comment.sent_by.lastname}}</span> เมื่อวันที่ <span class="date">{{comment.sent_on|abbr_datetime}}</span> &#187;</div>
+		                <p>{{comment.message}}</p>
+		            </div>
+					
+					{% if comment.replies %}
+		            <ol class="replies">
+		                {% for reply in comment.replies %}
+		                <li class="reply">
+		                    <div class="message new">
+		                        <div class="metadata">จาก <span class="name">{{reply.sent_by.firstname}} {{reply.sent_by.lastname}}</span> เมื่อวันที่ <span class="date">{{reply.sent_on|abbr_datetime}}</span> &#187;</div>
+		                        <p>{{reply.message}}</p>
+		                    </div>
+		                </li>
+		                {% endfor %}
+		            </ol>
+		            {% endif %}
+					
+				</li>
+				{% endfor %}
+			</ol>
+			
+			{% if object_comment.object_name == 'activity' %}<div class="comments_page_link"><a href="/activity/{{object_comment.object_id}}/comments/">อ่านความคิดเห็นทั้งหมด</a></div>{% endif %}
+            {% if object_comment.object_name == 'project' %}<div class="comments_page_link"><a href="/project/{{object_comment.object_id}}/comments/">อ่านความคิดเห็นทั้งหมด</a></div>{% endif %}
+            {% if object_comment.object_name == 'report' %}<div class="comments_page_link"><a href="/report/{{object_comment.object_id}}/comments/">อ่านความคิดเห็นทั้งหมด</a></div>{% endif %}
+            {% if object_comment.object_name == 'kpi' %}<div class="comments_page_link"><a href="/kpi/{{object_comment.object_id}}/comments/">อ่านความคิดเห็นทั้งหมด</a></div>{% endif %}
+            {% if object_comment.object_name == 'budget' %}<div class="comments_page_link"><a href="/budget/{{object_comment.object_id}}/comments/">อ่านความคิดเห็นทั้งหมด</a></div>{% endif %}
+		</li>
+        {% endfor %}
+    </ol>
+	{% else %}
+	<div class="ss_no_information">ไม่มีความคิดเห็นใหม่</div>
+	{% endif %}
+</div>
 {% endblock %}

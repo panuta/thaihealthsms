@@ -12,6 +12,7 @@ from accounts.models import *
 from domain.models import SectorMasterPlan, Plan, Program
 from report.models import ReportSubmission, SUBMITTED_ACTIVITY
 
+from comment import functions as comment_functions
 from report import functions as report_functions
 
 from helper import permission
@@ -113,7 +114,7 @@ def _view_sector_manager_assistant_homepage(request, roles, responsibilities):
     # Report
     for program in responsible_programs:
         program.approving_submissions = ReportSubmission.objects.filter(program=program, report__need_checkup=True, state=SUBMITTED_ACTIVITY)
-        (late_report_count, rejected_report_count) = report_functions.get_late_rejected_report_count(program, include_program_reports=False)
+        (late_report_count, rejected_report_count) = report_functions.get_late_rejected_report_count(program)
         program.late_report_count = late_report_count
         program.rejected_report_count = rejected_report_count
     
@@ -134,7 +135,8 @@ def _view_general_homepage(request, roles, responsibilities):
 
 @login_required
 def view_user_inbox(request):
-    return render_response(request, "page_user/user_inbox.html", {})
+    (object_comments, unread_count) = comment_functions.get_user_unread_comments(request.user.get_profile())
+    return render_response(request, "page_user/user_inbox.html", {'object_comments':object_comments, 'unread_count':unread_count})
 
 #
 # SETTINGS

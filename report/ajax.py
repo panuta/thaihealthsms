@@ -43,14 +43,17 @@ def ajax_delete_report_file(request):
         file_response = ReportSubmissionFileResponse.objects.get(pk=file_id)
         submission = file_response.submission
         
-        uploading_directory = "%s/%d/%d/" % (settings.REPORT_SUBMIT_FILE_PATH, file_response.submission.report_project.report.id, file_response.submission.id)
+        uploading_directory = "%s/%d/%d/" % (settings.REPORT_SUBMIT_FILE_PATH, file_response.submission.report.id, file_response.submission.id)
         
-        import os
-        os.remove(uploading_directory + file_response.filename.encode('utf-8'))
+        try:
+            import os
+            os.remove(uploading_directory + file_response.filename.encode('utf-8'))
+        except OSError:
+            pass
         
         file_response.delete()
         
-        if not ReportSubmissionFileResponse.objects.filter(submission).count():
+        if not ReportSubmissionFileResponse.objects.filter(submission=submission).count():
             submission.state = NO_ACTIVITY
             submission.save()
         

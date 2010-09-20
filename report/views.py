@@ -261,7 +261,11 @@ def view_program_reports(request, program_id, year_number):
         year_choices.append(year_number + i)
     
     (start_date, end_date) = utilities.master_plan_year_span(year_number)
-    (submissions, late_submissions, rejected_submissions) = report_functions.get_reports_for_program_reports_page(program, start_date, end_date, query_late_rejected=permission.access_obj(request.user, 'program report view late-rejected', program))
+    
+    if permission.access_obj(request.user, 'program report submission warning', program):
+        (submissions, late_submissions, rejected_submissions) = report_functions.get_reports_for_program_reports_page(program, start_date, end_date, include_warning=True)
+    else:
+        (submissions, late_submissions, rejected_submissions) = report_functions.get_reports_for_program_reports_page(program, start_date, end_date, include_warning=False)
     
     return render_page_response(request, 'reports', 'page_program/program_reports.html', {'program':program, 'submissions':submissions, 'late_submissions':late_submissions, 'rejected_submissions':rejected_submissions, 'start_date':start_date, 'end_date':end_date, 'year_number':year_number, 'year_choices':year_choices})
 
@@ -275,6 +279,9 @@ def view_program_reports_send_list(request, program_id):
     
     if not permission.access_obj(request.user, ('program report submission edit', 'program report submission submit'), program):
         return access_denied(request)
+    
+    # IMPORTANT NOTE ON PERMISSION
+    # In this page, 'program report submission warning' will be ignored
     
     reports = []
     for assignment in ReportAssignment.objects.filter(program=program, is_active=True):
@@ -290,6 +297,9 @@ def view_program_reports_send_report(request, program_id, report_id):
     
     if not permission.access_obj(request.user, ('program report submission edit', 'program report submission submit'), program):
         return access_denied(request)
+    
+    # IMPORTANT NOTE ON PERMISSION
+    # In this page, 'program report submission warning' will be ignored
     
     report = get_object_or_404(Report, id=report_id)
     submissions = report_functions.get_sending_report(program, report)

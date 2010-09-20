@@ -136,14 +136,48 @@ th {font-size:123.1%;text-align:center;}
 .assistant_responsibility_page ul li label {display:inline;}
 .assistant_responsibility_page .ss_no_information {margin-left:25px;}
 
-.user_page li.comment {margin-bottom:20px;}
-.user_page li.comment .source a {font-style:italic;font-size:108%;}
-.user_page li.comment .metadata {margin-bottom:10px;font-weight:bold;}
-.user_page li.comment .message {margin:10px 0px;padding:10px;border:1px solid #CCC;border-radius:8px;-moz-border-radius:8px;-webkit-border-radius:8px;}
-.user_page li.comment .new {background-color:#FFC;}
-.user_page li.comment .actions {margin-top:10px;}
-.user_page li.comment .actions a {font-size:95%;}
-.user_page li.comment ol.replies {margin-left:20px;}
+
+.user_inbox_page .context .supertitle {color:#666;margin-bottom:5px;}
+.user_inbox_page .context h2 {font-size:108%;color:#666;font-weight:bold;}
+
+.user_inbox_page li.object {border-bottom:1px dashed #999;margin-bottom:30px;}
+.user_inbox_page li.comment {margin-bottom:15px;}
+.user_inbox_page .comments .metadata {margin-bottom:10px;color:#666;}
+.user_inbox_page .comments .metadata span.name {color:#066;font-weight:bold;}
+.user_inbox_page .comments .metadata span.date {color:#444;font-weight:bold;}
+.user_inbox_page .comments .message {margin:10px 0px;padding:10px;border:1px solid #CCC;border-radius:8px;-moz-border-radius:8px;-webkit-border-radius:8px;}
+.user_inbox_page .comments .new {background-color:#FFC;}
+.user_inbox_page .comments ol.replies {margin-left:20px;}
+
+.user_inbox_page .comments_page_link {font-size:93%;margin-bottom:15px;}
+
+/*
+ * COMMENTS
+ */
+.comments_page .post_panel {border-bottom:1px dashed #999;padding-bottom:10px;margin-bottom:20px;}
+.comments_page .post_panel h3 {font-size:116%;color:#666;margin-bottom:5px;}
+.comments_page .post_panel textarea {width:100%;height:70px;}
+.comments_page .post_panel .buttons {margin-top:10px;}
+.comments_page .post_panel .buttons button {padding:4px 25px;cursor:pointer;border-left:1px solid #DDD;border-top:1px solid #DDD;border-bottom:1px solid #AAA;border-right:1px solid #AAA;background-color:#CCC;}
+.comments_page .post_panel .errorlist {margin-top:5px;color:#C30;}
+
+.comments_page .comments .metadata {margin-bottom:10px;color:#666;}
+.comments_page .comments .metadata span.name {color:#066;font-weight:bold;}
+.comments_page .comments .metadata span.date {color:#444;font-weight:bold;}
+.comments_page .comments .message {margin:10px 0px;padding:10px;border:1px solid #CCC;border-radius:8px;-moz-border-radius:8px;-webkit-border-radius:8px;}
+.comments_page .comments .new {background-color:#FFC;}
+.comments_page .comments .reply_link {margin:10px 0px 10px 20px;}
+.comments_page .comments .reply_link img {margin-right:5px;}
+.comments_page .comments .reply_link a {font-size:95%;color:#666;}
+.comments_page .comments .reply_link a:hover {color:#FFF;}
+.comments_page .comments ol.replies {margin-left:20px;}
+
+.comments_page .comments .post_reply_panel {border:1px dashed #999;padding:10px;background-color:#FFC;margin-left:20px;}
+.comments_page .comments .post_reply_panel h4 {font-size:108%;color:#666;margin-bottom:5px;}
+.comments_page .comments .post_reply_panel textarea {width:100%;height:60px;}
+.comments_page .comments .post_reply_panel .buttons {margin-top:10px;}
+.comments_page .comments .post_reply_panel .buttons button {padding:4px 25px;cursor:pointer;border-left:1px solid #DDD;border-top:1px solid #DDD;border-bottom:1px solid #AAA;border-right:1px solid #AAA;background-color:#CCC;}
+.comments_page .comments .post_reply_panel .buttons a {margin-left:15px;}
 
 /*
  * SECTOR
@@ -300,7 +334,7 @@ th {font-size:123.1%;text-align:center;}
 
 .program_kpi_page table {width:100%;margin:10px 0px 30px;}
 .program_kpi_page table th {padding:10px 10px;background-color:#DDD;color:#333;border:1px solid #AAA;text-align:center;}
-.program_kpi_page table th.quarter {font-weight:bold;}
+.program_kpi_page table th.quarter {font-weight:bold;font-size:100%;}
 
 .program_kpi_page table td {border:1px solid #AAA;padding:10px;}
 .program_kpi_page table td.kpi {width:300px;vertical-align:top;}

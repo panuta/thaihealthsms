@@ -128,11 +128,11 @@ def after_syncdb(sender, **kwargs):
     PermissionName.objects.get_or_create(permission='program activity delete', name='ลบกิจกรรมของแผนงาน')
     
     # REPORT
-    PermissionName.objects.get_or_create(permission='program report view late-rejected', name='ดูรายงานที่เลยกำหนดหรือถูกตีกลับของแผนงาน')
     PermissionName.objects.get_or_create(permission='program report schedule add', name='เพิ่มหัวเรื่องรายงานของแผนงาน')
     PermissionName.objects.get_or_create(permission='program report schedule edit', name='แก้ไขหัวเรื่องรายงานของแผนงาน')
     PermissionName.objects.get_or_create(permission='program report schedule delete', name='ลบหัวเรื่องรายงานของแผนงาน')
     
+    PermissionName.objects.get_or_create(permission='program report submission warning', name='ดูการแจ้งเตือนการส่งรายงาน')
     PermissionName.objects.get_or_create(permission='program report submission edit', name='เขียนรายงานสำหรับแผนงาน')
     PermissionName.objects.get_or_create(permission='program report submission submit', name='ส่งรายงานสำหรับแผนงาน')
     PermissionName.objects.get_or_create(permission='program report submission approve', name='รับรองรายงานสำหรับแผนงาน')
@@ -156,11 +156,11 @@ def after_syncdb(sender, **kwargs):
     AdminPermission.objects.get_or_create(permission='program activity edit')
     AdminPermission.objects.get_or_create(permission='program activity delete')
     
-    AdminPermission.objects.get_or_create(permission='program report view late-rejected')
     AdminPermission.objects.get_or_create(permission='program report schedule add')
     AdminPermission.objects.get_or_create(permission='program report schedule edit')
     AdminPermission.objects.get_or_create(permission='program report schedule delete')
     
+    AdminPermission.objects.get_or_create(permission='program report submission warning')
     AdminPermission.objects.get_or_create(permission='program report submission edit')
     AdminPermission.objects.get_or_create(permission='program report submission reference edit')
     
@@ -176,7 +176,7 @@ def after_syncdb(sender, **kwargs):
     
     UserPermission.objects.get_or_create(permission='master_plan manage', role=sector_manager_role, only_responsible=True)
     
-    UserPermission.objects.get_or_create(permission='program report view late-rejected', role=sector_manager_role, only_responsible=True)
+    UserPermission.objects.get_or_create(permission='program report submission warning', role=sector_manager_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program report submission approve', role=sector_manager_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program report submission reference edit', role=sector_manager_role, only_responsible=True)
     
@@ -192,7 +192,7 @@ def after_syncdb(sender, **kwargs):
     
     UserPermission.objects.get_or_create(permission='master_plan manage', role=sector_manager_assistant_role, only_responsible=True)
     
-    UserPermission.objects.get_or_create(permission='program report view late-rejected', role=sector_manager_assistant_role, only_responsible=True)
+    UserPermission.objects.get_or_create(permission='program report submission warning', role=sector_manager_assistant_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program report submission approve', role=sector_manager_assistant_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program report submission reference edit', role=sector_manager_assistant_role, only_responsible=True)
     
@@ -208,7 +208,7 @@ def after_syncdb(sender, **kwargs):
     
     UserPermission.objects.get_or_create(permission='master_plan manage', role=sector_specialist_role, only_responsible=True)
     
-    UserPermission.objects.get_or_create(permission='program report view late-rejected', role=sector_specialist_role, only_responsible=True)
+    UserPermission.objects.get_or_create(permission='program report submission warning', role=sector_specialist_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program report submission approve', role=sector_specialist_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program report submission reference edit', role=sector_specialist_role, only_responsible=True)
     
@@ -230,11 +230,11 @@ def after_syncdb(sender, **kwargs):
     UserPermission.objects.get_or_create(permission='program activity edit', role=program_manager_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program activity delete', role=program_manager_role, only_responsible=True)
     
-    UserPermission.objects.get_or_create(permission='program report view late-rejected', role=program_manager_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program report schedule add', role=program_manager_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program report schedule edit', role=program_manager_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program report schedule delete', role=program_manager_role, only_responsible=True)
     
+    UserPermission.objects.get_or_create(permission='program report submission warning', role=program_manager_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program report submission edit', role=program_manager_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program report submission submit', role=program_manager_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program report submission reference edit', role=program_manager_role, only_responsible=True)
@@ -255,11 +255,11 @@ def after_syncdb(sender, **kwargs):
     UserPermission.objects.get_or_create(permission='program activity edit', role=program_manager_assistant_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program activity delete', role=program_manager_assistant_role, only_responsible=True)
     
-    UserPermission.objects.get_or_create(permission='program report view late-rejected', role=program_manager_assistant_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program report schedule add', role=program_manager_assistant_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program report schedule edit', role=program_manager_assistant_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program report schedule delete', role=program_manager_assistant_role, only_responsible=True)
     
+    UserPermission.objects.get_or_create(permission='program report submission warning', role=program_manager_assistant_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program report submission edit', role=program_manager_assistant_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program report submission submit', role=program_manager_assistant_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program report submission reference edit', role=program_manager_assistant_role, only_responsible=True)

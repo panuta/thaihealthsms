@@ -176,3 +176,23 @@ def print_master_plan_quarter_kpi(kpi_type, plan, quarter_year, quarter_no):
     ret += '</ul>'
     return ret
 
+#
+# COMMENT
+#
+@register.simple_tag
+def display_comment_object_title(object_name, object_id):
+    from comment.functions import get_object_instance
+    object = get_object_instance(object_name, object_id)
+    
+    if object_name == 'project': 
+        return unicode('<div class="supertitle">แผนงาน %s</div><h2>โครงการ - %s</h2>', 'utf-8') % (object.program.name, object.name)
+    elif object_name == 'activity':
+        return unicode('<div class="supertitle">แผนงาน %s</div><div class="supertitle">โครงการ %s</div><h2>กิจกรรม - %s</h2>', 'utf-8') % (object.project.program.name, object.project.name, object.name)
+    elif object_name == 'report':
+        return unicode('<div class="supertitle">แผนงาน %s</div><div class="supertitle">รายงาน %s</div><h2>กำหนดส่งวันที่ %s</h2>', 'utf-8') % (object.program.name, object.report.name, utilities.format_abbr_date(object.schedule_date))
+    elif object_name == 'kpi':
+        return unicode('<div class="supertitle">แผนงาน %s</div><div class="supertitle">ตัวชี้วัด %s</div><h2>งวดไตรมาสที่ %d ปี %d</h2>', 'utf-8') % (object.program.name, object.kpi.name, object.quarter, object.quarter_year)
+    elif object_name == 'budget':
+        return unicode('<div class="supertitle">แผนงาน %s</div><h2>การเบิกจ่ายงวดวันที่ %s</h2>', 'utf-8') % (utilities.format_abbr_date(object.schedule_on))
+    
+    return ''

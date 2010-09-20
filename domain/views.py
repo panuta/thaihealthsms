@@ -268,11 +268,12 @@ def view_program_overview(request, program_id):
     current_projects = Project.objects.filter(program=program, start_date__lte=current_date, end_date__gte=current_date)
     
     # REPORT
-    late_report_count = []
-    rejected_report_count = []
     
-    if permission.access_obj(request.user, 'program report view late-rejected', program):
+    if permission.access_obj(request.user, 'program report submission warning', program):
         (late_report_count, rejected_report_count) = report_functions.get_late_rejected_report_count(program)
+    else:
+        late_report_count = 0
+        rejected_report_count = 0
     
     recent_reports = ReportSubmission.objects.filter(program=program).filter(Q(state=APPROVED_ACTIVITY) | (Q(state=SUBMITTED_ACTIVITY) & (Q(report__need_approval=False) | Q(report__need_checkup=False)))).order_by('-submitted_on')[:settings.RECENT_REPORTS_ON_PROGRAM_OVERVIEW]
     

@@ -9,6 +9,8 @@ def access_obj(user, permissions, obj, at_least_one_permission=True):
     
     if type(permissions).__name__ in ('str', 'unicode'):
         permissions = [permissions]
+    else:
+        permissions = list(permissions)
     
     if user.is_superuser:
         checked_permission_count = 0

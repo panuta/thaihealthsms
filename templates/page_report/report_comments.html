@@ -2,12 +2,73 @@
 {% load helper_tags page_tags core_tags %}
 
 {% block html_head %}
-
+<script type="text/javascript">
+$(document).ready(function() {
+    $(".reply-comment").click(function(e) {
+        e.preventDefault();
+        
+        var comment_id = $(this).closest('li.comment').attr('id').split('-')[1];
+        var comment_id_input = '<input type="hidden" name="comment_id" value="' + comment_id + '"/>';
+        
+        var post_panel = $("<div class='post_reply_panel'><form method='post' action='.'>{% csrf_token %}<h4>ตอบกลับความคิดเห็น</h4>" + comment_id_input + "<textarea name='comment_message'></textarea><div class='buttons'><button type='submit' name='submit_reply_button'>ส่งความคิดเห็น</button> <a href='#' class='cancel'>ยกเลิก</a></div></form></div>");
+        
+        post_panel.find(".cancel").click(function(e) {
+            e.preventDefault();
+            $(this).closest("li.comment").find("div.reply_link").show();
+            $(this).closest("div.post_reply_panel").remove();
+        });
+        
+        $(this).parent().after(post_panel);
+        $(this).parent().hide();
+        
+        post_panel.find('textarea').focus();
+    });
+});
+</script>
 {% endblock %}
 
 {% block body_title %}{% display_report_header user submission %}{% endblock %}
 {% block body_tabs %}{% tabs_for_report page user submission %}{% endblock %}
 
 {% block body_content %}
-
+<div class="comments_page">
+    <div class="post_panel">
+        <form method="post" action=".">
+            {% csrf_token %}
+            <h3>เขียนความคิดเห็น:</h3>
+            {{form.comment_message}}
+            {{form.comment_message.errors}}
+            <div class="buttons"><button type="submit" name="submit_comment_button">ส่งข้อความ</button></div>
+        </form>
+    </div>
+    
+    {% if comments %}
+    <ol class="comments">
+        {% for comment in comments %}
+        <li class="comment" id="comment-{{comment.id}}">
+            <div class="message {% if comment.is_unread %}new{% endif %}">
+                <div class="metadata">จาก <span class="name">{{comment.sent_by.firstname}} {{comment.sent_by.lastname}}</span> เมื่อวันที่ <span class="date">{{comment.sent_on|abbr_datetime}}</span> &#187;</div>
+                <p>{{comment.message}}</p>
+            </div>
+            
+            {% if comment.replies %}
+            <ol class="replies">
+                {% for reply in comment.replies %}
+                <li class="reply" id="reply-{{reply.id}}">
+                    <div class="message {% if reply.is_unread %}new{% endif %}">
+                        <div class="metadata">จาก <span class="name">{{reply.sent_by.firstname}} {{reply.sent_by.lastname}}</span> เมื่อวันที่ <span class="date">{{reply.sent_on|abbr_datetime}}</span> &#187;</div>
+                        <p>{{reply.message}}</p>
+                    </div>
+                </li>
+                {% endfor %}
+            </ol>
+            {% endif %}
+            <div class="reply_link"><img src="{{MEDIA_URL}}/images/page/comment_reply.png" class="icon"/> <a href="#" class="reply-comment">ตอบกลับ</a></div>
+        </li>
+        {% endfor %}
+    </ol>
+    {% else %}
+    <div class="ss_no_information">ไม่มีความคิดเห็น</div>
+    {% endif %}
+</div>
 {% endblock %}
