@@ -262,9 +262,6 @@ def get_reports_for_edit_reference(program):
 # REPORT NOTIFICATION
 #
 
-"""
-WILL HAVE TO DEAL WITH NO-SUBMISSION-ID
-
 def submission_notification():
     current_date = date.today()
     site = Site.objects.get_current()
@@ -272,89 +269,76 @@ def submission_notification():
     
     user_notifies = {}
     for report in Report.objects.all():
-        for report_project in ReportProject.objects.filter(report=report):
-            project = report_project.project
+        for report_assignment in ReportAssignment.objects.filter(report=report, is_active=True):
+            program = report_assignment.program
             
-            overdue = []
             atdue = []
             beforedue = []
             
             if report.due_type == REPORT_REPEAT_DUE:
                 repeatable = ReportDueRepeatable.objects.get(report=report)
-                
                 next_date = repeatable.schedule_start
                 while next_date < current_date:
-                    submission, created = ReportSubmission.objects.get_or_create(report=report, project=project, schedule_date=next_date)
-                    if submission.state == NO_ACTIVITY or submission.state == EDITING_ACTIVITY:
-                        # ADD --> overdue
-                        overdue.append(submission)
-                    
+                    submission, created = ReportSubmission.objects.get_or_create(report=report,
+                                            program=program, schedule_date=next_date)
                     next_date = _get_next_schedule(next_date, repeatable)
                 
                 if next_date == current_date and report.notify_at_due:
                     # ADD --> atdue
-                    submission, created = ReportSubmission.objects.get_or_create(report=report, project=project, schedule_date=next_date)
+                    submission, created = ReportSubmission.objects.get_or_create(report=report,
+                                            program=program, schedule_date=next_date)
                     atdue.append(submission)
                 
                 if report.notify_days_before:
                     days_pass = (next_date - current_date).days
-                    
                     while days_pass <= report.notify_days_before:
                         if next_date - timedelta(days=report.notify_days_before) == current_date:
-                            submission, created = ReportSubmission.objects.get_or_create(report=report, project=project, schedule_date=next_date-timedelta(days=report.notify_days_before))
+                            submission, created = ReportSubmission.objects.get_or_create(report=report,
+                                program=program, schedule_date=next_date-timedelta(days=report.notify_days_before))
                             if submission.state == NO_ACTIVITY or submission.state == EDITING_ACTIVITY:
                                 # ADD --> beforedue
                                 beforedue.append(submission)
-                        
                         next_date = _get_next_schedule(next_date, repeatable)
                         days_pass = (next_date - current_date).days
                 
             elif report.due_type == REPORT_DUE_DATES:
                 for due_date in ReportDueDates.objects.filter(report=report):
-                    
-                    if due_date.due_date < current_date:
-                        submission, created = ReportSubmission.objects.get_or_create(report=report, project=project, schedule_date=due_date.due_date)
-                        if submission.state == NO_ACTIVITY or submission.state == EDITING_ACTIVITY:
-                            # ADD --> overdue
-                            overdue.append(submission)
-                        
                     if due_date.due_date == current_date and report.notify_at_due:
                         # ADD --> atdue
-                        submission, created = ReportSubmission.objects.get_or_create(report=report, project=project, schedule_date=due_date.due_date)
+                        submission, created = ReportSubmission.objects.get_or_create(report=report,
+                                                program=program, schedule_date=due_date.due_date)
                         atdue.append(submission)
                     
                     if due_date.due_date - timedelta(days=report.notify_days_before) == current_date:
-                        submission, created = ReportSubmission.objects.get_or_create(report=report, project=project, schedule_date=due_date.due_date)
+                        submission, created = ReportSubmission.objects.get_or_create(report=report,
+                                                program=program, schedule_date=due_date.due_date)
                         if submission.state == NO_ACTIVITY or submission.state == EDITING_ACTIVITY:
                             # ADD --> beforedue
                             beforedue.append(submission)
             
-            if overdue or atdue or beforedue:
-                user_notifies = _populate_user_notification(user_notifies, _who_to_notify(project), overdue, atdue, beforedue)
+            if atdue or beforedue:
+                user_notifies = _populate_user_notification(user_notifies, _who_to_notify(program),
+                                    atdue, beforedue)
     
     if user_notifies:
         email_datatuple = []
         
         for user in user_notifies.keys():
-            overdue_submissions = user_notifies[user]['overdue']
             atdue_submissions = user_notifies[user]['atdue']
             beforedue_submissions = user_notifies[user]['beforedue']
             
             # Sending Email
             email_subject = render_to_string('email/notify_report_subject.txt', {'site':site, 'today':current_date}).strip(' \n\t')
-            email_message = render_to_string('email/notify_report_message.txt', {'site':site, 'today':current_date, 'overdue_submissions':overdue_submissions, 'atdue_submissions':atdue_submissions, 'beforedue_submissions':beforedue_submissions}).strip(' \n\t')
+            email_message = render_to_string('email/notify_report_message.txt', {'site':site, 'today':current_date, 'atdue_submissions':atdue_submissions, 'beforedue_submissions':beforedue_submissions}).strip(' \n\t')
             email_datatuple.append((email_subject, email_message, settings.SYSTEM_NOREPLY_EMAIL, [user.user.email]))
         
         send_mass_mail(email_datatuple, fail_silently=True)
 
-def _populate_user_notification(user_notifies, users, overdue, atdue, beforedue):
+def _populate_user_notification(user_notifies, users, atdue, beforedue):
     for user in users:
         if not user in user_notifies:
-            user_notifies[user] = {'overdue':[], 'atdue':[], 'beforedue':[]}
+            user_notifies[user] = {'atdue':[], 'beforedue':[]}
             
-        for submission in overdue:
-            user_notifies[user]['overdue'].append(submission)
-        
         for submission in atdue:
             user_notifies[user]['atdue'].append(submission)
         
@@ -363,17 +347,15 @@ def _populate_user_notification(user_notifies, users, overdue, atdue, beforedue)
     
     return user_notifies
 
-def _who_to_notify(project):
-    responsibilities = UserRoleResponsibility.objects.filter(role__name='project_manager', projects__in=(project,))
-    
+def _who_to_notify(program):
+    responsibilities = UserRoleResponsibility.objects.filter(role__name='project_manager', programs__in=(program,))
+
     users = set()
     for responsibility in responsibilities:
         users.add(responsibility.user)
     
     return users
-"""
 # END -- REPORT NOTIFICATION
-
 
 # NOTE: Only for monthly
 def _get_next_schedule(current_schedule, repeatable):
