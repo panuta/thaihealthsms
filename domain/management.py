@@ -276,7 +276,7 @@ def after_syncdb(sender, **kwargs):
 
     """
     BELOW CODE IS FOR PROTOTYPE-PURPOSE ONLY
-    """
+
     
     plan1, created = Plan.objects.get_or_create(master_plan=master_plan1, ref_no="101", name="Sample Plan 1")
     plan2, created = Plan.objects.get_or_create(master_plan=master_plan1, ref_no="102", name="Sample Plan 2")
@@ -353,8 +353,9 @@ def after_syncdb(sender, **kwargs):
     
     
     project_001, created = Project.objects.get_or_create(program=program101_01, ref_no='001', contract_no='REF001', name='Project 001', abbr_name='PRJ001', created_by=sector_manager_user_account)
+
+    """
     
 from django.db.models.signals import post_syncdb
 post_syncdb.connect(after_syncdb, dispatch_uid="domain.management")
-
 

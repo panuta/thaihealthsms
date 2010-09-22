@@ -16,6 +16,7 @@ from report.models import *
 
 from helper import utilities, permission
 
+
 # For creating report
 def generate_report_schedule_start(start_now, schedule_monthly_date):
     current_date = date.today()
@@ -317,8 +318,8 @@ def submission_notification():
                             beforedue.append(submission)
             
             if atdue or beforedue:
-                user_notifies = _populate_user_notification(user_notifies, _who_to_notify(program),
-                                    atdue, beforedue)
+                user_notifies = _populate_user_notification(user_notifies,
+                                    _who_to_notify(program), atdue, beforedue)
     
     if user_notifies:
         email_datatuple = []
@@ -328,9 +329,15 @@ def submission_notification():
             beforedue_submissions = user_notifies[user]['beforedue']
             
             # Sending Email
-            email_subject = render_to_string('email/notify_report_subject.txt', {'site':site, 'today':current_date}).strip(' \n\t')
-            email_message = render_to_string('email/notify_report_message.txt', {'site':site, 'today':current_date, 'atdue_submissions':atdue_submissions, 'beforedue_submissions':beforedue_submissions}).strip(' \n\t')
-            email_datatuple.append((email_subject, email_message, settings.SYSTEM_NOREPLY_EMAIL, [user.user.email]))
+            email_subject = render_to_string('email/notify_report_subject.txt',
+                                {'program': program}).strip(' \n\t')
+            email_message = render_to_string('email/notify_report_message.txt',
+                                {'site': site,
+                                 'atdue_submissions': atdue_submissions,
+                                 'beforedue_submissions': beforedue_submissions}).strip(' \n\t')
+
+            email_datatuple.append((email_subject, email_message,
+                                    settings.SYSTEM_NOREPLY_EMAIL, [user.user.email]))
         
         send_mass_mail(email_datatuple, fail_silently=True)
 
@@ -348,12 +355,10 @@ def _populate_user_notification(user_notifies, users, atdue, beforedue):
     return user_notifies
 
 def _who_to_notify(program):
-    responsibilities = UserRoleResponsibility.objects.filter(role__name='project_manager', programs__in=(program,))
-
+    responsibilities = UserRoleResponsibility.objects.filter(role__name='program_manager', programs__in=(program,))
     users = set()
     for responsibility in responsibilities:
         users.add(responsibility.user)
-    
     return users
 # END -- REPORT NOTIFICATION
 
