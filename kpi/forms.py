@@ -40,3 +40,6 @@ class DomainKPIModifyForm(forms.Form):
     year = forms.IntegerField(label='สำหรับปี')
     category = DomainKPICategoryChoiceField(required=False, label='ประเภท')
     unit_name = forms.CharField(max_length=300, label='หน่วยที่ใช้วัด')
+
+class ModifyKPIRemarkForm(forms.Form):
+    remark = forms.CharField(max_length=1000, required=False, widget=forms.Textarea(), label='หมายเหตุ')

@@ -22,6 +22,9 @@ urlpatterns = patterns('domain.views',
     url(r'^program/(?P<program_id>\d+)/$', 'view_program_overview', name='view_program_overview'),
     url(r'^program/(?P<program_id>\d+)/projects/$', 'view_program_projects', name='view_program_projects'),
     url(r'^program/(?P<program_id>\d+)/projects/add/$', 'view_program_add_project', name='view_program_add_project'),
+    url(r'^program/(?P<program_id>\d+)/projects/calendar/$', 'view_program_calendar', {'month':0, 'year':0, 'mpp':0}, name='view_program_calendar'),
+    url(r'^program/(?P<program_id>\d+)/projects/calendar/(?P<month>\d+)/(?P<year>\d+)/$', 'view_program_calendar', {'mpp':0}, name='view_program_calendar_month_year'),
+    url(r'^program/(?P<program_id>\d+)/projects/calendar/(?P<month>\d+)/(?P<year>\d+)/(?P<mpp>\d+)-month/$', 'view_program_calendar', name='view_program_calendar_month_year_mpp'),
     
     url(r'^program/projects/(?P<project_id>\d+)/edit/$', 'view_program_edit_project', name='view_program_edit_project'),
     
@@ -32,6 +35,9 @@ urlpatterns = patterns('domain.views',
     
     url(r'^project/(?P<project_id>\d+)/activities/$', 'view_project_activities', name='view_project_activities'),
     url(r'^project/(?P<project_id>\d+)/activities/add/$', 'view_project_add_activity', name='view_project_add_activity'),
+    url(r'^project/(?P<project_id>\d+)/activities/calendar/$', 'view_project_calendar', {'month':0, 'year':0, 'mpp':0}, name='view_project_calendar'),
+    url(r'^project/(?P<project_id>\d+)/activities/calendar/(?P<month>\d+)/(?P<year>\d+)/$', 'view_project_calendar', {'mpp':0}, name='view_project_calendar_month_year'),
+    url(r'^project/(?P<project_id>\d+)/activities/calendar/(?P<month>\d+)/(?P<year>\d+)/(?P<mpp>\d+)-month/$', 'view_project_calendar', name='view_project_calendar_month_year_mpp'),
     
     url(r'^project/activities/(?P<activity_id>\d+)/edit/$', 'view_project_edit_activity', name='view_project_edit_activity'),
     

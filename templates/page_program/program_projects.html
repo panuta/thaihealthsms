@@ -12,7 +12,7 @@
 	<div class="ss_control_panel">
         <ul>
 			{% access user 'program project add' program %}<li><img src="{{MEDIA_URL}}/images/toolbar/create.png" class="icon"/><a href="{% url view_program_add_project program.id %}">เพิ่มโครงการ</a></li>{% endaccess %}
-			<li><img src="{{MEDIA_URL}}/images/toolbar/calendar.png" class="icon"/><a href="#">ปฏิทินกิจกรรม</a></li>
+			<li><img src="{{MEDIA_URL}}/images/toolbar/calendar.png" class="icon"/><a href="{% url view_program_calendar program.id %}">ปฏิทินกิจกรรม</a></li>
         </ul>
     </div>
 	

@@ -59,6 +59,20 @@ def week_elapse_text(date):
         text = unicode('%d วัน', 'utf-8') % days_elapse
     
     return text
+
+def shift_month_year(month, year, offset):
+    month = month + offset
+    
+    while month > 12:
+        month = month - 12
+        year = year + 1
+    
+    while month < 1:
+        month = month + 12
+        year = year - 1
+    
+    return (month, year)
+
 #
 # QUARTER
 #
@@ -68,6 +82,24 @@ def find_quarter_number(date):
     if month_elapse < 0: month_elapse = month_elapse + 12
     return month_elapse / 3 + 1
 
+def find_quarter(date):
+    quarter = find_quarter_number(date)
+    
+    if settings.QUARTER_START_MONTH == 1:
+        quarter_year = date.year
+    else:
+        if date.month >= settings.QUARTER_START_MONTH:
+            if settings.QUARTER_LOWER_YEAR_NUMBER:
+                quarter_year = date.year
+            else:
+                quarter_year = date.year + 1
+        else:
+            if settings.QUARTER_LOWER_YEAR_NUMBER:
+                quarter_year = date.year + 1
+            else:
+                quarter_year = date.year
+    
+    return (quarter, quarter_year)
 
 # AUTH UTILITIES
 allow_password_chars = '0123456789'

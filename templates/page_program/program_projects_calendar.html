@@ -1,0 +1,52 @@
+{% extends 'page_base.html' %}
+{% load helper_tags page_tags core_tags %}
+
+{% block html_head %}
+<script type="text/javascript">
+$(document).ready(function() {
+   $(".change-mpp").change(function() {
+   	   var loc = "{% url view_program_calendar_month_year_mpp program.id month year 99999 %}";
+	   window.location = loc.replace("99999", $(this).find("option:selected").val());
+   });
+});
+</script>
+{% endblock %}
+
+{% block body_title %}{% display_program_header user program %}{% endblock %}
+{% block body_tabs %}{% tabs_for_program page user program %}{% endblock %}
+
+{% block body_content %}
+<div class="ss_breadcrumbs">
+    <div class="breadcrumbs"><a href="{% url view_program_projects program.id %}">โครงการของแผนงาน</a> &#187;</div>
+    <h2>ปฏิทินกิจกรรม</h2>
+</div>
+
+<div class="activity_calendar">
+	<div class="mpp">แสดงผล <select class="change-mpp">{% for i in mpp_list %}<option {% if i == mpp %}selected="selected"{% endif %} value="{{i}}">{{i}} เดือน</option>{% endfor %}</select> ต่อหน้า</div>
+	
+	<div class="load_month"><a href="{% url view_program_calendar_month_year_mpp program.id month|add:-1 year mpp %}">&#171; เดือนก่อนหน้า</a> <span>{{first_month_date|full_month_year}} - {{last_month_date|full_month_year}}</span> <a href="{% url view_program_calendar_month_year_mpp program.id month|add:1 year mpp %}">เดือนถัดไป &#187;</a></div>
+	
+	{% for activity_month in activity_months %}
+	<div class="activity_month">
+	    <div class="month">{{activity_month.first_day|full_month_year}}</div>
+		{% if activity_month.activities %}
+        <div class="activity_count">{{activity_month.activities|length}} กิจกรรม</div>
+		
+		<ul class="activities">
+			{% for activity in activity_month.activities %}
+			<li class="activity">
+                <div class="name"><a href="{% url view_activity_overview activity.id %}">{{activity.name}}</a></div>
+                <div class="time">วันที่ {{activity.start_date|abbr_date}} - วันที่ {{activity.end_date|abbr_date}}</div>
+            </li>
+			{% endfor %}
+	    </ul>
+	    
+		{% else %}
+		<div class="ss_no_information">ไม่มีกิจกรรม</div>
+		{% endif %}
+	</div>
+	{% endfor %}
+	
+	<div class="load_month"><a href="{% url view_program_calendar_month_year_mpp program.id month|add:-1 year mpp %}">&#171; เดือนก่อนหน้า</a> <span>{{first_month_date|full_month_year}} - {{last_month_date|full_month_year}}</span> <a href="{% url view_program_calendar_month_year_mpp program.id month|add:1 year mpp %}">เดือนถัดไป &#187;</a></div>
+</div>
+{% endblock %}

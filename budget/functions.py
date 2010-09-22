@@ -1,6 +1,8 @@
 
 from datetime import date
 
+from models import *
+
 def determine_schedule_status(schedule):
     # NORMAL, CLAIMED_EQUAL, CLAIMED_LOWER, CLAIMED_HIGHER, LATE
     current_date = date.today()
@@ -22,6 +24,5 @@ def determine_schedule_status(schedule):
 
 def get_late_budget_schedule_for_program(program):
     current_date = date.today()
-    schedules = BudgetSchedule.objects.filter(program=program, schedule_on__lt=current_date, claimed_on=None)
-    
+    return BudgetSchedule.objects.filter(program=program, schedule_on__lt=current_date, claimed_on=None)
     

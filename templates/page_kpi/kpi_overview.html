@@ -2,7 +2,22 @@
 {% load helper_tags page_tags core_tags humanize %}
 
 {% block html_head %}
-
+<script type="text/javascript">
+$(document).ready(function() {
+    $(".modify-remark").click(function(e) {
+        e.preventDefault();
+        $(this).closest(".remark").hide();
+        $("#remarkForm").show();
+    });
+    
+    $(".cancel-remark-button").click(function(e) {
+		e.preventDefault();
+        var remarkPanel = $(this).closest(".remark_panel");
+        remarkPanel.find(".remark").show();
+        $("#remarkForm").hide();
+    });
+});
+</script>
 {% endblock %}
 
 {% block body_title %}{% display_kpi_header user schedule %}{% endblock %}
@@ -16,11 +31,25 @@
         <div><span>ผลที่เกิด:</span> {{schedule.result|intcomma}} {{schedule.kpi.unit_name}}</div>
     </div>
 	
-	{% if schedule.remark %}
     <h2 class="h2">หมายเหตุ</h2>
-    <div class="remark">{{schedule.remark}}</div>
-    {% endif %}
-	
+    <div class="remark_panel">
+    	{% if schedule.remark %}
+        <div class="remark">
+            <p>{{schedule.remark}}</p>
+            <div class="actions"><a href="#" class="modify-remark">แก้ไขหมายเหตุ</a></div>
+        </div>
+        {% else %}
+        <div class="remark">
+            <a href="#" class="modify-remark">เพิ่มหมายเหตุ</a>
+        </div>
+        {% endif %}
+        <form action="." method="post" id="remarkForm">
+        	{% csrf_token %}
+            {{form.remark}}
+            <div class="button_panel"><button class="save-remark-button" type="submit">บันทึก</button><button class="cancel-remark-button">ยกเลิก</button></div>
+        </form>
+	</div>
+    
 	<div class="reference_section">
     <h2 class="h2">ข้อมูลประกอบ</h2>
 	

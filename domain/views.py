@@ -17,6 +17,8 @@ from comment.models import *
 from kpi.models import *
 from report.models import *
 
+from budget import functions as budget_functions
+from kpi import functions as kpi_functions
 from report import functions as report_functions
 
 from helper import utilities, permission
@@ -48,7 +50,64 @@ def view_sector_overview(request, sector_ref_no):
 def view_master_plan_overview(request, master_plan_ref_no):
     master_plan = get_object_or_404(MasterPlan, ref_no=master_plan_ref_no)
     
-    return render_page_response(request, 'overview', 'page_sector/master_plan_overview.html', {'master_plan': master_plan})
+    sectors = [smp.sector for smp in SectorMasterPlan.objects.filter(master_plan=master_plan).order_by('sector__ref_no')]
+    
+    programs_with_late_report = []
+    programs_with_rejected_report = []
+    programs_with_late_budget_claim = []
+    
+    for program in Program.objects.filter(plan__master_plan=master_plan):
+        
+        # REPORT
+        (late_submission_count, rejected_submission_count) = report_functions.get_program_warning_report_count(program)
+        
+        if late_submission_count: programs_with_late_report.append(program)
+        if rejected_submission_count: programs_with_rejected_report.append(program)
+        
+        # BUDGET
+        late_claim_budget_amount = 0
+        
+        late_budget_schedules = budget_functions.get_late_budget_schedule_for_program(program)
+        for schedule in late_budget_schedules:
+            late_claim_budget_amount = late_claim_budget_amount + schedule.grant_budget
+        
+        if late_budget_schedules:
+            program.late_claim_budget_amount = late_claim_budget_amount
+            programs_with_late_budget_claim.append(program)
+    
+    # KPI
+    current_date = date.today()
+    (current_quarter, current_quarter_year) = utilities.find_quarter(current_date)
+    
+    if current_quarter == 1:
+        last_quarter = 4
+        last_quarter_year = current_quarter_year - 1
+    else:
+        last_quarter = current_quarter -1
+        last_quarter_year = current_quarter_year
+    
+    kpi_progress = {'current_quarter':current_quarter, 'current_quarter_year':current_quarter_year, 'last_quarter':last_quarter, 'last_quarter_year':last_quarter_year}
+    
+    current_kpi_progress = kpi_functions.get_kpi_progress_for_master_plan_overview(master_plan, None, current_quarter, current_quarter_year)
+    last_kpi_progress = kpi_functions.get_kpi_progress_for_master_plan_overview(master_plan, None, last_quarter, last_quarter_year)
+    
+    if current_kpi_progress != '' or last_kpi_progress != '':
+        kpi_progress['no_category'] = {'current':current_kpi_progress, 'last':last_kpi_progress}
+    else:
+        kpi_progress['no_category'] = None
+    
+    kpi_categories = DomainKPICategory.objects.filter(master_plan=master_plan)
+    kpi_progress_categories = []
+    for kpi_category in kpi_categories:
+        current_kpi_progress = kpi_functions.get_kpi_progress_for_master_plan_overview(master_plan, kpi_category, current_quarter, current_quarter_year)
+        last_kpi_progress = kpi_functions.get_kpi_progress_for_master_plan_overview(master_plan, kpi_category, last_quarter, last_quarter_year)
+        
+        if current_kpi_progress != '' or last_kpi_progress != '':
+            kpi_progress_categories.append({'kpi_category':kpi_category, 'current':current_kpi_progress, 'last':last_kpi_progress})
+    
+    kpi_progress['kpi_progress_categories'] = kpi_progress_categories
+    
+    return render_page_response(request, 'overview', 'page_sector/master_plan_overview.html', {'master_plan': master_plan, 'sectors':sectors, 'programs_with_late_report':programs_with_late_report, 'programs_with_rejected_report':programs_with_rejected_report, 'programs_with_late_budget_claim':programs_with_late_budget_claim, 'kpi_progress':kpi_progress})
 
 @login_required
 def view_master_plan_programs(request, master_plan_ref_no):
@@ -347,6 +406,48 @@ def view_program_edit_project(request, project_id):
     project.removable = Activity.objects.filter(project=project).count() == 0
     return render_page_response(request, 'projects', 'page_program/program_projects_modify_project.html', {'program':program, 'form':form, 'project':project})
 
+def view_program_calendar(request, program_id, month, year, mpp):
+    program = get_object_or_404(Program, pk=program_id)
+    month = int(month)
+    year = int(year)
+    
+    if not month or not year:
+        current_date = date.today()
+        month = current_date.month
+        year = current_date.year
+    
+    if month > 12:
+        month = month - 12
+        year = year + 1
+        return redirect('view_program_calendar_month_year_mpp', program_id, month, year, mpp)
+    elif month < 1:
+        month = month + 12
+        year = year - 1
+        return redirect('view_program_calendar_month_year_mpp', program_id, month, year, mpp)
+    
+    mpp = int(mpp)
+    if mpp <= 0:
+        mpp = settings.DEFAULT_ACTIVITY_CALENDAR_MONTHS_PER_PROGRAM_PAGE
+        return redirect('view_program_calendar_month_year_mpp', program_id, month, year, mpp)
+    
+    activity_months = []
+    for i in range(0, mpp):
+        (new_month, new_year) = utilities.shift_month_year(month, year, i)
+        
+        first_day = date(new_year, new_month, 1)
+        last_day = date(new_year, new_month, calendar.monthrange(new_year, new_month)[1])
+        
+        activities = Activity.objects.filter(project__program=program).filter((Q(end_date__gte=first_day) & Q(start_date__lte=last_day)) | (Q(start_date__lte=last_day) & Q(end_date__gte=first_day)))
+        
+        activity_months.append({'month':new_month, 'year':year, 'activities':activities, 'first_day':first_day})
+    
+    first_month_date = date(year, month, 1)
+    (last_month, last_year) = utilities.shift_month_year(month, year, i)
+    last_month_date = date(last_year, last_month, 1)
+    
+    mpp_list = range(1, settings.MAX_ACTIVITY_CALENDAR_MONTHS_PER_PAGE+1)
+    return render_page_response(request, 'projects', 'page_program/program_projects_calendar.html', {'program':program, 'activity_months':activity_months, 'mpp_list':mpp_list, 'mpp':mpp, 'month':month, 'year':year, 'first_month_date':first_month_date, 'last_month_date':last_month_date})
+
 #
 # PROJECT #######################################################################
 #
@@ -465,6 +566,48 @@ def view_project_edit_activity(request, activity_id):
         form = ActivityModifyForm(initial=activity.__dict__)
     
     return render_page_response(request, 'activities', 'page_program/project_activities_modify_activity.html', {'project':project, 'form':form, 'activity':activity})
+
+def view_project_calendar(request, project_id, month, year, mpp):
+    project = get_object_or_404(Project, pk=project_id)
+    month = int(month)
+    year = int(year)
+    
+    if not month or not year:
+        current_date = date.today()
+        month = current_date.month
+        year = current_date.year
+    
+    if month > 12:
+        month = month - 12
+        year = year + 1
+        return redirect('view_project_calendar_month_year_mpp', project_id, month, year, mpp)
+    elif month < 1:
+        month = month + 12
+        year = year - 1
+        return redirect('view_project_calendar_month_year_mpp', project_id, month, year, mpp)
+    
+    mpp = int(mpp)
+    if mpp <= 0:
+        mpp = settings.DEFAULT_ACTIVITY_CALENDAR_MONTHS_PER_PROJECT_PAGE
+        return redirect('view_project_calendar_month_year_mpp', project_id, month, year, mpp)
+    
+    activity_months = []
+    for i in range(0, mpp):
+        (new_month, new_year) = utilities.shift_month_year(month, year, i)
+        
+        first_day = date(new_year, new_month, 1)
+        last_day = date(new_year, new_month, calendar.monthrange(new_year, new_month)[1])
+        
+        activities = Activity.objects.filter(project=project).filter((Q(end_date__gte=first_day) & Q(start_date__lte=last_day)) | (Q(start_date__lte=last_day) & Q(end_date__gte=first_day)))
+        
+        activity_months.append({'month':new_month, 'year':year, 'activities':activities, 'first_day':first_day})
+    
+    first_month_date = date(year, month, 1)
+    (last_month, last_year) = utilities.shift_month_year(month, year, i)
+    last_month_date = date(last_year, last_month, 1)
+    
+    mpp_list = range(1, settings.MAX_ACTIVITY_CALENDAR_MONTHS_PER_PAGE+1)
+    return render_page_response(request, 'activities', 'page_program/project_activities_calendar.html', {'project':project, 'activity_months':activity_months, 'mpp_list':mpp_list, 'mpp':mpp, 'month':month, 'year':year, 'first_month_date':first_month_date, 'last_month_date':last_month_date})
 
 #
 # ACTIVITY #######################################################################

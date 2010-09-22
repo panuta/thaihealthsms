@@ -1,7 +1,23 @@
 {% extends 'page_base.html' %}
-{% load helper_tags page_tags core_tags %}
+{% load helper_tags page_tags core_tags humanize %}
 
 {% block html_head %}
+<script type="text/javascript">
+$(document).ready(function() {
+    $(".showhide-programs").click(function(e) {
+		e.preventDefault();
+		var linkObject = $(this);
+		$(this).closest(".warning").find("ul").slideToggle('fast', function() {
+			if($(this).is(":visible")) {
+				linkObject.text("ซ่อนรายชื่อแผนงาน");
+            } else {
+                linkObject.text("แสดงรายชื่อแผนงาน");
+            }
+		});
+		$(this).blur();
+    });
+});
+</script>
 {% endblock %}
 
 {% block body_title %}{% display_master_plan_header user master_plan %}{% endblock %}
@@ -10,5 +26,114 @@
 {% block body_content %}
 <div class="master_plan_overview_page">
     
+	<div class="overview">
+		<div class="sectors">
+			สำนักที่ดูแลแผน {% for sector in sectors %}<a href="{% url view_sector_overview sector.ref_no %}">สำนัก {{sector.ref_no}}</a>{% endfor %}
+		</div>
+	</div>
+	
+	<h2>รายงาน</h2>
+	{% if programs_with_late_report or programs_with_rejected_report %}
+	
+	{% if programs_with_late_report %}
+	<div class="warning">
+		<div class="warning_title">มี {{programs_with_late_report|length}} แผนงานที่มีรายงานเลยกำหนดส่ง <a href="#" class="showhide-programs">แสดงรายชื่อแผนงาน</a></div>
+		
+		<ul style="display:none;">
+            {% for program in programs_with_late_report %}
+            <li>
+                <div class="name"><span>{{program.ref_no}}</span> {{program.name}}</div>
+                <div><a href="{% url view_program_reports program.id %}">ไปหน้ารายงาน</a></div>
+            </li>
+            {% endfor %}
+        </ul>
+	</div>
+	{% endif %}
+	
+	{% if programs_with_rejected_report %}
+	<div class="warning">
+        <div class="warning_title">มี {{programs_with_late_report|length}} แผนงานที่มีรายงานที่ถูกตีกลับ <a href="#" class="showhide-programs">แสดงรายชื่อแผนงาน</a></div>
+        
+        <ul style="display:none;">
+            {% for program in programs_with_late_report %}
+            <li>
+            	<div class="name"><span>{{program.ref_no}}</span> {{program.name}}</div>
+            	<div><a href="{% url view_program_reports program.id %}">ไปหน้ารายงาน</a></div>
+	        </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+	
+	{% else %}
+	<div class="ss_no_information">การส่งรายงานเป็นปกติ</div>
+    {% endif %}
+	
+	<h2>การเบิกจ่าย</h2>
+	{% if programs_with_late_budget_claim %}
+	<div class="warning">
+        <div class="warning_title">มี {{programs_with_late_budget_claim|length}} แผนงานที่เลขกำหนดการเบิกจ่าย <a href="#" class="showhide-programs">แสดงรายชื่อแผนงาน</a></div>
+        
+        <ul style="display:none;">
+            {% for program in programs_with_late_budget_claim %}
+            <li>
+                <div class="name"><span>{{program.ref_no}}</span> {{program.name}}</div>
+                <div class="amount">ยังไม่ได้เบิก {{program.late_claim_budget_amount|intcomma}} บาท</div>
+				<div><a href="{% url view_program_budget program.id %}">ไปหน้าแผนการเงิน</a></div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+	{% else %}
+	<div class="ss_no_information">การเบิกจ่ายปกติ</div>
+	{% endif %}
+	
+	<h2>ความก้าวหน้าโดยตัวชี้วัด</h2>
+	{% if kpi_progress.no_category or kpi_progress.kpi_progress_categories %}
+	<div class="kpi_progress">
+		<div class="more_details"><a href="{% url view_master_plan_kpi master_plan.ref_no %}">เปิดหน้าแผนผลลัพธ์ เพื่อดูข้อมูลโดยละเอียด</a></div>
+		<table>
+			<tr>
+                <th>ไตรมาสที่ {{kpi_progress.last_quarter}} ปี {{kpi_progress.last_quarter_year|add:543}}</th>
+                <th>ไตรมาสที่ {{kpi_progress.current_quarter}} ปี {{kpi_progress.current_quarter_year|add:543}}</th>
+            </tr>
+			
+			{% if kpi_progress.no_category %}
+			<tr>
+                <td colspan="2" class="kpi_category">{% if kpi_progress.no_category and kpi_progress.kpi_progress_categories %}(ตัวชี้วัดที่ไม่ได้แบ่งประเภท){% endif %}</td>
+            </tr>
+			<tr>
+                <td>
+                    <div class="ss_bar_graph"><div class="percent_bar" style="width:{% if kpi_progress.no_category.last != '' %}{{kpi_progress.no_category.last}}{% else %}0{% endif %}%;"></div></div>
+                    <div class="graph_number">{% if kpi_progress.no_category.last != '' %}{{kpi_progress.no_category.last}}%{% else %}ไม่มีตัวชี้วัด{% endif %}</div>
+                </td>
+                <td>
+                    <div class="ss_bar_graph"><div class="percent_bar" style="width:{% if kpi_progress.no_category.current != '' %}{{kpi_progress.no_category.current}}{% else %}0{% endif %}%;"></div></div>
+                    <div class="graph_number">{% if kpi_progress.no_category.current != '' %}{{kpi_progress.no_category.current}}%{% else %}ไม่มีตัวชี้วัด{% endif %}</div>
+                </td>
+            </tr>
+			{% endif %}
+			
+			{% for kpi_progress_category in kpi_progress.kpi_progress_categories %}
+			
+			<tr>
+                <td colspan="2" class="kpi_category">{{kpi_progress_category.kpi_category.name}}</td>
+            </tr>
+			<tr>
+                <td>
+                    <div class="ss_bar_graph"><div class="percent_bar" style="width:{% if kpi_progress_category.last != '' %}{{kpi_progress_category.last}}{% else %}0{% endif %}%;"></div></div>
+                    <div class="graph_number">{% if kpi_progress_category.current != '' %}{{kpi_progress_category.current}}{% else %}0{% endif %}</div>
+                </td>
+                <td>
+                    <div class="ss_bar_graph"><div class="percent_bar" style="width:{% if kpi_progress_category.last != '' %}{{kpi_progress_category.last}}%{% else %}ไม่มีตัวชี้วัด{% endif %}%;"></div></div>
+                    <div class="graph_number">{% if kpi_progress_category.current != '' %}{{kpi_progress_category.current}}%{% else %}ไม่มีตัวชี้วัด{% endif %}</div>
+                </td>
+            </tr>
+			{% endfor %}
+		</table>
+	</div>
+	{% else %}
+	<div class="ss_no_information">ไม่มีข้อมูลการชี้วัด</div>
+    {% endif %}
 </div>
 {% endblock %}

@@ -335,6 +335,19 @@ def view_program_kpi(request, program_id):
 def view_kpi_overview(request, schedule_id):
     schedule = get_object_or_404(DomainKPISchedule, pk=schedule_id)
     
+    if request.method == 'POST':
+        form = ModifyKPIRemarkForm(request.POST)
+        if form.is_valid():
+            remark = form.cleaned_data['remark']
+            
+            schedule.remark = form.cleaned_data['remark']
+            schedule.save()
+            
+            return redirect('view_kpi_overview', (schedule.id))
+        
+    else:
+        form = ModifyKPIRemarkForm(initial={'remark':schedule.remark})
+    
     ref_projects = []
     ref_report_submissions = []
     
@@ -344,7 +357,7 @@ def view_kpi_overview(request, schedule_id):
         elif reference.report_submission:
             ref_report_submissions.append(reference)
     
-    return render_page_response(request, 'overview', 'page_kpi/kpi_overview.html', {'schedule':schedule, 'ref_projects':ref_projects, 'ref_report_submissions':ref_report_submissions})
+    return render_page_response(request, 'overview', 'page_kpi/kpi_overview.html', {'schedule':schedule, 'form':form, 'ref_projects':ref_projects, 'ref_report_submissions':ref_report_submissions})
 
 @login_required
 def view_kpi_overview_edit_reference(request, schedule_id):

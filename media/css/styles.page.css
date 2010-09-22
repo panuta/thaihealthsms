@@ -180,8 +180,30 @@ h2.h2 {font-size:146.5%;padding-bottom:5px;margin-bottom:10px;color:#2D8659;bord
 .comments_page .comments .post_reply_panel .buttons a {margin-left:15px;}
 
 /*
+ * ACTIVITY CALENDAR
+ */
+
+.activity_calendar .mpp {color:#666;margin-bottom:20px;border-bottom:1px dashed #999;padding-bottom:10px;}
+.activity_calendar .mpp select {margin:0px 10px;}
+.activity_calendar .load_month {text-align:center;margin:15px 0px;}
+.activity_calendar .load_month a {margin:0px 25px;}
+.activity_calendar .load_month span {font-size:123.1%;color:#555;}
+.activity_calendar .month {font-size:123.1%;color:#2D8659;margin:0px 0px 5px;border-bottom:1px solid #CCC;padding-bottom:5px;}
+.activity_calendar .activity_count {color:#666;font-size:108%;margin-bottom:15px;}
+
+.activity_calendar .activity_month {border:1px solid #999;padding:15px;margin-bottom:25px;}
+.activity_calendar .ss_no_information {margin-left:20px;margin-bottom:5px;}
+.activity_calendar .activities {}
+.activity_calendar li.activity {margin-bottom:15px;list-style:disc;margin-left:30px;}
+.activity_calendar li.activity .name {font-size:108%;margin-bottom:5px;}
+.activity_calendar li.activity .time {color:#555;}
+
+/*
  * SECTOR
  */
+
+.sector_overview_page h2 {color:#2D8659;margin-bottom:15px;font-size:138.5%;border-bottom:1px solid #CCC;padding-bottom:5px;}
+.sector_overview_page .master_plans li {font-size:116%;margin-bottom:15px;}
 
 .sector_kpi_page .master_plans,
 .sector_budget_page .master_plans {margin-bottom:20px;}
@@ -218,7 +240,27 @@ h2.h2 {font-size:146.5%;padding-bottom:5px;margin-bottom:10px;color:#2D8659;bord
  */
 
 /* Master Plan - Overview Page */
+.master_plan_overview_page .overview {border-bottom:1px dashed #999;padding-bottom:10px;margin-bottom:20px;}
+.master_plan_overview_page .overview .sectors {font-size:116%;color:#444;}
+.master_plan_overview_page .overview .sectors a {margin:0px 10px;}
 
+.master_plan_overview_page h2 {font-size:138.5%;color:#2D8659;margin-bottom:10px;}
+.master_plan_overview_page .more_details {margin-bottom:20px;font-size:93%;}
+
+.master_plan_overview_page .warning {background-color:#FDD;border:1px solid #CCC;padding:10px;margin-bottom:20px;}
+.master_plan_overview_page .warning .warning_title {font-size:108%;color:#333;}
+.master_plan_overview_page .warning ul {margin:15px 0px;}
+.master_plan_overview_page .warning li {margin-bottom:15px;list-style:disc;margin-left:20px;}
+.master_plan_overview_page .warning li .name {margin-bottom:5px;}
+.master_plan_overview_page .warning li .name span {color:#666;}
+.master_plan_overview_page .warning li .amount {margin-bottom:5px;}
+
+.master_plan_overview_page .kpi_progress {}
+.master_plan_overview_page .kpi_progress table {width:100%;}
+.master_plan_overview_page .kpi_progress table th {color:#666;font-size:123.1%;padding:0px 20px;text-align:center;}
+.master_plan_overview_page .kpi_progress table td {padding:0px 10px;}
+.master_plan_overview_page .kpi_progress .kpi_category {color:#2D8659;padding:20px 10px 10px;}
+.master_plan_overview_page .kpi_progress .graph_number {font-weight:bold;margin-top:5px;font-size:108%;}
 
 /* Master Plan - Programs Page */
 .master_plan_programs_page {}
@@ -528,7 +570,12 @@ h2.h2 {font-size:146.5%;padding-bottom:5px;margin-bottom:10px;color:#2D8659;bord
 .kpi_page .kpi_value div {margin-bottom:10px;}
 .kpi_page .kpi_value span {color:#666;}
 
-.kpi_page .remark {font-size:108%;margin-bottom:20px;}
+.kpi_page .remark_panel {margin-bottom:20px;}
+.kpi_page .remark_panel p {margin:5px 0px 10px;padding:10px;background-color:#EEE;border:1px solid #999;font-size:116%;}
+.kpi_page .remark_panel form {display:none;}
+.kpi_page .remark_panel form textarea {width:95%;margin-bottom:10px;height:110px;}
+.kpi_page .remark_panel form button {margin-right:10px;padding:3px 10px;border-top:1px solid #CCC;border-left:1px solid #CCC;border-bottom:1px solid #999;border-right:1px solid #999;background-color:#369;cursor:pointer;color:#FFF;}
+
 .kpi_page .reference_section {margin-bottom:40px;}
 
 
@@ -546,7 +593,11 @@ h2.h2 {font-size:146.5%;padding-bottom:5px;margin-bottom:10px;color:#2D8659;bord
 .budget_page .budget_value div {margin-bottom:10px;}
 .budget_page .budget_value span {color:#666;}
 
-.budget_page .remark {font-size:108%;margin-bottom:20px;}
+.budget_page .remark_panel {margin-bottom:20px;}
+.budget_page .remark_panel p {margin:5px 0px 10px;padding:10px;background-color:#EEE;border:1px solid #999;font-size:116%;}
+.budget_page .remark_panel form {display:none;}
+.budget_page .remark_panel form textarea {width:95%;margin-bottom:10px;height:110px;}
+.budget_page .remark_panel form button {margin-right:10px;padding:3px 10px;border-top:1px solid #CCC;border-left:1px solid #CCC;border-bottom:1px solid #999;border-right:1px solid #999;background-color:#369;cursor:pointer;color:#FFF;}
 
 .budget_page .reference_section {margin-bottom:40px;}
 

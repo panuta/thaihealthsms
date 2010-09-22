@@ -16,6 +16,21 @@ from report.models import *
 
 from helper import utilities, permission
 
+def looping_earlier_report_schedule(report, funct):
+    current_date = date.today()
+    
+    if report.due_type == REPORT_REPEAT_DUE:
+        repeatable = ReportDueRepeatable.objects.get(report=report)
+        
+        next_date = repeatable.schedule_start
+        while next_date < current_date:
+            funct.__call__(report, next_date)
+            next_date = _get_next_schedule(next_date, repeatable)
+    
+    elif report.due_type == REPORT_DUE_DATES:
+        for due_date in ReportDueDates.objects.filter(report=report, due_date__lt=current_date):
+            funct.__call__(report, due_date.due_date)
+
 # For creating report
 def generate_report_schedule_start(start_now, schedule_monthly_date):
     current_date = date.today()
@@ -34,6 +49,26 @@ def generate_report_schedule_start(start_now, schedule_monthly_date):
             schedule_start = date(current_date.year, current_date.month+1, schedule_monthly_date)
     
     return schedule_start
+
+def get_program_warning_report_count(program):
+    late_submissions = []
+    
+    def print_something(report, due_date):
+        try:
+            submission = ReportSubmission.objects.get(report=report, program=program, schedule_date=due_date)    
+        except ReportSubmission.DoesNotExist:
+            submission = ReportSubmission(report=report, program=program, schedule_date=due_date)
+        
+        if submission.state == NO_ACTIVITY or submission.state == EDITING_ACTIVITY:
+            late_submissions.append(submission)
+    
+    for assignment in ReportAssignment.objects.filter(program=program, is_active=True):
+        report = assignment.report
+        looping_earlier_report_schedule(report, print_something)
+    
+    rejected_submission_count = ReportSubmission.objects.filter(program=program, state=REJECTED_ACTIVITY).count()
+    
+    return (len(late_submissions), rejected_submission_count)
 
 # Used in Program Overview page
 def get_late_rejected_report_count(program):

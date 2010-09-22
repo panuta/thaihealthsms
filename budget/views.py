@@ -8,10 +8,12 @@ from django.shortcuts import get_object_or_404, redirect
 
 from budget import functions as budget_functions
 from report import functions as report_functions
+
+from forms import *
 from models import *
 
 from budget.models import BudgetSchedule
-from domain.models import Sector, MasterPlan, SectorMasterPlan, Plan, Program
+from domain.models import Sector, MasterPlan, SectorMasterPlan, Plan, Program, Project
 from report.models import ReportAssignment, ReportSubmission
 
 from helper import utilities, permission
@@ -167,6 +169,19 @@ def view_program_budget(request, program_id):
 def view_budget_overview(request, schedule_id):
     schedule = get_object_or_404(BudgetSchedule, pk=schedule_id)
     
+    if request.method == 'POST':
+        form = ModifyBudgetRemarkForm(request.POST)
+        if form.is_valid():
+            remark = form.cleaned_data['remark']
+            
+            schedule.remark = form.cleaned_data['remark']
+            schedule.save()
+            
+            return redirect('view_budget_overview', (schedule.id))
+        
+    else:
+        form = ModifyBudgetRemarkForm(initial={'remark':schedule.remark})
+    
     ref_projects = []
     ref_report_submissions = []
     
@@ -177,4 +192,52 @@ def view_budget_overview(request, schedule_id):
             ref_report_submissions.append(reference)
     
     revisions = BudgetScheduleRevision.objects.filter(schedule=schedule).order_by('-revised')
-    return render_page_response(request, 'overview', 'page_kpi/budget_overview.html', {'schedule':schedule, 'references':references, 'revisions':revisions})
+    return render_page_response(request, 'overview', 'page_kpi/budget_overview.html', {'schedule':schedule, 'ref_projects':ref_projects, 'ref_report_submissions':ref_report_submissions, 'revisions':revisions, 'form':form})
+
+def view_budget_overview_edit_reference(request, schedule_id):
+    schedule = get_object_or_404(BudgetSchedule, pk=schedule_id)
+    
+    if not permission.access_obj(request.user, 'program budget reference edit', schedule.program):
+        return access_denied(request)
+    
+    if request.method == 'POST':
+        for form_project in request.POST.getlist('project'):
+            try:
+                project = Project.objects.get(pk=form_project)
+            except Project.DoesNotExist:
+                pass
+            else:
+                (reference, created) = BudgetScheduleReference.objects.get_or_create(schedule=schedule, project=project)
+                reference.description = request.POST.get('desc_project_%d' % project.id)
+                reference.save()
+        
+        for form_report in request.POST.getlist('report'):
+            try:
+                report_submission = ReportSubmission.objects.get(pk=form_report)
+            except ReportSubmission.DoesNotExist:
+                pass
+            else:
+                (reference, created) = BudgetScheduleReference.objects.get_or_create(schedule=schedule, report_submission=report_submission)
+                reference.description = request.POST.get('desc_report_%d' % report_submission.id)
+                reference.save()
+        
+        return redirect('view_budget_overview', schedule.id)
+    
+    projects = Project.objects.filter(program=schedule.program).order_by('name')
+    reports = report_functions.get_reports_for_edit_reference(schedule.program)
+    
+    for reference in BudgetScheduleReference.objects.filter(schedule=schedule):
+        if reference.project:
+            for project in projects:
+                if project.id == reference.project.id:
+                    project.has_reference = True
+                    project.reference_description = reference.description
+        
+        elif reference.report_submission:
+            for report in reports:
+                for submission in report.submissions:
+                    if submission.id == reference.report_submission.id:
+                        submission.has_reference = True
+                        submission.reference_description = reference.description
+    
+    return render_page_response(request, 'overview', 'page_kpi/budget_overview_edit_reference.html', {'schedule':schedule, 'projects':projects, 'reports':reports})

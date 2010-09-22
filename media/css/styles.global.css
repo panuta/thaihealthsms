@@ -191,3 +191,12 @@ a:hover {color:#FFF;background-color:#369;}
 .ss_form .form_radio_group .caption {font-size:108%;margin:10px 0px;color:#396;}
 .ss_form .form_radio_group .radio_row {margin:0px 0px 15px 10px;font-size:108%;}
 .ss_form .form_radio_group .radio {margin-right:7px;}
+
+/* Bar Graph */
+.ss_bar_graph {height:20px;background-color:#999;}
+.ss_bar_graph div {height:20px;border-right:2px solid #FFF;background-color:#099;}
+.ss_bar_graph_disabled {background-color:#CCC !important;}
+
+.ss_bar_graph .low {background-color:#C33;}
+.ss_bar_graph .medium {background-color:#C90;}
+.ss_bar_graph .high {background-color:#099;}
