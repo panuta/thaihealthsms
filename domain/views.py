@@ -329,7 +329,7 @@ def view_program_overview(request, program_id):
     # REPORT
     
     if permission.access_obj(request.user, 'program report submission warning', program):
-        (late_report_count, rejected_report_count) = report_functions.get_late_rejected_report_count(program)
+        (late_report_count, rejected_report_count) = report_functions.get_program_warning_report_count(program)
     else:
         late_report_count = 0
         rejected_report_count = 0
