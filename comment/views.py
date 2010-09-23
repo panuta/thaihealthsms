@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect
 
@@ -25,6 +26,7 @@ def view_project_comments(request, project_id):
             
             if form.is_valid():
                 comment_functions.post_comment_for('project', project_id, form.cleaned_data['comment_message'], request.user.get_profile())
+                messages.success(request, 'เพิ่มความคิดเห็นเรียบร้อย')
                 return redirect('view_project_comments', project_id)
             
         elif 'submit_reply_button' in request.POST:
@@ -51,6 +53,7 @@ def view_activity_comments(request, activity_id):
             
             if form.is_valid():
                 comment_functions.post_comment_for('activity', activity_id, form.cleaned_data['comment_message'], request.user.get_profile())
+                messages.success(request, 'เพิ่มความคิดเห็นเรียบร้อย')
                 return redirect('view_activity_comments', activity_id)
             
         elif 'submit_reply_button' in request.POST:
@@ -60,6 +63,7 @@ def view_activity_comments(request, activity_id):
             comment = get_object_or_404(Comment, pk=comment_id)
             if message:
                 comment_functions.post_reply_comment_for(comment, 'activity', activity_id, message, request.user.get_profile())
+                messages.success(request, 'ตอบกลับความคิดเห็นเรียบร้อย')
                 return redirect('view_activity_comments', activity_id)
         
     else:
@@ -89,7 +93,7 @@ def view_report_comments(request, program_id, report_id, schedule_dateid):
             if form.is_valid():
                 if not submission.id: submission.save()
                 comment_functions.post_comment_for('report', submission.id, form.cleaned_data['comment_message'], request.user.get_profile())
-                
+                messages.success(request, 'เพิ่มความคิดเห็นเรียบร้อย')
                 return redirect('view_report_comments', program_id=program.id, report_id=report.id, schedule_dateid=schedule_dateid)
             
         elif 'submit_reply_button' in request.POST:
@@ -99,6 +103,7 @@ def view_report_comments(request, program_id, report_id, schedule_dateid):
             comment = get_object_or_404(Comment, pk=comment_id)
             if message:
                 comment_functions.post_reply_comment_for(comment, 'report', submission.id, message, request.user.get_profile())
+                messages.success(request, 'ตอบกลับความคิดเห็นเรียบร้อย')
                 return redirect('view_report_comments', program_id=program.id, report_id=report.id, schedule_dateid=schedule_dateid)
         
     else:
@@ -120,6 +125,7 @@ def view_kpi_comments(request, schedule_id):
             
             if form.is_valid():
                 comment_functions.post_comment_for('kpi', schedule_id, form.cleaned_data['comment_message'], request.user.get_profile())
+                messages.success(request, 'เพิ่มความคิดเห็นเรียบร้อย')
                 return redirect('view_kpi_comments', schedule_id)
             
         elif 'submit_reply_button' in request.POST:
@@ -129,6 +135,7 @@ def view_kpi_comments(request, schedule_id):
             comment = get_object_or_404(Comment, pk=comment_id)
             if message:
                 comment_functions.post_reply_comment_for(comment, 'kpi', schedule_id, message, request.user.get_profile())
+                messages.success(request, 'ตอบกลับความคิดเห็นเรียบร้อย')
                 return redirect('view_kpi_comments', schedule_id)
         
     else:
@@ -146,6 +153,7 @@ def view_budget_comments(request, schedule_id):
             
             if form.is_valid():
                 comment_functions.post_comment_for('budget', schedule_id, form.cleaned_data['comment_message'], request.user.get_profile())
+                messages.success(request, 'เพิ่มความคิดเห็นเรียบร้อย')
                 return redirect('view_budget_comments', schedule_id)
             
         elif 'submit_reply_button' in request.POST:
@@ -155,6 +163,7 @@ def view_budget_comments(request, schedule_id):
             comment = get_object_or_404(Comment, pk=comment_id)
             if message:
                 comment_functions.post_reply_comment_for(comment, 'budget', schedule_id, message, request.user.get_profile())
+                messages.success(request, 'ตอบกลับความคิดเห็นเรียบร้อย')
                 return redirect('view_budget_comments', schedule_id)
         
     else:

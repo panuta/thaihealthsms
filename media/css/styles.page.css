@@ -328,6 +328,8 @@ h2.h2 {font-size:146.5%;padding-bottom:5px;margin-bottom:10px;color:#2D8659;bord
 
 /* Program KPI */
 
+.master_plan_manage_program_kpi .error_message {color:#C30;margin-bottom:10px;}
+
 .master_plan_manage_program_kpi table {width:100%;margin-bottom:30px;}
 .master_plan_manage_program_kpi table th {font-weight:bold;color:#333;border:1px solid #CCC;padding:12px 10px;}
 .master_plan_manage_program_kpi table td {border:1px solid #CCC;padding:12px 10px;vertical-align:top;}
@@ -355,8 +357,10 @@ h2.h2 {font-size:146.5%;padding-bottom:5px;margin-bottom:10px;color:#2D8659;bord
 
 /* Program Budget */
 
+.master_plan_manage_program_budget .error_message {color:#C30;margin-bottom:10px;}
+
 .master_plan_manage_program_budget table {width:100%;margin-bottom:30px;}
-.master_plan_manage_program_budget table th {font-weight:bold;color:#333;border:1px solid #CCC;padding:12px 10px;}
+.master_plan_manage_program_budget table th {font-size:108%;color:#666;text-align:center;border:1px solid #CCC;padding:12px 10px;}
 .master_plan_manage_program_budget table td {border:1px solid #CCC;padding:12px 10px;vertical-align:top;}
 
 .master_plan_manage_program_budget table .controls {width:60px;text-align:center;}

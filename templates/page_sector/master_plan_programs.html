@@ -18,17 +18,22 @@ $(document).ready(function() {
 {% block body_tabs %}{% tabs_for_master_plan page user master_plan %}{% endblock %}
 
 {% block body_content %}
+
+{% access user 'master_plan manage' master_plan %}
 <div class="ss_control_panel">
     <ul>
         <li><img src="{{MEDIA_URL}}/images/icons/manage.png" class="icon"/><a href="{% url view_master_plan_manage_organization master_plan.ref_no %}">จัดการแผนงาน</a></li>
     </ul>
 </div>
+{% endaccess %}
 
 <div class="master_plan_programs_page">
+	{% if plans %}
 	<ul class="plans">
 		{% for plan in plans %}
 		<li class="plan">
 			<h2>{{plan.name}}</h2>
+			{% if plan.programs %}
 			<div class="programs_controls"><span>{{plan.programs|length}} แผนงาน</span><a href="#" class="expand-collapse">แสดง/ซ่อนแผนงาน</a></div>
 			<ul class="programs" style="display:none;">
 				{% for program in plan.programs %}
@@ -38,8 +43,14 @@ $(document).ready(function() {
 				</li>
 				{% endfor %}
 			</ul>
+			{% else %}
+            <div class="ss_no_information">ไม่มีแผนงานในกลุ่มแผนงานนี้</div>
+			{% endif %}
 		</li>
 		{% endfor %}
 	</ul>
+	{% else %}
+	<div class="ss_no_information">ไม่มีข้อมูลแผนงาน</div>
+	{% endif %}
 </div>
 {% endblock %}

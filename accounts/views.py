@@ -31,7 +31,10 @@ def hooked_login(request, template_name='registration/login.html', redirect_fiel
 
     if request.user.is_authenticated():
         if not request.user.is_superuser and request.user.get_profile().random_password:
+            request.session['first_time_login'] = True
             return redirect('/accounts/first_time/')
+        else:
+            request.session['first_time_login'] = False
         
     return response
 
@@ -46,22 +49,22 @@ def view_first_time_login(request):
         if form.is_valid():
             password1 = form.cleaned_data['password1']
             password2 =form.cleaned_data['password2']
-
+            
             user = request.user
             user.set_password(password1)
             user.save()
-
+            
             user_account = user.get_profile()
             user_account.random_password = ''
             user_account.save()
-
+            
             next = request.POST.get('next')
             if not next: next = '/'
             return redirect(next)
-
+        
     else:
         form = ChangeFirstTimePasswordForm()
-
+        
     next = request.GET.get('next', '')
     return render_response(request, "registration/first_time_login.html", {'form':form, 'next':next})
 

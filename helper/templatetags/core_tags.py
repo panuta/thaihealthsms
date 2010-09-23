@@ -242,3 +242,4 @@ def tabs_for_budget(page, user, schedule):
     else: html = html + '<li><a href="%s">ความคิดเห็น</a></li>' % reverse('view_budget_comments', args=[schedule.id])
     
     return _generate_tabs(html)
+

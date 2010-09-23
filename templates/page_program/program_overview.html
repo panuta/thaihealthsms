@@ -9,6 +9,20 @@
 {% block body_tabs %}{% tabs_for_program page user program %}{% endblock %}
 
 {% block body_content %}
+
+{% role user 'program_manager,program_manager_assistant' program %}
+{% if first_time_login %}
+<div class="help_content">
+	<div class="title">ยินดีต้อนรับเข้าสู่ระบบ</div>
+	<p>ในหน้านี้จะแสดงภาพรวมของแผนงาน เช่น โครงการที่ดำเนินอยู่ ผู้ใช้สามารถใส่ข้อมูลต่างๆสำหรับแผนงานได้โดยการไปที่แท็บต่างๆด้านบน ซึ่งจะมี "โครงการ" "แผนผลลัพธ์" "แผนการเงิน" "รายงาน"</p>
+	<p><em>แท็บโครงการสำหรับ</em> สร้างโครงการย่อยของแผนงาน</p>
+	<p><em>แท็บแผนผลลัพธ์สำหรับ</em> ตรวจสอบตัวชี้วัด และใส่ตัวเลขตัวชี้วัดของสำนัก</p>
+	<p><em>แท็บแผนการเงินสำหรับ</em> ตรวจสอบตารางการเบิกจ่าย ที่สำนักเป็นคนใส่ข้อมูล</p>
+	<p><em>แท็บรายงานสำหรับ</em> ส่งรายงานและสร้างหัวเรื่องรายงานใหม่</p>
+</div>
+{% endif %}
+{% endrole %}
+
 <div class="program_overview_page">
 	
 	{% if late_budget_schedules %}

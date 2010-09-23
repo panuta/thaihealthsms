@@ -16,8 +16,24 @@
     <link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}/css/styles.page.css">
     
     <script type="text/javascript" src="{{MEDIA_URL}}/scripts/scripts.js"></script>
-    <script type="text/javascript">var MEDIA_URL = '{{MEDIA_URL}}';</script>
-    
+<script type="text/javascript">
+var MEDIA_URL = '{{MEDIA_URL}}';
+
+$(document).ready(function() {
+    $(".activate-help").click(function(e) {
+		e.preventDefault();
+		var link = $(this);
+		$(".help_content").slideToggle(function() {
+			if($(this).is(":visible")) {
+				link.text("ซ่อนคำแนะนำการใช้งาน");
+			} else {
+				link.text("แสดงคำแนะนำการใช้งาน");
+			}
+		});
+    });
+});
+</script>
+	
     {% block html_head %}{% endblock %}
 </head>
 <body class="yui-skin-sam">

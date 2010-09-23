@@ -17,7 +17,7 @@ $(document).ready(function() {
     $(".new-schedule").click(function(e) {
         e.preventDefault();
         var uid = new Date().getTime();
-        var new_row = $('<tr class="schedule"><td class="controls"><a href="#" class="remove-schedule">ลบแถว</a></td><td class="grant_column"><input type="text" /> บาท</td><td class="schedule_on_column"><span class="yui_date_picker_panel"><input type="hidden" name="schedule_on" value="" id="id_schedule_on_' + uid + '_value"/><input type="text" value="" id="id_schedule_on_' + uid + '_display" readonly="readonly" class="yui_date_picker_textbox"/> <img src="/m/images/icons/date_picker.png" id="id_schedule_on_' + uid + '" class="yui_date_picker"/></span></td><td></td></tr>');
+        var new_row = $('<tr class="schedule"><td class="controls"><a href="#" class="remove-schedule">ลบแถว</a></td><td class="schedule_on_column"><span class="yui_date_picker_panel"><input type="hidden" name="schedule_on" value="" id="id_schedule_on_' + uid + '_value"/><input type="text" value="" id="id_schedule_on_' + uid + '_display" readonly="readonly" class="yui_date_picker_textbox"/> <img src="/m/images/icons/date_picker.png" id="id_schedule_on_' + uid + '" class="yui_date_picker"/></span></td><td class="grant_column"><input type="text" /> บาท</td><td>&nbsp;</td></tr>');
         initializeRowEvents(new_row);
         new_row.insertBefore($(this).closest('tr'));
     });
@@ -115,15 +115,14 @@ function initializeRowEvents(row_obj) {
     <table>
         <tr>
             <th class="controls"></th>
-            <th class="grant_column">ตัวเลขคาดการณ์</th>
             <th class="schedule_on_column">วันที่เบิกจ่าย</th>
+			<th class="grant_column">ตัวเลขคาดการณ์</th>
             <th></th>
         </tr>
         {% if schedules %}
             {% for schedule in schedules %}
             <tr class="schedule" id="schedule-{{schedule.id}}">
                 <td class="controls"><a href="#" class="remove-schedule">ลบแถว</a></td>
-                <td class="grant_column"><input type="text" value="{{schedule.grant_budget|intcomma}}"/> บาท</td>
                 <td class="schedule_on_column">
                     <span class="yui_date_picker_panel">
                         <input type="hidden" name="schedule_on" value="{{schedule.schedule_on|date:"Y-n-j"}}" id="id_schedule_on_{{schedule.id}}_value"/>
@@ -131,13 +130,13 @@ function initializeRowEvents(row_obj) {
                         <img src="{{MEDIA_URL}}/images/input/date_picker.png" id="id_schedule_on_{{schedule.id}}" class="yui_date_picker"/>
                     </span>
                 </td>
+				<td class="grant_column"><input type="text" value="{{schedule.grant_budget|intcomma}}"/> บาท</td>
                 <td>&nbsp;</td>
             </tr>
             {% endfor %}
         {% else %}
         <tr class="schedule">
             <td class="controls"><a href="#" class="remove-schedule">ลบแถว</a></td>
-            <td class="grant_column"><input type="text" /> บาท</td>
             <td class="schedule_on_column">
                 <span class="yui_date_picker_panel">
                     <input type="hidden" name="schedule_on" value="" id="id_schedule_on_starter_value"/>
@@ -145,6 +144,7 @@ function initializeRowEvents(row_obj) {
                     <img src="{{MEDIA_URL}}/images/input/date_picker.png" id="id_schedule_on_starter" class="yui_date_picker"/>
                 </span>
             </td>
+			<td class="grant_column"><input type="text" /> บาท</td>
             <td>&nbsp;</td>
         </tr>
         {% endif %}

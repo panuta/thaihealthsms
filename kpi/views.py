@@ -97,7 +97,7 @@ def view_master_plan_manage_program_kpi(request, program_id):
                 # TODO - Delete Comment
                 program_schedule.delete()
         
-        messages.success(request, 'แก้ไขแผนผลลัพธ์เรียบร้อย')
+        messages.success(request, 'แก้ไขแผนผลลัพธ์ของแผนงานเรียบร้อย')
         return redirect('view_master_plan_manage_organization', (master_plan.ref_no))
     
     return render_page_response(request, 'organization', 'page_sector/manage_master_plan/manage_program_kpi.html', {'master_plan':master_plan, 'program':program, 'kpi_choices':kpi_choices, 'kpi_schedules':kpi_schedules})
@@ -343,6 +343,7 @@ def view_kpi_overview(request, schedule_id):
             schedule.remark = form.cleaned_data['remark']
             schedule.save()
             
+            messages.success(request, 'แก้ไขหมายเหตุเรียบร้อย')
             return redirect('view_kpi_overview', (schedule.id))
         
     else:
@@ -387,6 +388,7 @@ def view_kpi_overview_edit_reference(request, schedule_id):
                 reference.description = request.POST.get('desc_report_%d' % report_submission.id)
                 reference.save()
         
+        messages.success(request, 'แก้ไขข้อมูลประกอบเรียบร้อย')
         return redirect('view_kpi_overview', schedule.id)
     
     projects = Project.objects.filter(program=schedule.program).order_by('name')

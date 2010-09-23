@@ -44,12 +44,10 @@ def access_obj(user, permissions, obj, at_least_one_permission=True):
                             if obj in responsibility.sectors.all():
                                 has_access = True
                             
-                            if user.get_profile().sector.id == obj.id:
-                                has_access = True
-                                
                         elif type(obj).__name__ == 'MasterPlan':
-                            has_access = SectorMasterPlan.objects.filter(sector__in=responsibility.sectors.all(), master_plan=obj).count() > 0
-                            
+                            if SectorMasterPlan.objects.filter(sector__in=responsibility.sectors.all(), master_plan=obj).count() > 0:
+                                has_access = True
+                        
                         elif type(obj).__name__ == 'Program':
                             if responsibility.role.name == 'sector_manager':
                                 obj_sectors = [smp.sector for smp in SectorMasterPlan.objects.filter(master_plan=obj.plan.master_plan)]
@@ -96,6 +94,36 @@ def has_roles(user, roles):
         if user_roles.intersection(roles): return True
         
     return False
+
+def has_role_with_obj(user, roles, obj):
+    if type(roles).__name__ in ('str', 'unicode'):
+        roles = [roles]
+    else:
+        roles = list(roles)
+    
+    if user.is_superuser: return False
+    
+    has_access = False
+    for responsibility in UserRoleResponsibility.objects.filter(user=user.get_profile()):
+        if responsibility.role in roles:
+            if type(obj).__name__ == 'Sector':
+                if obj in responsibility.sectors.all():
+                    has_access = True
+                
+            elif type(obj).__name__ == 'MasterPlan':
+                if SectorMasterPlan.objects.filter(sector__in=responsibility.sectors.all(), master_plan=obj).count() > 0:
+                    has_access = True
+                    
+            elif type(obj).__name__ == 'Program':
+                if responsibility.role.name == 'sector_manager':
+                    obj_sectors = [smp.sector for smp in SectorMasterPlan.objects.filter(master_plan=obj.plan.master_plan)]
+                    if set(obj_sectors).intersection(set(responsibility.sectors.all())):
+                        has_access = True
+                else:
+                    if obj in responsibility.programs.all():
+                        has_access = True
+    
+    return has_access
 
 def who_program_manager(program):
     if program.manager_name:

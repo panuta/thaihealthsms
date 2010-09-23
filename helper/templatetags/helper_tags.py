@@ -121,7 +121,7 @@ def do_access(parser, token):
     try:
         tag_name, user, permission_names, obj = token.split_contents()
     except ValueError:
-        raise template.TemplateSyntaxError, "Responsible tag raise ValueError"
+        raise template.TemplateSyntaxError, "Access tag raise ValueError"
     
     nodelist_true = parser.parse(('else', 'endaccess'))
     token = parser.next_token()
@@ -132,6 +132,45 @@ def do_access(parser, token):
         nodelist_false = NodeList()
     
     return AccessNode(nodelist_true, nodelist_false, user, permission_names, obj)
+
+class RoleNode(template.Node):
+    def __init__(self, nodelist_true, nodelist_false, user, role_names, obj):
+        self.nodelist_true = nodelist_true
+        self.nodelist_false = nodelist_false
+        self.user = template.Variable(user)
+        self.role_names = role_names.strip(' \"\'')
+        self.obj = template.Variable(obj)
+    
+    def render(self, context):
+        user = self.user.resolve(context)
+        role_names = self.role_names
+        obj = self.obj.resolve(context)
+        
+        roles = [role_name.strip() for role_name in role_names.split(',')]
+        
+        if permission.has_role_with_obj(user, roles, obj):
+            output = self.nodelist_true.render(context)
+            return output
+        else:
+            output = self.nodelist_false.render(context)
+            return output
+
+@register.tag(name="role")
+def do_role(parser, token):
+    try:
+        tag_name, user, role_names, obj = token.split_contents()
+    except ValueError:
+        raise template.TemplateSyntaxError, "Role tag raise ValueError"
+    
+    nodelist_true = parser.parse(('else', 'endrole'))
+    token = parser.next_token()
+    if token.contents == 'else':
+        nodelist_false = parser.parse(('endrole',))
+        parser.delete_first_token()
+    else:
+        nodelist_false = NodeList()
+    
+    return RoleNode(nodelist_true, nodelist_false, user, role_names, obj)
 
 # BACK TO PAGE #################################################################
 

@@ -147,6 +147,7 @@ def view_master_plan_manage_program_budget(request, program_id):
                 BudgetScheduleRevision.objects.filter(schedule=budget_schedule).delete()
                 budget_schedule.delete()
         
+        messages.success(request, 'แก้ไขแผนงานเงินของแผนงานเรียบร้อย')
         return utilities.redirect_or_back('view_master_plan_manage_organization', (master_plan.ref_no), request)
     
     return render_page_response(request, 'organization', 'page_sector/manage_master_plan/manage_program_budget.html', {'master_plan':master_plan, 'program':program, 'schedules':budget_schedules})
@@ -177,6 +178,7 @@ def view_budget_overview(request, schedule_id):
             schedule.remark = form.cleaned_data['remark']
             schedule.save()
             
+            messages.success(request, 'แก้ไขหมายเหตุเรียบร้อย')
             return redirect('view_budget_overview', (schedule.id))
         
     else:
@@ -221,6 +223,7 @@ def view_budget_overview_edit_reference(request, schedule_id):
                 reference.description = request.POST.get('desc_report_%d' % report_submission.id)
                 reference.save()
         
+        messages.success(request, 'แก้ไขข้อมูลประกอบเรียบร้อย')
         return redirect('view_budget_overview', schedule.id)
     
     projects = Project.objects.filter(program=schedule.program).order_by('name')
