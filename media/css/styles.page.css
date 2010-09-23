@@ -384,8 +384,9 @@ h2.h2 {font-size:146.5%;padding-bottom:5px;margin-bottom:10px;color:#2D8659;bord
 .master_plan_manage_report .notify_input input {width:60px;margin:0px 10px;}
 
 /* Manage KPI */
-.master_plan_manage_kpi .kpi_year_choices {margin-bottom:20px;border:1px dashed #CCC;padding:10px;}
-.master_plan_manage_kpi .kpi_year_choices span {margin-right:10px;font-size:123.1%;color:#333;}
+.master_plan_manage_kpi .year_select {border:1px dashed #999;padding:10px;margin-bottom:15px;font-size:116%;}
+.master_plan_manage_kpi .year_select a {margin:0px 10px;}
+.master_plan_manage_kpi .year_select span {margin:0px 10px;font-weight:bold;}
 
 .master_plan_manage_kpi h3 {font-size:123.1%;color:#2D8659;margin-bottom:8px;}
 .master_plan_manage_kpi h3.no_category {font-style:italic;}

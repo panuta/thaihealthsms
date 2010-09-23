@@ -208,6 +208,8 @@ def view_budget_overview_edit_reference(request, schedule_id):
         return access_denied(request)
     
     if request.method == 'POST':
+        BudgetScheduleReference.objects.filter(schedule=schedule).delete()
+        
         for form_project in request.POST.getlist('project'):
             try:
                 project = Project.objects.get(pk=form_project)

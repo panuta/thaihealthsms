@@ -99,7 +99,7 @@ class MasterPlanProgramForm(forms.Form):
 	ref_no = forms.CharField(max_length=64, label='รหัสแผนงาน')
 	name = forms.CharField(max_length=500, label='ชื่อแผนงาน')
 	abbr_name = forms.CharField(max_length=200, label='ชื่อย่อแผนงาน', required=False)
-	manager_name = forms.CharField(max_length=300, label='ผู้ดูแลแผนงาน', required=False)
+	manager_name = forms.CharField(max_length=300, label='ผู้จัดการแผนงาน', required=False)
 	start_date = forms.DateField(widget=YUICalendar(attrs={'id':'id_start_date'}), label='ระยะเวลา', required=False)
 	end_date = forms.DateField(widget=YUICalendar(attrs={'id':'id_end_date'}), label='ถึง', required=False)
 	

@@ -49,7 +49,7 @@ def display_program_header(user, program):
     manager_names = permission.who_program_manager(program)
     if not manager_names: manager_names = unicode('(ไม่มีข้อมูล)', 'utf-8')
     
-    return unicode('<div class="supertitle"><a href="%s">แผน %d - %s</a></div><h1>แผนงาน (%s) %s</h1><div class="subtitle">ผู้จัดการ: %s</div>', 'utf-8') % (reverse('view_master_plan_overview', args=[program.plan.master_plan.ref_no]), program.plan.master_plan.ref_no, program.plan.master_plan.name, program.ref_no, program.name, manager_names)
+    return unicode('<div class="supertitle"><a href="%s">แผน %d - %s</a></div><h1>แผนงาน (%s) %s</h1><div class="subtitle">ผู้จัดการแผนงาน: %s</div>', 'utf-8') % (reverse('view_master_plan_overview', args=[program.plan.master_plan.ref_no]), program.plan.master_plan.ref_no, program.plan.master_plan.name, program.ref_no, program.name, manager_names)
 
 @register.simple_tag
 def display_project_header(user, project):

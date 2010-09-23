@@ -4,10 +4,6 @@
 {% block html_head %}
 <script type="text/javascript">
 $(document).ready(function() {
-    $("#kpi-year-choices").change(function() {
-		window.location = "http://" + window.location.host + "{% url view_master_plan_manage_kpi master_plan.id %}" + $(this).find("option:selected").val() + "/";
-	});
-	
 	$(".delete-kpi").click(function(e) {
         if(!window.confirm("ยืนยันการลบตัวชี้วัด?")) {
             e.preventDefault();
@@ -28,15 +24,12 @@ $(document).ready(function() {
 </div>
 
 <div class="master_plan_manage master_plan_manage_kpi">
-	{% if year_choices %}
-	<div class="kpi_year_choices">
-		<span>ตัวชี้วัดสำหรับปี</span>
-		<select id="kpi-year-choices">
-			{% for choice in year_choices %}
-			{% if choice == kpi_year %}<option selected="selected">{{choice|add:543}}</option>{% else %}<option>{{choice|add:543}}</option>{% endif %}
-			{% endfor %}
-		</select>
+	<div class="year_select">
+		ตัวชี้วัดสำหรับปี
+		<a href="{% url view_master_plan_manage_kpi_year master_plan.ref_no kpi_year|add:-1 %}">{{kpi_year|add:542}}</a> | <span>{{kpi_year|add:543}}</span> | <a href="{% url view_master_plan_manage_kpi_year master_plan.ref_no kpi_year|add:1 %}">{{kpi_year|add:544}}</a>
 	</div>
+	
+	{% if kpi_categories or no_category_kpis %}
 	
 	{% for kpi_category in kpi_categories %}
 	<h3>{{kpi_category.name}}</h3>
@@ -93,7 +86,7 @@ $(document).ready(function() {
 	{% endif %}
 	
 	{% else %}
-	<div class="ss_no_information">ไม่มีตัวชี้วัดแผนหลัก</div>
+	<div class="ss_no_information">ไม่มีตัวชี้วัดแผนหลักในปีนี้</div>
 	{% endif %}
 </div>
 {% endblock %}

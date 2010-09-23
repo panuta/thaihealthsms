@@ -661,6 +661,8 @@ def view_report_overview_edit_reference(request, program_id, report_id, schedule
         return access_denied(request)
     
     if request.method == 'POST':
+        ReportSubmissionReference.objects.filter(submission=submission).delete()
+        
         for form_project in request.POST.getlist('project'):
             try:
                 project = Project.objects.get(pk=form_project)

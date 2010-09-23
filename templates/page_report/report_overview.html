@@ -165,7 +165,7 @@ $(document).ready(function() {
                         {% for file in submission.files %}
                         <li>
                             <div class="filename"><a href="{{REPORT_SUBMIT_FILE_URL}}{{submission.report.id}}/{{submission.id}}/{{file.filename}}">{{file.filename}}</a></div>
-                            <div class="metadata">จัดเก็บเมื่อวันที่ {{file.uploaded|abbr_datetime}} โดย {{file.uploaded_by.first_name}} {{file.uploaded_by.last_name}}
+                            <div class="metadata">จัดเก็บเมื่อวันที่ {{file.uploaded|abbr_datetime}} โดย {{file.uploaded_by.firstname}} {{file.uploaded_by.lastname}}
 							
 							{% access user 'program report submission edit' submission %}
                             {% if submission.allow_modifying %}<span class="actions">| <a href="#" rel="{{file.id}}" class="delete-report-file">ลบไฟล์</a></span>{% endif %}

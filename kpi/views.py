@@ -148,7 +148,7 @@ def view_master_plan_manage_kpi(request, master_plan_ref_no, kpi_year):
         return access_denied(request)
     
     if kpi_year:
-        year_number = int(kpi_year) - 543
+        year_number = int(kpi_year)
     else:
         year_number = utilities.master_plan_current_year_number()
     
@@ -167,16 +167,14 @@ def view_master_plan_manage_kpi(request, master_plan_ref_no, kpi_year):
             kpi_category.kpis = kpis
             kpi_categories.append(kpi_category)
     
+    print year_number
     no_category_kpis = DomainKPI.objects.filter(master_plan=master_plan, year=year_number, category=None)
+    print no_category_kpis
     
     for kpi in no_category_kpis:
         kpi.removable = DomainKPISchedule.objects.filter(kpi=kpi).count() == 0
     
-    year_choices = []
-    for dict in DomainKPI.objects.filter(master_plan=master_plan).order_by('year').values('year').distinct():
-        year_choices.append(int(dict['year']))
-    
-    return render_page_response(request, 'kpi', 'page_sector/manage_master_plan/manage_kpi.html', {'master_plan':master_plan, 'kpi_categories':kpi_categories, 'no_category_kpis':no_category_kpis, 'year_choices':year_choices, 'kpi_year':year_number})
+    return render_page_response(request, 'kpi', 'page_sector/manage_master_plan/manage_kpi.html', {'master_plan':master_plan, 'kpi_categories':kpi_categories, 'no_category_kpis':no_category_kpis, 'kpi_year':year_number})
 
 @login_required
 def view_master_plan_manage_kpi_add_kpi(request, master_plan_ref_no):
@@ -404,6 +402,8 @@ def view_kpi_overview_edit_reference(request, schedule_id):
         return access_denied(request)
     
     if request.method == 'POST':
+        DomainKPIScheduleReference.objects.filter(schedule=schedule).delete()
+        
         for form_project in request.POST.getlist('project'):
             try:
                 project = Project.objects.get(pk=form_project)

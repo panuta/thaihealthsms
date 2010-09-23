@@ -137,7 +137,7 @@ def get_user_unread_comments(user_account):
         hash_str = "%s%d" % (unread_reply.reply.comment.object_name, unread_reply.reply.comment.object_id)
         
         if not hash_str in obj_comments:
-            obj_comments[hash_str] = {'object_name':unread_reply.reply.comment.object_name, 'object_id':unread_reply.reply.comment.object_id, 'comments':[], 'latest':unread_comment.comment.sent_on}
+            obj_comments[hash_str] = {'object_name':unread_reply.reply.comment.object_name, 'object_id':unread_reply.reply.comment.object_id, 'comments':[], 'latest':unread_reply.reply.sent_on}
         
         comment_found = False
         for comment in obj_comments[hash_str]['comments']:

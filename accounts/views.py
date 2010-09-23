@@ -161,6 +161,8 @@ def view_user_settings(request):
                 
                 messages.success(request, 'แก้ไขข้อมูลผู้ใช้เรียบร้อย')
                 return redirect('view_user_settings')
+        else:
+            form_profile = ChangeUserProfileForm(initial={'firstname':request.user.get_profile().firstname, 'lastname':request.user.get_profile().lastname})
         
         if 'password_button' in request.POST and request.POST.get('password_button'):
             form_password = ChangeUserPasswordForm(request.POST)
@@ -174,6 +176,8 @@ def view_user_settings(request):
                 
                 messages.success(request, 'เปลี่ยนรหัสผ่านเรียบร้อย')
                 return redirect('view_user_settings')
+        else:
+            form_password = ChangeUserPasswordForm()
     
     else:
         form_profile = ChangeUserProfileForm(initial={'firstname':request.user.get_profile().firstname, 'lastname':request.user.get_profile().lastname})
