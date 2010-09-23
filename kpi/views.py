@@ -46,26 +46,40 @@ def view_master_plan_kpi(request, master_plan_ref_no):
 # MASTER PLAN MANAGEMENT #######################################################################
 #
 
-def view_master_plan_manage_program_kpi(request, program_id):
+def view_master_plan_manage_program_kpi(request, program_id, quarter_year):
     program = get_object_or_404(Program, pk=program_id)
     master_plan = program.plan.master_plan
     
     if not permission.access_obj(request.user, 'master_plan manage', master_plan):
         return access_denied(request)
     
-    kpi_choices = DomainKPI.objects.filter(master_plan=master_plan).order_by('ref_no')
-    kpi_schedules = DomainKPISchedule.objects.filter(program=program).order_by('-quarter_year', '-quarter')
+    if not quarter_year:
+        current_quarter_year = utilities.master_plan_current_year()
+    else:
+        current_quarter_year = int(quarter_year)
+    
+    kpi_category_choices = []
+    for dict in DomainKPI.objects.filter(master_plan=master_plan, year=current_quarter_year).values('category'):
+        if dict['category']:
+            kpi_category = DomainKPICategory.objects.get(pk=dict['category'])
+            kpis = DomainKPI.objects.filter(master_plan=master_plan, year=current_quarter_year, category=kpi_category)
+            kpi_category_choices.append({'category':kpi_category, 'kpis':kpis})
+    
+    kpi_no_category_choices = DomainKPI.objects.filter(master_plan=master_plan, year=current_quarter_year, category=None)
+    
+    kpi_schedules = DomainKPISchedule.objects.filter(program=program, quarter_year=current_quarter_year)
     
     if request.method == 'POST':
-        # 'schedule' - kpi_id , schedule_id , target , target_on - "123,None,100,2010-01-01"
+        # 'schedule' - kpi_id , schedule_id , target , quarter - "123,None,100,1"
         schedules = request.POST.getlist('schedule')
         
         updating_schedules = list()
         for schedule in schedules:
             try:
-                (kpi_id, schedule_id, target, quarter_year, quarter_month) = schedule.split(',')
+                (kpi_id, schedule_id, target, quarter) = schedule.split(',')
+                kpi_id = int(kpi_id)
                 target = int(target)
-                quarter_year = int(quarter_year) - 543
+                quarter = int(quarter)
             except:
                 messages.error(request, 'ข้อมูลไม่อยู่ในรูปแบบที่ถูกต้อง กรุณากรอกใหม่อีกครั้ง')
                 return redirect('view_master_plan_manage_program_kpi', (program.id))
@@ -75,14 +89,14 @@ def view_master_plan_manage_program_kpi(request, program_id):
                 if schedule_id and schedule_id != 'none':
                     schedule = DomainKPISchedule.objects.get(pk=schedule_id)
                     
-                    if schedule.target != target or schedule.quarter_year != quarter_year or schedule.quarter != quarter_month:
+                    if schedule.target != target or schedule.quarter_year != current_quarter_year or schedule.quarter != quarter:
                         schedule.target = target
-                        schedule.quarter_year = quarter_year
-                        schedule.quarter = quarter_month
+                        schedule.quarter_year = current_quarter_year
+                        schedule.quarter = quarter
                         schedule.save()
                     
                 else:
-                    schedule = DomainKPISchedule.objects.create(kpi=kpi, program=program, target=target, result=0, quarter_year=quarter_year, quarter=quarter_month)
+                    schedule = DomainKPISchedule.objects.create(kpi=kpi, program=program, target=target, result=0, quarter_year=current_quarter_year, quarter=quarter)
                 
             updating_schedules.append(schedule)
         
@@ -98,9 +112,31 @@ def view_master_plan_manage_program_kpi(request, program_id):
                 program_schedule.delete()
         
         messages.success(request, 'แก้ไขแผนผลลัพธ์ของแผนงานเรียบร้อย')
-        return redirect('view_master_plan_manage_organization', (master_plan.ref_no))
+        return utilities.redirect_or_back('view_master_plan_manage_organization', (master_plan.ref_no), request)
     
-    return render_page_response(request, 'organization', 'page_sector/manage_master_plan/manage_program_kpi.html', {'master_plan':master_plan, 'program':program, 'kpi_choices':kpi_choices, 'kpi_schedules':kpi_schedules})
+    # GET SCHEDULE
+    
+    column_schedules = [[], [], [], []]
+    for schedule in kpi_schedules:
+        column_schedules[schedule.quarter-1].append(schedule)
+    
+    max_height = 0
+    for i in range(0, 4):
+        if max_height < len(column_schedules[i]): max_height = len(column_schedules[i])
+    
+    row_schedules = []
+    for i in range(0, max_height):
+        row_schedule = {}
+        
+        for quarter in range(0, 4):
+            try:
+                row_schedule[str(quarter+1)] = column_schedules[quarter][i]
+            except:
+                row_schedule[str(quarter+1)] = ''
+        
+        row_schedules.append(row_schedule)
+    
+    return render_page_response(request, 'organization', 'page_sector/manage_master_plan/manage_program_kpi.html', {'master_plan':master_plan, 'program':program, 'row_schedules':row_schedules, 'kpi_no_category_choices':kpi_no_category_choices, 'kpi_category_choices':kpi_category_choices, 'current_quarter_year':current_quarter_year})
 
 # MANAGE KPI
 

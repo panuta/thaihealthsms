@@ -19,6 +19,7 @@
         {% csrf_token %}
         
         <h2>โครงการ</h2>
+		{% if projects %}
         <ul>
         {% for project in projects %}
             <li class="project">
@@ -27,6 +28,9 @@
             </li>
         {% endfor %}
         </ul>
+		{% else %}
+		<div class="ss_no_information">ไม่มีโครงการของแผนงาน</div>
+		{% endif %}
         
         <h2>รายงาน</h2>
         {% for report in reports %}
@@ -41,7 +45,7 @@
             </ul>
         {% endfor %}
         {% if not reports %}
-        <div class="ss_no_information">ไม่มีรายงาน</div>
+        <div class="ss_no_information">ไม่มีรายงานของแผนงาน</div>
         {% endif %}
         
         <div class="button_panel"><button class="submit-button">บันทึกการแก้ไข</button></div>

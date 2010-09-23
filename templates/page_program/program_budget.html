@@ -89,7 +89,14 @@ $(document).ready(function() {
                 {% endaccess %}
             </td>
             <td class="status_column">{% display_budget_schedule_status schedule %}</td>
-			<td></td>
+			<td>
+				{% if schedule.ref_project_count or schedule.ref_report_submission_count %}
+				    {% if schedule.ref_project_count %}<div>{{schedule.ref_project_count}} โครงการ</div>{% endif %}
+				    {% if schedule.ref_report_submission_count %}<div>{{schedule.ref_report_submission_count}} รายงาน</div>{% endif %}
+				{% else %}
+				<div class="no_information">(ไม่มีข้อมูลประกอบ)</div>
+				{% endif %}
+			</td>
         </tr>
         {% endfor %}
     </table>

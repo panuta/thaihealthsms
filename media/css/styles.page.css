@@ -328,32 +328,35 @@ h2.h2 {font-size:146.5%;padding-bottom:5px;margin-bottom:10px;color:#2D8659;bord
 
 /* Program KPI */
 
-.master_plan_manage_program_kpi .error_message {color:#C30;margin-bottom:10px;}
+.master_plan_manage_program_kpi .ss_form .button_panel {margin-left:0px;}
 
-.master_plan_manage_program_kpi table {width:100%;margin-bottom:30px;}
-.master_plan_manage_program_kpi table th {font-weight:bold;color:#333;border:1px solid #CCC;padding:12px 10px;}
+.master_plan_manage_program_kpi .year_select {border:1px dashed #999;padding:10px;margin-bottom:15px;font-size:116%;}
+.master_plan_manage_program_kpi .year_select a {margin:0px 10px;}
+.master_plan_manage_program_kpi .year_select span {margin:0px 10px;font-weight:bold;}
+.master_plan_manage_program_kpi .year_select .comment {color:#666;margin-top:15px;font-size:93%;}
+
+.master_plan_manage_program_kpi h2 {font-size:116%;color:#2D8659;margin-bottom:10px;}
+
+.master_plan_manage_program_kpi table {width:100%;margin-bottom:20px;}
+.master_plan_manage_program_kpi table th {width:25%;background-color:#EEE;color:#555;border:1px solid #CCC;padding:12px 10px;text-align:center;font-size:108%;}
+.master_plan_manage_program_kpi table th .quarter {font-weight:bold;margin-bottom:5px;}
 .master_plan_manage_program_kpi table td {border:1px solid #CCC;padding:12px 10px;vertical-align:top;}
+.master_plan_manage_program_kpi table .action {text-align:center;}
+.master_plan_manage_program_kpi table .adding {background-color:#FFC;}
+.master_plan_manage_program_kpi table .kpi-selector {background-color:#FFC;display:none;}
+.master_plan_manage_program_kpi table .kpi-selector .category {font-weight:bold;margin-bottom:10px;font-size:108%;border-bottom:1px dashed #CCC;padding-bottom:5px;}
+.master_plan_manage_program_kpi table .kpi-selector ul {margin:0px 15px 15px;}
+.master_plan_manage_program_kpi table .kpi-selector ul li {margin-bottom:10px;}
+.master_plan_manage_program_kpi table .kpi-selector .cancel {margin:20px 0px 10px 5px;}
+.master_plan_manage_program_kpi table .kpi-selector .cancel button {width:90px;}
 
-.master_plan_manage_program_kpi table .choices_cell label {font-size:108%;color:#666;margin-right:6px;}
-
-.master_plan_manage_program_kpi table .controls {width:60px;text-align:center;}
-.master_plan_manage_program_kpi table .target_head_column {width:180px;}
-.master_plan_manage_program_kpi table .quarter_head_column {width:370px;}
-
-.master_plan_manage_program_kpi table .kpi_column .kpi_category {font-size:95%;color:#666;margin-bottom:6px;}
-.master_plan_manage_program_kpi table .kpi_column .kpi_name {}
-
-.master_plan_manage_program_kpi table .target_column {width:180px;color:#666;text-align:right;}
-.master_plan_manage_program_kpi table .target_column input {width:95%;text-align:right;}
-.master_plan_manage_program_kpi table .target_column input.invalid {background-color:#FCC;}
-.master_plan_manage_program_kpi table .target_column div {margin-top:3px;text-align:right;}
-
-.master_plan_manage_program_kpi table .quarter_column {width:370px;color:#666;}
-.master_plan_manage_program_kpi table .quarter_column select.invalid {background-color:#FCC;}
-.master_plan_manage_program_kpi table .quarter_column span {margin-right:15px;}
-.master_plan_manage_program_kpi table .quarter_column label {margin-right:5px;}
-
-.master_plan_manage_program_kpi .button_panel {margin:0px !important;}
+.master_plan_manage_program_kpi table td .kpi {font-size:108%;margin-bottom:8px;}
+.master_plan_manage_program_kpi table td .target {margin-bottom:10px;color:#555;}
+.master_plan_manage_program_kpi table td .target input {width:90px;margin:0px 10px;}
+.master_plan_manage_program_kpi table td .target input.invalid {background-color:#FCC;}
+.master_plan_manage_program_kpi table td .delete {text-align:right;}
+.master_plan_manage_program_kpi table td .delete a {color:#C20;font-size:93%;}
+.master_plan_manage_program_kpi table td .delete a:hover {color:#FFF;}
 
 /* Program Budget */
 
@@ -440,6 +443,8 @@ h2.h2 {font-size:146.5%;padding-bottom:5px;margin-bottom:10px;color:#2D8659;bord
 
 .program_budget_page .ss_table .status_column .future {color:#999;}
 .program_budget_page .ss_table .status_column .late {color:#C30;}
+
+.program_budget_page .ss_table .no_information {color:#777;}
 
 
 /* PROGRAM - PROJECTS */

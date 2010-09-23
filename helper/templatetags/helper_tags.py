@@ -232,6 +232,26 @@ def display_pagination(objects, url_name):
         return ''
 
 @register.simple_tag
+def generate_quarter_text(quarter_no, quarter_year):
+    from helper.constants import THAI_MONTH_NAME
+    
+    start_month = settings.QUARTER_START_MONTH + (quarter_no * 3 - 3)
+    if start_month > 12: start_month = start_month - 12
+    
+    end_month = start_month + 2
+    if end_month > 12: end_month = end_month - 12
+    
+    if settings.QUARTER_START_MONTH != 1:
+        if start_month >= settings.QUARTER_START_MONTH:
+            if not settings.QUARTER_LOWER_YEAR_NUMBER:
+                quarter_year = quarter_year - 1
+        else:
+            if settings.QUARTER_LOWER_YEAR_NUMBER:
+                quarter_year = quarter_year + 1
+    
+    return '%s %d - %s %d' % (THAI_MONTH_NAME[start_month], quarter_year+543, THAI_MONTH_NAME[end_month], quarter_year+543)
+
+@register.simple_tag
 def generate_quarter_table_header(quarter_year):
     from helper.constants import THAI_MONTH_ABBR_NAME
     

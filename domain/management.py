@@ -152,6 +152,10 @@ def after_syncdb(sender, **kwargs):
     
     AdminPermission.objects.get_or_create(permission='master_plan manage')
     
+    AdminPermission.objects.get_or_create(permission='program project add')
+    AdminPermission.objects.get_or_create(permission='program project edit')
+    AdminPermission.objects.get_or_create(permission='program project delete')
+    
     AdminPermission.objects.get_or_create(permission='program activity add')
     AdminPermission.objects.get_or_create(permission='program activity edit')
     AdminPermission.objects.get_or_create(permission='program activity delete')

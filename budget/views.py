@@ -160,6 +160,11 @@ def view_master_plan_manage_program_budget(request, program_id):
 def view_program_budget(request, program_id):
     program = get_object_or_404(Program, pk=program_id)
     schedules = BudgetSchedule.objects.filter(program=program).order_by('-schedule_on')
+    
+    for schedule in schedules:
+        schedule.ref_project_count = BudgetScheduleReference.objects.filter(schedule=schedule, project__isnull=False).count()
+        schedule.ref_report_submission_count = BudgetScheduleReference.objects.filter(schedule=schedule, report_submission__isnull=False).count()
+    
     return render_page_response(request, 'budget', 'page_program/program_budget.html', {'program':program, 'schedules':schedules})
 
 #

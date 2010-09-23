@@ -8,7 +8,6 @@ def render_response(request, *args, **kwargs):
 
 def render_page_response(request, page, *args, **kwargs):
 	first_time_login = request.session.get('first_time_login', False)
-	print first_time_login
 	kwargs['context_instance'] = RequestContext(request, {'page':page, 'first_time_login':first_time_login})
 	return render_to_response(*args, **kwargs)
 

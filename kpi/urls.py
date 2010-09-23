@@ -6,7 +6,8 @@ urlpatterns = patterns('kpi.views',
     url(r'^program/(?P<program_id>\d+)/kpi/$', 'view_program_kpi', name='view_program_kpi'),
     
     # Master Plan - Manage - Organization
-    url(r'^master_plan/manage/program/(?P<program_id>\d+)/kpi/$', 'view_master_plan_manage_program_kpi', name='view_master_plan_manage_program_kpi'),
+    url(r'^master_plan/manage/program/(?P<program_id>\d+)/kpi/$', 'view_master_plan_manage_program_kpi', {'quarter_year':0}, name='view_master_plan_manage_program_kpi'),
+    url(r'^master_plan/manage/program/(?P<program_id>\d+)/kpi/(?P<quarter_year>\d+)/$', 'view_master_plan_manage_program_kpi', name='view_master_plan_manage_program_kpi_year'),
     
     # Master Plan - Manage KPI
     url(r'^master_plan/(?P<master_plan_ref_no>\d+)/manage/kpi/$', 'view_master_plan_manage_kpi', {'kpi_year':''}, name='view_master_plan_manage_kpi'),

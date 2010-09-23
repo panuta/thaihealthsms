@@ -109,6 +109,17 @@ def make_random_user_password():
     return ''.join([choice(allow_password_chars) for i in range(random_password_length)])
 
 # MASTER PLAN YEAR
+def master_plan_current_year():
+    today = date.today()
+    
+    if settings.QUARTER_START_MONTH == 1:
+        return today.year
+    else:
+        if settings.QUARTER_LOWER_YEAR_NUMBER:
+            return today.year - 1
+        else:
+            return today.year
+
 def master_plan_current_year_span():
     today = date.today()
     
