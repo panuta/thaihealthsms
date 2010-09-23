@@ -1,0 +1,16 @@
+{% load helper_tags %}
+{% if atdue_submissions %}
+คุณมีรายงานที่ถึงกำหนดส่งดังนี้
+{% for submission in atdue_submissions %}
+{{submission.report.name}} -- กำหนดส่งวันที่ {{submission.schedule_date|abbr_date}}
+[http://{{site.name}}/program/{{submission.program.id}}/report/{{submission.report.id}}/{{submission.schedule_date|dateid}}/]
+{% endfor %}
+{% endif %}
+
+{% if beforedue_submissions %}
+คุณมีรายงานที่ใกล้ถึงกำหนดส่งดังนี้
+{% for submission in beforedue_submissions %}
+{{submission.report.name}} -- กำหนดส่งวันที่ {{submission.schedule_date|abbr_date}}
+[http://{{site.name}}/program/{{submission.program.id}}/report/{{submission.report.id}}/{{submission.schedule_date|dateid}}/]
+{% endfor %}
+{% endif %}
