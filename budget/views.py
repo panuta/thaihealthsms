@@ -175,19 +175,20 @@ def view_program_budget(request, program_id):
 def view_budget_overview(request, schedule_id):
     schedule = get_object_or_404(BudgetSchedule, pk=schedule_id)
     
-    if request.method == 'POST':
-        form = ModifyBudgetRemarkForm(request.POST)
-        if form.is_valid():
-            remark = form.cleaned_data['remark']
+    if permission.access_obj(request.user, 'program budget remark edit', schedule.program):
+        if request.method == 'POST':
+            form = ModifyBudgetRemarkForm(request.POST)
+            if form.is_valid():
+                schedule.remark = form.cleaned_data['remark']
+                schedule.save()
+                
+                messages.success(request, 'แก้ไขหมายเหตุเรียบร้อย')
+                return redirect('view_budget_overview', (schedule.id))
             
-            schedule.remark = form.cleaned_data['remark']
-            schedule.save()
-            
-            messages.success(request, 'แก้ไขหมายเหตุเรียบร้อย')
-            return redirect('view_budget_overview', (schedule.id))
-        
+        else:
+            form = ModifyBudgetRemarkForm(initial={'remark':schedule.remark})
     else:
-        form = ModifyBudgetRemarkForm(initial={'remark':schedule.remark})
+        form = None
     
     ref_projects = []
     ref_report_submissions = []

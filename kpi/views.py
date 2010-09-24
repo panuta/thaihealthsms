@@ -369,19 +369,20 @@ def view_program_kpi(request, program_id):
 def view_kpi_overview(request, schedule_id):
     schedule = get_object_or_404(DomainKPISchedule, pk=schedule_id)
     
-    if request.method == 'POST':
-        form = ModifyKPIRemarkForm(request.POST)
-        if form.is_valid():
-            remark = form.cleaned_data['remark']
+    if permission.access_obj(request.user, 'program kpi remark edit', schedule.program):
+        if request.method == 'POST':
+            form = ModifyKPIRemarkForm(request.POST)
+            if form.is_valid():
+                schedule.remark = form.cleaned_data['remark']
+                schedule.save()
+                
+                messages.success(request, 'แก้ไขหมายเหตุเรียบร้อย')
+                return redirect('view_kpi_overview', (schedule.id))
             
-            schedule.remark = form.cleaned_data['remark']
-            schedule.save()
-            
-            messages.success(request, 'แก้ไขหมายเหตุเรียบร้อย')
-            return redirect('view_kpi_overview', (schedule.id))
-        
+        else:
+            form = ModifyKPIRemarkForm(initial={'remark':schedule.remark})
     else:
-        form = ModifyKPIRemarkForm(initial={'remark':schedule.remark})
+        form = None
     
     ref_projects = []
     ref_report_submissions = []
