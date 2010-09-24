@@ -2,6 +2,7 @@
 import datetime
 
 from django import forms
+from django.contrib.auth.models import User
 from django.forms.util import ErrorList
 
 from domain.forms import SectorChoiceField, SectorCheckboxChoiceField
@@ -10,14 +11,31 @@ from accounts.models import RoleDetails
 from domain.models import Sector, MasterPlan, SectorMasterPlan
 
 roles = [(role_details.role.name, role_details.name) for role_details in RoleDetails.objects.all()]
+roles.insert(0, ('',''))
 
 class UserAccountForm(forms.Form):
+    user_id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
     username = forms.CharField(max_length=500, label='ชื่อผู้ใช้')
     email = forms.EmailField(label='อีเมล')
     firstname = forms.CharField(max_length=500, label='ชื่อจริง')
     lastname = forms.CharField(max_length=500, label='นามสกุล')
     role = forms.CharField(widget=forms.Select(choices=roles), label='ตำแหน่ง')
-
+    
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        
+        user_id = cleaned_data.get('user_id')
+        username=cleaned_data.get('username')
+        
+        if user_id: existing = User.objects.filter(username=username).exclude(id=user_id).count()
+        else: existing = User.objects.filter(username=username).count()
+        
+        if existing:
+            self._errors['username'] = ErrorList(['ชื่อผู้ใช้ซ้ำกับผู้ใช้คนอื่นในระบบ'])
+            del cleaned_data['username']
+        
+        return cleaned_data
+        
 class UserChangePasswordForm(forms.Form):
     password1 = forms.CharField(max_length=100, widget=forms.PasswordInput(), label='รหัสผ่าน')
     password2 = forms.CharField(max_length=100, widget=forms.PasswordInput(), label='ยืนยันรหัสผ่าน')

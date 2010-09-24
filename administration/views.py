@@ -191,9 +191,26 @@ def view_administration_users(request):
 def view_administration_users_add(request):
     if not request.user.is_superuser: return access_denied(request)
     
+    responsible_input_mode = 0 # Determine to show which type of responsibility input in template
+    
     if request.method == 'POST':
         form = UserAccountForm(request.POST)
-        if form.is_valid():
+        is_valid = True
+        
+        try:
+            role = request.POST.get('role')
+            group = Group.objects.get(name=role)
+            group_details = RoleDetails.objects.get(role=group)
+            
+            if group_details.level == RoleDetails.SECTOR_LEVEL:
+                responsible_input_mode = 1
+            elif group_details.level == RoleDetails.PROGRAM_LEVEL:
+                responsible_input_mode = 2
+        except:
+            is_valid = False
+            messages.error(request, 'ข้อมูลตำแหน่งที่ส่งมาไม่อยู่ในรูปแบบที่ถูกต้อง')
+        
+        if form.is_valid() and is_valid:
             username = form.cleaned_data['username']
             email = form.cleaned_data['email']
             firstname = form.cleaned_data['firstname']
@@ -202,38 +219,61 @@ def view_administration_users_add(request):
             
             password = utilities.make_random_user_password()
             
-            user = User.objects.create_user(username, email, password=password)
-            user_account = UserAccount.objects.get(user=user)
-            user_account.firstname = firstname
-            user_account.lastname = lastname
-            user_account.random_password = password
-            user_account.save()
-            
-            group = Group.objects.get(name=role)
-            group_details = RoleDetails.objects.get(role=group)
-            
-            user.groups.add(group)
-            responsibility = UserRoleResponsibility.objects.create(user=user_account, role=group)
-            
             if group_details.level == RoleDetails.SECTOR_LEVEL:
                 sector_id = request.POST.get('responsible_sector')
-                sector = Sector.objects.get(pk=sector_id)
-                responsibility.sectors.add(sector)
                 
+                try:
+                    responsible_sector = Sector.objects.get(pk=sector_id)
+                except:
+                    is_valid = False
+                    messages.error(request, 'ไม่มีข้อมูลสำนักที่สังกัด กรุณากรอกข้อมูลให้ครบถ้วน')
+            
             elif group_details.level == RoleDetails.PROGRAM_LEVEL:
                 program_ids = request.POST.getlist('responsible_program')
+                responsible_programs = []
                 
-                for program_id in program_ids:
-                    program = Program.objects.get(pk=program_id)
-                    responsibility.programs.add(program)
+                if program_ids:
+                    for program_id in program_ids:
+                        try:
+                            responsible_programs.append(Program.objects.get(pk=program_id))
+                        except:
+                            pass
+                    
+                if not responsible_programs:
+                    is_valid = False
+                    messages.error(request, 'ไม่มีข้อมูลแผนงานที่สังกัด กรุณากรอกข้อมูลให้ครบถ้วน')
             
-            email_render_dict = {'username':username, 'password':password, 'settings':settings, 'site':Site.objects.get_current()}
-            email_subject = render_to_string('email/create_user_subject.txt', email_render_dict)
-            email_message = render_to_string('email/create_user_message.txt', email_render_dict)
+            else:
+                is_valid = False
+                messages.error(request, 'ข้อมูลตำแหน่งที่ส่งมาไม่อยู่ในรูปแบบที่ถูกต้อง')
             
-            send_mail(email_subject, email_message, settings.SYSTEM_NOREPLY_EMAIL, [email])
-            
-            return redirect('view_administration_users_password', user.id)
+            if is_valid:
+                user = User.objects.create_user(username, email, password=password)
+                
+                user_account = UserAccount.objects.get(user=user)
+                user_account.firstname = firstname
+                user_account.lastname = lastname
+                user_account.random_password = password
+                user_account.save()
+                
+                user.groups.add(group)
+                responsibility = UserRoleResponsibility.objects.create(user=user_account, role=group)
+                
+                if group_details.level == RoleDetails.SECTOR_LEVEL:
+                    responsibility.sectors.add(responsible_sector)
+                
+                elif group_details.level == RoleDetails.PROGRAM_LEVEL:
+                    for program in responsible_programs:
+                        responsibility.programs.add(program)
+                
+                email_render_dict = {'username':username, 'password':password, 'settings':settings, 'site':Site.objects.get_current()}
+                email_subject = render_to_string('email/create_user_subject.txt', email_render_dict)
+                email_message = render_to_string('email/create_user_message.txt', email_render_dict)
+                
+                send_mail(email_subject, email_message, settings.SYSTEM_NOREPLY_EMAIL, [email])
+                
+                messages.success(request, 'เพิ่มผู้ใช้เรียบร้อย')
+                return redirect('view_administration_users_password', user.id)
             
     else:
         form = UserAccountForm()
@@ -241,7 +281,9 @@ def view_administration_users_add(request):
     sectors = Sector.objects.all().order_by('ref_no')
     master_plans = MasterPlan.objects.all().order_by('ref_no')
     
-    responsible_sector = 'first_item' # Can be any string
+    # TODO: Check integrity of the following value
+    
+    responsible_sector = '' # Can be any string
     if 'responsible_sector' in request.POST:
         sector_id = request.POST.get('responsible_sector')
         responsible_sector = Sector.objects.get(pk=sector_id)
@@ -251,54 +293,92 @@ def view_administration_users_add(request):
         program_ids = request.POST.getlist('responsible_program')
         responsible_programs = [Program.objects.get(pk=program_id) for program_id in program_ids]
     
-    return render_page_response(request, 'users', 'page_administration/manage_users_modify_user.html', {'form': form, 'sectors':sectors, 'master_plans':master_plans, 'responsible_sector':responsible_sector, 'responsible_programs':responsible_programs})
+    return render_page_response(request, 'users', 'page_administration/manage_users_modify_user.html', {'form': form, 'sectors':sectors, 'master_plans':master_plans, 'responsible_sector':responsible_sector, 'responsible_programs':responsible_programs, 'responsible_input_mode':responsible_input_mode})
 
 @login_required
 def view_administration_users_edit(request, user_id):
     if not request.user.is_superuser: return access_denied(request)
     user = get_object_or_404(User, pk=user_id)
     
+    responsible_input_mode = 0 # Determine to show which type of responsibility input in template
+    
     if request.method == 'POST':
         form = UserAccountForm(request.POST)
-        if form.is_valid():
+        is_valid = True
+        
+        try:
+            role = request.POST.get('role')
+            group = Group.objects.get(name=role)
+            group_details = RoleDetails.objects.get(role=group)
+            
+            if group_details.level == RoleDetails.SECTOR_LEVEL:
+                responsible_input_mode = 1
+            elif group_details.level == RoleDetails.PROGRAM_LEVEL:
+                responsible_input_mode = 2
+        except:
+            is_valid = False
+            messages.error(request, 'ข้อมูลตำแหน่งที่ส่งมาไม่อยู่ในรูปแบบที่ถูกต้อง')
+        
+        if form.is_valid() and is_valid:
             username = form.cleaned_data['username']
             email = form.cleaned_data['email']
             firstname = form.cleaned_data['firstname']
             lastname = form.cleaned_data['lastname']
             role = form.cleaned_data['role']
             
-            user.username = username
-            user.email = email
-            user.save()
-            
-            user_account = UserAccount.objects.get(user=user)
-            user_account.firstname = firstname
-            user_account.lastname = lastname
-            user_account.save()
-            
-            group = Group.objects.get(name=role)
-            group_details = RoleDetails.objects.get(role=group)
-            
-            user.groups.clear()
-            user.groups.add(group)
-            
-            UserRoleResponsibility.objects.filter(user=user_account).delete()
-            responsibility = UserRoleResponsibility.objects.create(user=user_account, role=group)
-            
             if group_details.level == RoleDetails.SECTOR_LEVEL:
                 sector_id = request.POST.get('responsible_sector')
-                sector = Sector.objects.get(pk=sector_id)
-                responsibility.sectors.add(sector)
                 
+                try:
+                    responsible_sector = Sector.objects.get(pk=sector_id)
+                except:
+                    is_valid = False
+                    messages.error(request, 'ไม่มีข้อมูลสำนักที่สังกัด กรุณากรอกข้อมูลให้ครบถ้วน')
+            
             elif group_details.level == RoleDetails.PROGRAM_LEVEL:
                 program_ids = request.POST.getlist('responsible_program')
+                responsible_programs = []
                 
-                for program_id in program_ids:
-                    program = Program.objects.get(pk=program_id)
-                    responsibility.programs.add(program)
+                if program_ids:
+                    for program_id in program_ids:
+                        try:
+                            responsible_programs.append(Program.objects.get(pk=program_id))
+                        except:
+                            pass
+                    
+                if not responsible_programs:
+                    is_valid = False
+                    messages.error(request, 'ไม่มีข้อมูลแผนงานที่สังกัด กรุณากรอกข้อมูลให้ครบถ้วน')
             
-            messages.success(request, 'แก้ไขข้อมูลผู้ใช้เรียบร้อย')
-            return redirect('view_administration_users')
+            else:
+                is_valid = False
+                messages.error(request, 'ข้อมูลตำแหน่งที่ส่งมาไม่อยู่ในรูปแบบที่ถูกต้อง')
+            
+            if is_valid:
+                user.username = username
+                user.email = email
+                user.save()
+                
+                user_account = UserAccount.objects.get(user=user)
+                user_account.firstname = firstname
+                user_account.lastname = lastname
+                user_account.save()
+                
+                user.groups.clear()
+                user.groups.add(group)
+                
+                UserRoleResponsibility.objects.filter(user=user_account).delete()
+                responsibility = UserRoleResponsibility.objects.create(user=user_account, role=group)
+                
+                if group_details.level == RoleDetails.SECTOR_LEVEL:
+                    responsibility.sectors.add(responsible_sector)
+                
+                elif group_details.level == RoleDetails.PROGRAM_LEVEL:
+                    for program in responsible_programs:
+                        responsibility.programs.add(program)
+                
+                messages.success(request, 'แก้ไขข้อมูลผู้ใช้เรียบร้อย')
+                return redirect('view_administration_users')
         
         responsible_sector = ''
         if 'responsible_sector' in request.POST:
@@ -312,6 +392,7 @@ def view_administration_users_edit(request, user_id):
         
     else:
         form = UserAccountForm(initial={
+            'user_id':user.id,
             'username':user.username,
             'email':user.email,
             'firstname':user.get_profile().firstname,
@@ -326,14 +407,16 @@ def view_administration_users_edit(request, user_id):
         responsible_programs = []
         
         if group_details.level == RoleDetails.SECTOR_LEVEL:
+            responsible_input_mode = 1
             responsible_sector = responsibility.sectors.all()[0]
         elif group_details.level == RoleDetails.PROGRAM_LEVEL:
+            responsible_input_mode = 2
             responsible_programs = responsibility.programs.all()
         
     sectors = Sector.objects.all().order_by('ref_no')
     master_plans = MasterPlan.objects.all().order_by('ref_no')
     
-    return render_page_response(request, 'users', 'page_administration/manage_users_modify_user.html', {'form': form, 'editing_user':user, 'sectors':sectors, 'master_plans':master_plans, 'responsible_sector':responsible_sector, 'responsible_programs':responsible_programs})
+    return render_page_response(request, 'users', 'page_administration/manage_users_modify_user.html', {'form': form, 'editing_user':user, 'sectors':sectors, 'master_plans':master_plans, 'responsible_sector':responsible_sector, 'responsible_programs':responsible_programs, 'responsible_input_mode':responsible_input_mode})
 
 @login_required
 def view_administration_users_password(request, user_id):

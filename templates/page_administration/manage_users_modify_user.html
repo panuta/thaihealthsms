@@ -7,26 +7,30 @@
 		$("#id_role").change(function() {
 			var role_name = $(this).find("option:selected").val();
 			
-			$.getJSON('{% url ajax_get_group_level %}', {role_name:role_name}, function(result) {
-				if(result == '0') {
-					$("li.responsible").hide();
-					
-				} else if(result == '1') {
-					$("li.responsible").show();
-					$("li.responsible .sectors").show();
-					$("#responsible_sector option:first").attr("selected", "selected");
-					$("li.responsible .programs").hide();
-					
-				} else if(result == '2') {
-					$("li.responsible").show();
-                    $("li.responsible .sectors").hide();
-                    $("li.responsible .programs").show();
-					$("#responsible_master_plan option:first").attr("selected", "selected");
-					
-					$("#responsible_selected_programs").html("");
-					$("#responsible_programs").hide();
-				}
-			});
+			if(role_name) {
+				$.getJSON('{% url ajax_get_group_level %}', {role_name:role_name}, function(result) {
+	                if(result == '0') {
+	                    $("li.responsible").hide();
+	                    
+	                } else if(result == '1') {
+	                    $("li.responsible").show();
+	                    $("li.responsible .sectors").show();
+	                    $("#responsible_sector option:first").attr("selected", "selected");
+	                    $("li.responsible .programs").hide();
+	                    
+	                } else if(result == '2') {
+	                    $("li.responsible").show();
+	                    $("li.responsible .sectors").hide();
+	                    $("li.responsible .programs").show();
+	                    $("#responsible_master_plan option:first").attr("selected", "selected");
+	                    
+	                    $("#responsible_selected_programs").html("");
+	                    $("#responsible_programs").hide();
+	                }
+	            });
+			} else {
+				$("li.responsible").hide();
+			}
 		});
 		
 		$("#responsible_master_plan").change(function() {
@@ -153,15 +157,16 @@
             <div class="input">{{form.role}}</div>
             {{form.role.errors}}
         </li>
-		<li class="responsible" {% if not responsible_sector and not responsible_programs %}style="display:none"{% endif %}>
+		
+		<li class="responsible" {% if responsible_input_mode == 0 %}style="display:none"{% endif %}>
 			<label for="id_responsible" class="caption">หน่วยงานที่รับผิดชอบ:</label>
 			<div class="input">
-				<div class="sectors" {% if not responsible_sector %}style="display:none"{% endif %}>
+				<div class="sectors" {% if responsible_input_mode != 1 %}style="display:none"{% endif %}>
 					<div class="list"><select id="responsible_sector">{% for sector in sectors %}<option value="{{sector.id}}" {% ifequal sector.id responsible_sector.id %}selected="selected"{% endifequal %}>สำนัก {{sector.ref_no}} - {{sector.name}}</option>{% endfor %}</select></div>
 				</div>
-				<div class="programs" {% if not responsible_programs %}style="display:none"{% endif %}>
+				<div class="programs" {% if responsible_input_mode != 2 %}style="display:none"{% endif %}>
 					<div><ul id="responsible_selected_programs">{% for responsible_program in responsible_programs %}<li class="program-{{responsible_program.id}}"><a href="#" class="remove-program"><img src="{{MEDIA_URL}}/images/icons/delete_row.png" class="icon"/></a>แผนงาน {{responsible_program.ref_no}} - {{responsible_program.name}}</li>{% endfor %}</ul></div>
-					<div class="list"><select id="responsible_master_plan"><option></option>{% for master_plan in master_plans %}<option value="{{master_plan.id}}">แผน {{master_plan.ref_no}}</option>{% endfor %}</select> <span class="list_comment">* เลือกแผนหลัก จากนั้นเลือกแผนงาน</span></div>
+					<div class="list"><select id="responsible_master_plan"><option></option>{% for master_plan in master_plans %}<option value="{{master_plan.id}}" {% if responsible_master_plan == master_plan.id %}selected="selected"{% endif %}>แผน {{master_plan.ref_no}}</option>{% endfor %}</select> <span class="list_comment">* เลือกแผนหลัก จากนั้นเลือกแผนงาน</span></div>
 					<div class="list"><select id="responsible_programs" style="display:none"></select></div>
 				</div>
 				
@@ -170,6 +175,7 @@
 		</li>
     </ul>
     
+	{{form.user_id}}
     <div class="button_panel"><button>ตกลง</button></div>
 </form>
 </div>
