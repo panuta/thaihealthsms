@@ -518,45 +518,55 @@ def view_report_overview(request, program_id, report_id, schedule_dateid):
             if not permission.access_obj(request.user, 'program report submission edit', submission):
                 return access_denied(request)
             
+            # Reading upload file
+            try:
+                uploading_file = request.FILES['uploading_file']
+                (file_name, separator, file_ext) = uploading_file.name.rpartition('.')
+            except:
+                messages.error(request, 'ไม่สามารถอ่านไฟล์รายงานได้ กรุณาตรวจสอบชื่อไฟล์ แล้วส่งใหม่อีกครั้ง')
+                return redirect('view_report_overview', program_id=program.id, report_id=report.id, schedule_dateid=schedule_dateid)
+            
             if not submission.id: submission.save()
             
             file_response = ReportSubmissionFileResponse.objects.create(submission=submission, uploaded_by=request.user.get_profile())
             
             # Uploading directory
-            uploading_directory = "%s/%d/%d/" % (settings.REPORT_SUBMIT_FILE_PATH, submission.report.id, submission.id)
-            if not os.path.exists(uploading_directory): os.makedirs(uploading_directory)
-            
-            # Uploading file
-            uploading_file = request.FILES['uploading_file']
-            (file_name, separator, file_ext) = uploading_file.name.rpartition('.')
-            
-            if not file_name:
-                file_name = file_ext
-                file_ext = ''
-            else:
-                file_ext = '.%s' % file_ext
-            
-            unique_filename = '%s%s' % (file_name, file_ext)
-            
-            unique_filename = '%s%s' % (file_name, file_ext)
-            if os.path.isfile('%s%s' % (uploading_directory, unique_filename.encode('utf-8'))):
-                # Duplicated filename
-                suffix_counter = 1
+            try:
+                uploading_directory = "%s/%d/%d/" % (settings.REPORT_SUBMIT_FILE_PATH, submission.report.id, submission.id)
+                if not os.path.exists(uploading_directory): os.makedirs(uploading_directory)
                 
-                while os.path.isfile('%s%s(%d)%s' % (uploading_directory, file_name, suffix_counter, file_ext)):
-                    suffix_counter = suffix_counter + 1
+                if not file_name:
+                    file_name = file_ext
+                    file_ext = ''
+                else:
+                    file_ext = '.%s' % file_ext
+                
+                unique_filename = '%s%s' % (file_name, file_ext)
+                
+                unique_filename = '%s%s' % (file_name, file_ext)
+                if os.path.isfile('%s%s' % (uploading_directory, unique_filename.encode('utf-8'))):
+                    # Duplicated filename
+                    suffix_counter = 1
                     
-                unique_filename = '%s(%d)%s' % (file_name, suffix_counter, file_ext)
+                    while os.path.isfile('%s%s(%d)%s' % (uploading_directory, file_name, suffix_counter, file_ext)):
+                        suffix_counter = suffix_counter + 1
+                        
+                    unique_filename = '%s(%d)%s' % (file_name, suffix_counter, file_ext)
+                    
+                file_response.filename = unique_filename
+                file_response.save()
                 
-            file_response.filename = unique_filename
-            file_response.save()
+                destination = open(uploading_directory + unique_filename.encode('utf-8'), 'wb')
+                for chunk in request.FILES['uploading_file'].chunks(): destination.write(chunk)
+                destination.close()
             
-            destination = open(uploading_directory + unique_filename.encode('utf-8'), 'wb')
-            for chunk in request.FILES['uploading_file'].chunks(): destination.write(chunk)
-            destination.close()
+            except:
+                messages.error(request, 'ไม่สามารถบันทึกไฟล์ได้ กรุณาลองใหม่อีกครั้ง')
+                return redirect('view_report_overview', program_id=program.id, report_id=report.id, schedule_dateid=schedule_dateid)
             
             submission.state = EDITING_ACTIVITY
             submission.save()
+            messages.success(request, 'แนบไฟล์รายงานเรียบร้อย')
         
         elif submit_type == 'submit-text':
             if not permission.access_obj(request.user, 'program report submission edit', submission):
@@ -576,6 +586,7 @@ def view_report_overview(request, program_id, report_id, schedule_dateid):
             
             submission.state = EDITING_ACTIVITY if text else NO_ACTIVITY
             submission.save()
+            messages.success(request, 'แก้ไขเนื้อหารายงานเรียบร้อย')
             
         elif submit_type == 'submit-report':
             if not permission.access_obj(request.user, 'program report submission submit', submission):
@@ -585,6 +596,7 @@ def view_report_overview(request, program_id, report_id, schedule_dateid):
             submission.submitted_on = datetime.now()
             submission.approval_on = None
             submission.save()
+            messages.success(request, 'ส่งรายงานเรียบร้อย')
             
         elif submit_type == 'approve-report':
             if not permission.access_obj(request.user, 'program report submission approve', submission):
@@ -593,6 +605,7 @@ def view_report_overview(request, program_id, report_id, schedule_dateid):
             submission.state = APPROVED_ACTIVITY
             submission.approval_on = datetime.now()
             submission.save()
+            messages.success(request, 'รับรองรายงานเรียบร้อย')
             
         elif submit_type == 'reject-report':
             if not permission.access_obj(request.user, 'report submission approve', submission):
@@ -601,6 +614,7 @@ def view_report_overview(request, program_id, report_id, schedule_dateid):
             submission.state = REJECTED_ACTIVITY
             submission.approval_on = datetime.now()
             submission.save()
+            messages.success(request, 'ตีกลับรายงานเรียบร้อย')
         
         return redirect('view_report_overview', program_id=program.id, report_id=report.id, schedule_dateid=schedule_dateid)
     
@@ -696,6 +710,7 @@ def view_report_overview_edit_reference(request, program_id, report_id, schedule
                 reference.description = request.POST.get('desc_budget_%d' % budget_schedule.id)
                 reference.save()
         
+        messages.success(request, 'แก้ไขข้อมูลประกอบของรายงานเรียบร้อย')
         return redirect('view_report_overview', program.id, report.id, schedule_dateid)
     
     projects = Project.objects.filter(program=program).order_by('name')
