@@ -352,8 +352,9 @@ def view_administration_users_change_password(request, user_id):
         if form.is_valid():
             user.set_password(form.cleaned_data['password1'])
             user.save()
-            set_message(request, u'ตั้งรหัสผ่านใหม่เรียบร้อย')
-            return redirect('view_administration_users_edit', (user.id))
+            
+            messages.success(request, 'ตั้งรหัสผ่านใหม่เรียบร้อย')
+            return redirect('view_administration_users')
         
     else:
         form = UserChangePasswordForm()
