@@ -117,7 +117,7 @@ def _view_sector_manager_assistant_homepage(request, roles, responsibilities):
     # Report
     for program in responsible_programs:
         program.approving_submissions = ReportSubmission.objects.filter(program=program, report__need_checkup=True, state=SUBMITTED_ACTIVITY)
-        (late_report_count, rejected_report_count) = get_program_warning_report_count(program)
+        (late_report_count, rejected_report_count) = report_functions.get_program_warning_report_count(program)
         program.late_report_count = late_report_count
         program.rejected_report_count = rejected_report_count
     
