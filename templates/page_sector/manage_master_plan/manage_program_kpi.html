@@ -106,43 +106,43 @@ function deleteKPISchedule(linkObject) {
     <h2>จัดการแผนผลลัพธ์</h2>
 </div>
 
-<div class="master_plan_manage master_plan_manage_program_kpi">
+<div class="master_plan_manage ss_manage_kpi_schedule_page">
 	
-	<div class="year_select">
-        <div>ตัวชี้วัดปี <a href="{% url view_master_plan_manage_program_kpi_year program.id current_quarter_year|add:-1 %}">{{current_quarter_year|add:542}}</a> | <span>{{current_quarter_year|add:543}}</span> | <a href="{% url view_master_plan_manage_program_kpi_year program.id current_quarter_year|add:1 %}">{{current_quarter_year|add:544}}</a></div>
+	<div class="year_selector">
+        <div class="selector">เลือกจัดการตัวชี้วัดสำหรับปี <a href="{% url view_master_plan_manage_program_kpi_year program.id current_kpi_year|add:-1 %}">{{current_kpi_year|add:542}}</a> | <span>{{current_kpi_year|add:543}}</span> | <a href="{% url view_master_plan_manage_program_kpi_year program.id current_kpi_year|add:1 %}">{{current_kpi_year|add:544}}</a></div>
         <div class="comment">* กดบันทึกการแก้ไขด้านล่างก่อนเปลี่ยนปี ถ้ามีการแก้ไขข้อมูลในปีนี้</div>
     </div>
 	
 	{% if not kpi_category_choices and not kpi_no_category_choices %}
-	<div class="ss_prerequisite">ไม่มีตัวชี้วัดของแผน เพิ่มตัวชี้วัดได้จากหน้า <a href="{% url view_master_plan_manage_kpi_add_kpi master_plan.ref_no %}?{% back_to_this request %}">เพิ่มตัวชี้วัดแผน</a></div>
+	<div class="ss_prerequisite">ไม่มีตัวชี้วัดของแผนสำหรับปีนี้ เพิ่มตัวชี้วัดได้จากหน้า <a href="{% url view_master_plan_manage_kpi_add_kpi master_plan.ref_no %}?{% back_to_this request %}">เพิ่มตัวชี้วัดแผน</a></div>
 	{% else %}
 	<div class="error_message invalid_input" style="display:none;">ข้อมูลไม่ครบถ้วนหรือไม่อยู่ในรูปแบบที่ถูกต้อง</div>
 	
-	<h2>ตัวชี้วัดสำหรับปี 2553</h2>
+	<h2>ตัวชี้วัดสำหรับปี {{current_kpi_year|add:543}}</h2>
 	<table class="kpi_table">
 		<tr>
 			<th>
 				<div class="quarter">ไตรมาสที่ 1</div>
-				<div>{% generate_quarter_text 1 current_quarter_year %}</div>
+				<div>{% generate_quarter_text 1 current_kpi_year %}</div>
 			</th>
 			<th>
 				<div class="quarter">ไตรมาสที่ 2</div>
-                <div>{% generate_quarter_text 2 current_quarter_year %}</div>
+                <div>{% generate_quarter_text 2 current_kpi_year %}</div>
 			</th>
 			<th>
                 <div class="quarter">ไตรมาสที่ 3</div>
-                <div>{% generate_quarter_text 3 current_quarter_year %}</div>
+                <div>{% generate_quarter_text 3 current_kpi_year %}</div>
             </th>
 			<th>
                 <div class="quarter">ไตรมาสที่ 4</div>
-                <div>{% generate_quarter_text 4 current_quarter_year %}</div>
+                <div>{% generate_quarter_text 4 current_kpi_year %}</div>
             </th>
 		</tr>
 		<tr>
-			<td class="action" id="quarter-1"><img src="{{MEDIA_URL}}/images/page/add_kpi_schedule.png" class="icon" /> <a href="#" class="add-schedule">เพิ่มตัวชี้วัด</a></td>
-			<td class="action" id="quarter-2"><img src="{{MEDIA_URL}}/images/page/add_kpi_schedule.png" class="icon" /> <a href="#" class="add-schedule">เพิ่มตัวชี้วัด</a></td>
-			<td class="action" id="quarter-3"><img src="{{MEDIA_URL}}/images/page/add_kpi_schedule.png" class="icon" /> <a href="#" class="add-schedule">เพิ่มตัวชี้วัด</a></td>
-			<td class="action" id="quarter-4"><img src="{{MEDIA_URL}}/images/page/add_kpi_schedule.png" class="icon" /> <a href="#" class="add-schedule">เพิ่มตัวชี้วัด</a></td>
+			<td class="action" id="quarter-1"><img src="{{MEDIA_URL}}/images/page/add_kpi_schedule.png" class="icon" /> <a href="#" class="add-schedule">ใส่ตัวชี้วัด</a></td>
+			<td class="action" id="quarter-2"><img src="{{MEDIA_URL}}/images/page/add_kpi_schedule.png" class="icon" /> <a href="#" class="add-schedule">ใส่ตัวชี้วัด</a></td>
+			<td class="action" id="quarter-3"><img src="{{MEDIA_URL}}/images/page/add_kpi_schedule.png" class="icon" /> <a href="#" class="add-schedule">ใส่ตัวชี้วัด</a></td>
+			<td class="action" id="quarter-4"><img src="{{MEDIA_URL}}/images/page/add_kpi_schedule.png" class="icon" /> <a href="#" class="add-schedule">ใส่ตัวชี้วัด</a></td>
 		</tr>
 		<tr class="kpi-selector">
 			<td colspan="4">
@@ -206,17 +206,4 @@ function deleteKPISchedule(linkObject) {
     </form>
 	{% endif %}
 </div>
-
-<ul style="display:none;">
-	{% for kpi in kpi_choices %}
-	<li id="kpi-data-{{kpi.id}}">
-		<span class="year">{{kpi.year|add:543}}</span>
-		<span class="category">{{kpi.category.name}}</span>
-		<span class="ref_no">{{kpi.ref_no}}</span>
-		<span class="name">{{kpi.abbr_name}}</span>
-		<span class="unit">{{kpi.unit_name}}</span>
-	</li>
-	{% endfor %}
-</ul>
-
 {% endblock %}

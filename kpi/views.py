@@ -46,28 +46,28 @@ def view_master_plan_kpi(request, master_plan_ref_no):
 # MASTER PLAN MANAGEMENT #######################################################################
 #
 
-def view_master_plan_manage_program_kpi(request, program_id, quarter_year):
+def view_master_plan_manage_program_kpi(request, program_id, kpi_year):
     program = get_object_or_404(Program, pk=program_id)
     master_plan = program.plan.master_plan
     
     if not permission.access_obj(request.user, 'master_plan manage', master_plan):
         return access_denied(request)
     
-    if not quarter_year:
-        current_quarter_year = utilities.master_plan_current_year()
+    if not kpi_year:
+        current_kpi_year = utilities.master_plan_current_year()
     else:
-        current_quarter_year = int(quarter_year)
+        current_kpi_year = int(kpi_year)
     
     kpi_category_choices = []
-    for dict in DomainKPI.objects.filter(master_plan=master_plan, year=current_quarter_year).values('category'):
+    for dict in DomainKPI.objects.filter(master_plan=master_plan, year=current_kpi_year).values('category'):
         if dict['category']:
             kpi_category = DomainKPICategory.objects.get(pk=dict['category'])
-            kpis = DomainKPI.objects.filter(master_plan=master_plan, year=current_quarter_year, category=kpi_category)
+            kpis = DomainKPI.objects.filter(master_plan=master_plan, year=current_kpi_year, category=kpi_category)
             kpi_category_choices.append({'category':kpi_category, 'kpis':kpis})
     
-    kpi_no_category_choices = DomainKPI.objects.filter(master_plan=master_plan, year=current_quarter_year, category=None)
+    kpi_no_category_choices = DomainKPI.objects.filter(master_plan=master_plan, year=current_kpi_year, category=None)
     
-    kpi_schedules = DomainKPISchedule.objects.filter(program=program, quarter_year=current_quarter_year)
+    kpi_schedules = DomainKPISchedule.objects.filter(program=program, quarter_year=current_kpi_year)
     
     if request.method == 'POST':
         # 'schedule' - kpi_id , schedule_id , target , quarter - "123,None,100,1"
@@ -89,14 +89,14 @@ def view_master_plan_manage_program_kpi(request, program_id, quarter_year):
                 if schedule_id and schedule_id != 'none':
                     schedule = DomainKPISchedule.objects.get(pk=schedule_id)
                     
-                    if schedule.target != target or schedule.quarter_year != current_quarter_year or schedule.quarter != quarter:
+                    if schedule.target != target or schedule.quarter_year != current_kpi_year or schedule.quarter != quarter:
                         schedule.target = target
-                        schedule.quarter_year = current_quarter_year
+                        schedule.quarter_year = current_kpi_year
                         schedule.quarter = quarter
                         schedule.save()
                     
                 else:
-                    schedule = DomainKPISchedule.objects.create(kpi=kpi, program=program, target=target, result=0, quarter_year=current_quarter_year, quarter=quarter)
+                    schedule = DomainKPISchedule.objects.create(kpi=kpi, program=program, target=target, result=0, quarter_year=current_kpi_year, quarter=quarter)
                 
             updating_schedules.append(schedule)
         
@@ -136,7 +136,7 @@ def view_master_plan_manage_program_kpi(request, program_id, quarter_year):
         
         row_schedules.append(row_schedule)
     
-    return render_page_response(request, 'organization', 'page_sector/manage_master_plan/manage_program_kpi.html', {'master_plan':master_plan, 'program':program, 'row_schedules':row_schedules, 'kpi_no_category_choices':kpi_no_category_choices, 'kpi_category_choices':kpi_category_choices, 'current_quarter_year':current_quarter_year})
+    return render_page_response(request, 'organization', 'page_sector/manage_master_plan/manage_program_kpi.html', {'master_plan':master_plan, 'program':program, 'row_schedules':row_schedules, 'kpi_no_category_choices':kpi_no_category_choices, 'kpi_category_choices':kpi_category_choices, 'current_kpi_year':current_kpi_year})
 
 # MANAGE KPI
 
@@ -167,9 +167,7 @@ def view_master_plan_manage_kpi(request, master_plan_ref_no, kpi_year):
             kpi_category.kpis = kpis
             kpi_categories.append(kpi_category)
     
-    print year_number
     no_category_kpis = DomainKPI.objects.filter(master_plan=master_plan, year=year_number, category=None)
-    print no_category_kpis
     
     for kpi in no_category_kpis:
         kpi.removable = DomainKPISchedule.objects.filter(kpi=kpi).count() == 0
@@ -325,21 +323,58 @@ def view_master_plan_manage_kpi_delete_category(request, kpi_category_id):
 #
 
 @login_required
-def view_program_kpi(request, program_id):
+def view_program_kpi(request, program_id, kpi_year):
     program = get_object_or_404(Program, pk=program_id)
-    current_year = date.today().year
     
-    years = [dict['kpi__year'] for dict in DomainKPISchedule.objects.filter(program=program).values('kpi__year').distinct()]
+    if not kpi_year:
+        current_kpi_year = utilities.master_plan_current_year()
+    else:
+        current_kpi_year = int(kpi_year)
     
-    categories = []
-    category_ids = DomainKPISchedule.objects.filter(program=program).values('kpi__category').distinct()
+    # MASTER PLAN KPI
+    master_plan_kpi_categories = []
+    for category in DomainKPICategory.objects.filter(master_plan=program.plan.master_plan):
+        print category
+        master_plan_kpis = []
+        for kpi in DomainKPI.objects.filter(master_plan=program.plan.master_plan, category=category, year=current_kpi_year):
+            if DomainKPISchedule.objects.filter(kpi=kpi, program=program, quarter_year=current_kpi_year).count() > 0:
+                schedules = {'1':'', '2':'', '3':'', '4':''}
+                for i in range(1, 5):
+                    try:
+                        schedules[str(i)] = DomainKPISchedule.objects.get(kpi=kpi, program=program, quarter_year=current_kpi_year, quarter=i)
+                    except:
+                        pass
+                
+                kpi.schedules = schedules
+                master_plan_kpis.append(kpi)
+        
+        if master_plan_kpis:
+            category.kpis = master_plan_kpis
+            master_plan_kpi_categories.append(category)
     
-    for category_id in category_ids:
+    master_plan_kpis = []
+    for kpi in DomainKPI.objects.filter(master_plan=program.plan.master_plan, category=None, year=current_kpi_year):
+        if DomainKPISchedule.objects.filter(kpi=kpi, program=program, quarter_year=current_kpi_year).count() > 0:
+            schedules = {'1':'', '2':'', '3':'', '4':''}
+            for i in range(1, 5):
+                try:
+                    schedules[str(i)] = DomainKPISchedule.objects.get(kpi=kpi, program=program, quarter_year=current_kpi_year, quarter=i)
+                except:
+                    pass
+            
+            kpi.schedules = schedules
+            master_plan_kpis.append(kpi)
+    
+    """
+    for category_id in DomainKPISchedule.objects.filter(program=program).values('kpi__category').distinct():
         if category_id['kpi__category']:
             category = DomainKPICategory.objects.get(pk=category_id['kpi__category'])
             kpi_ids = DomainKPISchedule.objects.filter(program=program, kpi__category=category).order_by('kpi__ref_no').values('kpi').distinct()
         else:
-            category = DomainKPICategory()
+            if len(category_ids) > 1:
+                category = DomainKPICategory('(ตัวชี้วัดที่ไม่ระบุประเภท)')
+            else:
+                category = DomainKPICategory()
             kpi_ids = DomainKPISchedule.objects.filter(program=program, kpi__category=None).order_by('kpi__ref_no').values('kpi').distinct()
         
         kpis = []
@@ -349,7 +384,7 @@ def view_program_kpi(request, program_id):
             schedules = {}
             for i in range(1, 5):
                 try:
-                    schedules[str(i)] = DomainKPISchedule.objects.get(kpi=kpi, program=program, quarter_year=current_year, quarter=i)
+                    schedules[str(i)] = DomainKPISchedule.objects.get(kpi=kpi, program=program, quarter_year=current_kpi_year, quarter=i)
                 except:
                     schedules[str(i)] = ''
             
@@ -357,9 +392,193 @@ def view_program_kpi(request, program_id):
             kpis.append(kpi)
         
         category.kpis = kpis
-        categories.append(category)
+        master_plan_kpi_categories.append(category)
+    """
     
-    return render_page_response(request, 'kpi', 'page_program/program_kpi.html', {'program':program, 'categories':categories, 'years':years, 'current_year':current_year})
+    # PROGRAM KPI
+    program_kpis = []
+    for kpi in DomainKPI.objects.filter(program=program, year=current_kpi_year):
+        if DomainKPISchedule.objects.filter(kpi=kpi, quarter_year=current_kpi_year).count() > 0:
+            schedules = {'1':'', '2':'', '3':'', '4':''}
+            for i in range(1, 5):
+                try:
+                    schedules[str(i)] = DomainKPISchedule.objects.get(kpi=kpi, quarter_year=current_kpi_year, quarter=i)
+                except:
+                    pass
+            
+            kpi.schedules = schedules
+            program_kpis.append(kpi)
+    
+    return render_page_response(request, 'kpi', 'page_program/program_kpi.html', {'program':program, 'master_plan_kpi_categories':master_plan_kpi_categories, 'master_plan_kpis':master_plan_kpis, 'program_kpis':program_kpis, 'current_kpi_year':current_kpi_year})
+
+def view_program_manage_kpi_and_schedule(request, program_id):
+    program = get_object_or_404(Program, pk=program_id)
+    return render_page_response(request, 'kpi', 'page_program/manage_kpi/program_manage_kpi_and_schedule.html', {'program':program, })
+
+def view_program_manage_kpi(request, program_id):
+    program = get_object_or_404(Program, pk=program_id)
+    
+    if not permission.access_obj(request.user, 'program kpi manage', program):
+        return access_denied(request)
+    
+    kpi_years = []
+    for dict in DomainKPI.objects.filter(program=program).values('year').distinct():
+        kpis = DomainKPI.objects.filter(program=program, year=dict['year']).order_by('ref_no')
+        
+        for kpi in kpis:
+            kpi.removable = DomainKPISchedule.objects.filter(kpi=kpi).count() == 0
+        
+        kpi_years.append({'year':dict['year'], 'kpis':kpis}) 
+    
+    return render_page_response(request, 'kpi', 'page_program/manage_kpi/program_manage_kpi.html', {'program':program, 'kpi_years':kpi_years})
+
+def view_program_manage_kpi_add_kpi(request, program_id):
+    program = get_object_or_404(Program, pk=program_id)
+    
+    if not permission.access_obj(request.user, 'program kpi manage', program):
+        return access_denied(request)
+    
+    if request.method == 'POST':
+        form = DomainKPIModifyForm(request.POST)
+        if form.is_valid():
+            kpi = DomainKPI.objects.create(
+                program = program,
+                ref_no = form.cleaned_data['ref_no'],
+                name = form.cleaned_data['name'],
+                abbr_name = form.cleaned_data['abbr_name'],
+                year = form.cleaned_data['year'] - 543,
+                unit_name = form.cleaned_data['unit_name']
+            )
+            
+            messages.success(request, 'เพิ่มตัวชี้วัดเรียบร้อย')
+            return utilities.redirect_or_back('view_program_manage_kpi', (program.id), request)
+            
+    else:
+        form = DomainKPIModifyForm()
+    
+    return render_page_response(request, 'kpi', 'page_program/manage_kpi/program_manage_kpi_modify_kpi.html', {'program':program, 'form':form})
+
+def view_program_manage_kpi_edit_kpi(request, kpi_id):
+    kpi = get_object_or_404(DomainKPI, pk=kpi_id)
+    program = kpi.program
+    
+    if not permission.access_obj(request.user, 'program kpi manage', program):
+        return access_denied(request)
+    
+    if request.method == 'POST':
+        form = DomainKPIModifyForm(request.POST)
+        if form.is_valid():
+            kpi.ref_no = form.cleaned_data['ref_no']
+            kpi.name = form.cleaned_data['name']
+            kpi.abbr_name = form.cleaned_data['abbr_name']
+            kpi.year = form.cleaned_data['year']- 543
+            kpi.unit_name = form.cleaned_data['unit_name']
+            kpi.save()
+            
+            messages.success(request, 'แก้ไขตัวชี้วัดเรียบร้อย')
+            return redirect('view_program_manage_kpi', (program.id))
+            
+    else:
+        form = DomainKPIModifyForm(initial={'ref_no':kpi.ref_no, 'name':kpi.name, 'abbr_name':kpi.abbr_name, 'year':kpi.year+543, 'unit_name':kpi.unit_name})
+    
+    return render_page_response(request, 'kpi', 'page_program/manage_kpi/program_manage_kpi_modify_kpi.html', {'program':program, 'form':form, 'kpi':kpi})
+
+def view_program_manage_kpi_delete_kpi(request, kpi_id):
+    kpi = get_object_or_404(DomainKPI, pk=kpi_id)
+    program = kpi.program
+    
+    if not permission.access_obj(request.user, 'program kpi manage', program):
+        return access_denied(request)
+    
+    if not DomainKPISchedule.objects.filter(kpi=kpi).count():
+        kpi.delete()
+        messages.success(request, 'ลบตัวชี้วัดเรียบร้อย')
+    else:
+        messages.error(request, 'ไม่สามารถลบตัวชี้วัด เนื่องจากยังมีแผนงานที่ผูกอยู่กับตัวชี้วัดนี้')
+    
+    return redirect('view_program_manage_kpi', (program.id))
+
+def view_program_manage_kpi_schedule(request, program_id, kpi_year):
+    program = get_object_or_404(Program, pk=program_id)
+    
+    if not permission.access_obj(request.user, 'program kpi schedule manage', program):
+        return access_denied(request)
+    
+    if not kpi_year:
+        current_kpi_year = utilities.master_plan_current_year()
+    else:
+        current_kpi_year = int(kpi_year)
+    
+    kpi_choices = DomainKPI.objects.filter(program=program, year=current_kpi_year)
+    kpi_schedules = DomainKPISchedule.objects.filter(kpi__in=kpi_choices, quarter_year=current_kpi_year)
+    
+    if request.method == 'POST':
+        # 'schedule' - kpi_id , schedule_id , target , quarter - "123,None,100,1"
+        schedules = request.POST.getlist('schedule')
+        
+        updating_schedules = list()
+        for schedule in schedules:
+            try:
+                (kpi_id, schedule_id, target, quarter) = schedule.split(',')
+                kpi_id = int(kpi_id)
+                target = int(target)
+                quarter = int(quarter)
+            except:
+                messages.error(request, 'ข้อมูลไม่อยู่ในรูปแบบที่ถูกต้อง กรุณากรอกใหม่อีกครั้ง')
+                return redirect('view_program_manage_kpi_schedule', (program.id))
+            else:
+                kpi = DomainKPI.objects.get(pk=kpi_id)
+                
+                if schedule_id and schedule_id != 'none':
+                    schedule = DomainKPISchedule.objects.get(pk=schedule_id)
+                    
+                    if schedule.target != target or schedule.quarter_year != current_kpi_year or schedule.quarter != quarter:
+                        schedule.target = target
+                        schedule.quarter_year = current_kpi_year
+                        schedule.quarter = quarter
+                        schedule.save()
+                    
+                else:
+                    schedule = DomainKPISchedule.objects.create(kpi=kpi, target=target, result=0, quarter_year=current_kpi_year, quarter=quarter)
+                
+            updating_schedules.append(schedule)
+        
+        # Remove schedule
+        for program_schedule in kpi_schedules:
+            found = False
+            for schedule in updating_schedules:
+                if schedule == program_schedule:
+                    found = True
+                    
+            if not found:
+                # TODO - Delete Comment
+                program_schedule.delete()
+        
+        messages.success(request, 'แก้ไขแผนผลลัพธ์ของแผนงานเรียบร้อย')
+        return redirect('view_program_manage_kpi_schedule', (program.id))
+    
+    # GET SCHEDULE
+    column_schedules = [[], [], [], []]
+    for schedule in kpi_schedules:
+        column_schedules[schedule.quarter-1].append(schedule)
+    
+    max_height = 0
+    for i in range(0, 4):
+        if max_height < len(column_schedules[i]): max_height = len(column_schedules[i])
+    
+    row_schedules = []
+    for i in range(0, max_height):
+        row_schedule = {}
+        
+        for quarter in range(0, 4):
+            try:
+                row_schedule[str(quarter+1)] = column_schedules[quarter][i]
+            except:
+                row_schedule[str(quarter+1)] = ''
+        
+        row_schedules.append(row_schedule)
+    
+    return render_page_response(request, 'kpi', 'page_program/manage_kpi/program_manage_kpi_schedule.html', {'program':program, 'row_schedules':row_schedules, 'kpi_choices':kpi_choices, 'current_kpi_year':current_kpi_year})
 
 #
 # KPI SCHEDULE #######################################################################

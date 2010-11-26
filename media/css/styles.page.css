@@ -36,6 +36,39 @@ h2.h2 {font-size:146.5%;padding-bottom:5px;margin-bottom:10px;color:#2D8659;bord
 .ss_edit_reference_page li .description input {width:550px;}
 .ss_edit_reference_page .ss_form .button_panel {margin-left:0px;}
 
+.ss_kpi_list_page h3 {font-size:123.1%;font-weight:bold;color:#444;margin:10px 0px;}
+
+.ss_manage_kpi_schedule_page .year_selector {margin-bottom:25px;border:1px solid #CCC;padding:10px;background-color:#DEDDFF;}
+.ss_manage_kpi_schedule_page .year_selector .selector {font-size:108%;}
+.ss_manage_kpi_schedule_page .year_selector a {margin:0px 10px;}
+.ss_manage_kpi_schedule_page .year_selector span {margin:0px 10px;font-weight:bold;}
+.ss_manage_kpi_schedule_page .year_selector .comment {color:#666;margin-top:10px;}
+
+.ss_manage_kpi_schedule_page h2 {font-size:116%;color:#2D8659;margin-bottom:10px;}
+
+.ss_manage_kpi_schedule_page table {width:100%;margin-bottom:20px;}
+.ss_manage_kpi_schedule_page table th {width:25%;background-color:#EEE;color:#555;border:1px solid #CCC;padding:12px 10px;text-align:center;font-size:108%;}
+.ss_manage_kpi_schedule_page table th .quarter {font-weight:bold;margin-bottom:5px;}
+.ss_manage_kpi_schedule_page table td {border:1px solid #CCC;padding:12px 10px;vertical-align:top;}
+.ss_manage_kpi_schedule_page table .action {text-align:center;}
+.ss_manage_kpi_schedule_page table .adding {background-color:#FFC;}
+.ss_manage_kpi_schedule_page table .kpi-selector {background-color:#FFC;display:none;}
+.ss_manage_kpi_schedule_page table .kpi-selector .category {font-weight:bold;margin-bottom:10px;font-size:108%;border-bottom:1px dashed #CCC;padding-bottom:5px;}
+.ss_manage_kpi_schedule_page table .kpi-selector ul {margin:0px 15px 15px;}
+.ss_manage_kpi_schedule_page table .kpi-selector ul li {margin-bottom:10px;}
+.ss_manage_kpi_schedule_page table .kpi-selector .cancel {margin:20px 0px 10px 5px;}
+.ss_manage_kpi_schedule_page table .kpi-selector .cancel button {width:90px;}
+
+.ss_manage_kpi_schedule_page table td .kpi {font-size:108%;margin-bottom:8px;}
+.ss_manage_kpi_schedule_page table td .target {margin-bottom:10px;color:#555;}
+.ss_manage_kpi_schedule_page table td .target input {width:90px;margin:0px 10px;}
+.ss_manage_kpi_schedule_page table td .target input.invalid {background-color:#FCC;}
+.ss_manage_kpi_schedule_page table td .delete {text-align:right;}
+.ss_manage_kpi_schedule_page table td .delete a {color:#C20;font-size:93%;}
+.ss_manage_kpi_schedule_page table td .delete a:hover {color:#FFF;}
+
+.ss_manage_kpi_schedule_page .ss_form .button_panel {margin-left:0px;}
+
 /*
  * ADMINISTRATION PAGE
  */
@@ -328,36 +361,6 @@ h2.h2 {font-size:146.5%;padding-bottom:5px;margin-bottom:10px;color:#2D8659;bord
 
 /* Program KPI */
 
-.master_plan_manage_program_kpi .ss_form .button_panel {margin-left:0px;}
-
-.master_plan_manage_program_kpi .year_select {border:1px dashed #999;padding:10px;margin-bottom:15px;font-size:116%;}
-.master_plan_manage_program_kpi .year_select a {margin:0px 10px;}
-.master_plan_manage_program_kpi .year_select span {margin:0px 10px;font-weight:bold;}
-.master_plan_manage_program_kpi .year_select .comment {color:#666;margin-top:15px;font-size:93%;}
-
-.master_plan_manage_program_kpi h2 {font-size:116%;color:#2D8659;margin-bottom:10px;}
-
-.master_plan_manage_program_kpi table {width:100%;margin-bottom:20px;}
-.master_plan_manage_program_kpi table th {width:25%;background-color:#EEE;color:#555;border:1px solid #CCC;padding:12px 10px;text-align:center;font-size:108%;}
-.master_plan_manage_program_kpi table th .quarter {font-weight:bold;margin-bottom:5px;}
-.master_plan_manage_program_kpi table td {border:1px solid #CCC;padding:12px 10px;vertical-align:top;}
-.master_plan_manage_program_kpi table .action {text-align:center;}
-.master_plan_manage_program_kpi table .adding {background-color:#FFC;}
-.master_plan_manage_program_kpi table .kpi-selector {background-color:#FFC;display:none;}
-.master_plan_manage_program_kpi table .kpi-selector .category {font-weight:bold;margin-bottom:10px;font-size:108%;border-bottom:1px dashed #CCC;padding-bottom:5px;}
-.master_plan_manage_program_kpi table .kpi-selector ul {margin:0px 15px 15px;}
-.master_plan_manage_program_kpi table .kpi-selector ul li {margin-bottom:10px;}
-.master_plan_manage_program_kpi table .kpi-selector .cancel {margin:20px 0px 10px 5px;}
-.master_plan_manage_program_kpi table .kpi-selector .cancel button {width:90px;}
-
-.master_plan_manage_program_kpi table td .kpi {font-size:108%;margin-bottom:8px;}
-.master_plan_manage_program_kpi table td .target {margin-bottom:10px;color:#555;}
-.master_plan_manage_program_kpi table td .target input {width:90px;margin:0px 10px;}
-.master_plan_manage_program_kpi table td .target input.invalid {background-color:#FCC;}
-.master_plan_manage_program_kpi table td .delete {text-align:right;}
-.master_plan_manage_program_kpi table td .delete a {color:#C20;font-size:93%;}
-.master_plan_manage_program_kpi table td .delete a:hover {color:#FFF;}
-
 /* Program Budget */
 
 .master_plan_manage_program_budget .error_message {color:#C30;margin-bottom:10px;}
@@ -384,7 +387,7 @@ h2.h2 {font-size:146.5%;padding-bottom:5px;margin-bottom:10px;color:#2D8659;bord
 .master_plan_manage_report .notify_input input {width:60px;margin:0px 10px;}
 
 /* Manage KPI */
-.master_plan_manage_kpi .year_select {border:1px dashed #999;padding:10px;margin-bottom:15px;font-size:116%;}
+.master_plan_manage_kpi .year_select {border:1px solid #CCC;background-color:#DEDDFF;padding:10px;margin-bottom:15px;font-size:108%;}
 .master_plan_manage_kpi .year_select a {margin:0px 10px;}
 .master_plan_manage_kpi .year_select span {margin:0px 10px;font-weight:bold;}
 
@@ -408,9 +411,12 @@ h2.h2 {font-size:146.5%;padding-bottom:5px;margin-bottom:10px;color:#2D8659;bord
 .program_overview_page .reports {margin:15px 0px 20px;}
 
 /* PROGRAM - KPI */
-.program_kpi_page {}
+.program_kpi_page .year_selector {border:1px solid #CCC;padding:10px;background-color:#DEDDFF;margin-bottom:20px;font-size:108%;}
+.program_kpi_page .year_selector a {margin:0px 10px;}
+.program_kpi_page .year_selector span {margin:0px 10px;}
 
-.program_kpi_page h2 {font-size:123.1%;color:#555;}
+.program_kpi_page h2 {font-size:138.5%;color:#555;margin-bottom:10px;}
+.program_kpi_page h3 {font-size:108%;color:#555;}
 
 .program_kpi_page table {width:100%;margin:10px 0px 30px;}
 .program_kpi_page table th {padding:10px 10px;background-color:#DDD;color:#333;border:1px solid #AAA;text-align:center;}

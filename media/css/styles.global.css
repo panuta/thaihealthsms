@@ -53,9 +53,9 @@ a:hover {color:#FFF;background-color:#369;}
 .ss_page_error_message img {margin-bottom:10px;}
 
 /* Breadcrumbs */
-.ss_breadcrumbs .breadcrumbs {margin-bottom:8px;}
-.ss_breadcrumbs h2 {font-size:131%;background-color:#CCC;margin-bottom:20px;padding:8px 10px 5px;border-bottom:5px solid #488E6B;}
-.ss_breadcrumbs .supertitle {margin:5px 0px;font-size:108%;color:#555;}
+.ss_breadcrumbs .breadcrumbs {margin-bottom:15px;}
+.ss_breadcrumbs h2 {color:#333;font-size:131%;margin-bottom:20px;padding-bottom:6px;border-bottom:3px solid #488E6B;}
+.ss_breadcrumbs .supertitle {margin:5px 0px 10px;font-size:108%;color:#555;}
 .ss_breadcrumbs .subtitle {margin:10px 0px 5px;color:#444;}
 .ss_breadcrumbs .link_backward {margin:0px 0px 20px;}
 
@@ -204,3 +204,9 @@ a:hover {color:#FFF;background-color:#369;}
 .ss_bar_graph .low {background-color:#C33;}
 .ss_bar_graph .medium {background-color:#C90;}
 .ss_bar_graph .high {background-color:#099;}
+
+/* Action List */
+.ss_action_list {}
+.ss_action_list li {list-style:disc;margin:0px 0px 15px 25px;}
+.ss_action_list li a {font-size:123.1%;}
+.ss_action_list li .description {color:#555;margin-top:6px;}

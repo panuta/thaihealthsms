@@ -139,6 +139,9 @@ def after_syncdb(sender, **kwargs):
     PermissionName.objects.get_or_create(permission='program report submission reference edit', name='แก้ไขข้อมูลประกอบรายงานสำหรับแผนงาน')
     
     # KPI
+    PermissionName.objects.get_or_create(permission='program kpi manage', name='จัดการตัวชี้วัดแผนงาน')
+    PermissionName.objects.get_or_create(permission='program kpi schedule manage', name='จัดการแผนผลลัพธ์แผนงาน')
+    
     PermissionName.objects.get_or_create(permission='program kpi remark edit', name='แก้ไขหมายเหตุตัวชี้วัด')
     PermissionName.objects.get_or_create(permission='program kpi target edit', name='แก้ไขตัวเลขคาดการณ์ตัวชี้วัด')
     PermissionName.objects.get_or_create(permission='program kpi result edit', name='แก้ไขตัวเลขผลที่เกิดของตัวชี้วัด')
@@ -170,6 +173,9 @@ def after_syncdb(sender, **kwargs):
     AdminPermission.objects.get_or_create(permission='program report submission edit')
     AdminPermission.objects.get_or_create(permission='program report submission reference edit')
     
+    AdminPermission.objects.get_or_create(permission='program kpi manage')
+    AdminPermission.objects.get_or_create(permission='program kpi schedule manage')
+    
     AdminPermission.objects.get_or_create(permission='program kpi remark edit')
     AdminPermission.objects.get_or_create(permission='program kpi target edit')
     AdminPermission.objects.get_or_create(permission='program kpi result edit')
@@ -187,6 +193,9 @@ def after_syncdb(sender, **kwargs):
     UserPermission.objects.get_or_create(permission='program report submission warning', role=sector_manager_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program report submission approve', role=sector_manager_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program report submission reference edit', role=sector_manager_role, only_responsible=True)
+    
+    UserPermission.objects.get_or_create(permission='program kpi manage', role=sector_manager_role, only_responsible=True)
+    UserPermission.objects.get_or_create(permission='program kpi schedule manage', role=sector_manager_role, only_responsible=True)
     
     UserPermission.objects.get_or_create(permission='program kpi remark edit', role=sector_manager_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program kpi target edit', role=sector_manager_role, only_responsible=True)
@@ -206,6 +215,9 @@ def after_syncdb(sender, **kwargs):
     UserPermission.objects.get_or_create(permission='program report submission approve', role=sector_manager_assistant_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program report submission reference edit', role=sector_manager_assistant_role, only_responsible=True)
     
+    UserPermission.objects.get_or_create(permission='program kpi manage', role=sector_manager_assistant_role, only_responsible=True)
+    UserPermission.objects.get_or_create(permission='program kpi schedule manage', role=sector_manager_assistant_role, only_responsible=True)
+    
     UserPermission.objects.get_or_create(permission='program kpi remark edit', role=sector_manager_assistant_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program kpi target edit', role=sector_manager_assistant_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program kpi result edit', role=sector_manager_assistant_role, only_responsible=True)
@@ -223,6 +235,9 @@ def after_syncdb(sender, **kwargs):
     UserPermission.objects.get_or_create(permission='program report submission warning', role=sector_specialist_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program report submission approve', role=sector_specialist_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program report submission reference edit', role=sector_specialist_role, only_responsible=True)
+    
+    UserPermission.objects.get_or_create(permission='program kpi manage', role=sector_specialist_role, only_responsible=True)
+    UserPermission.objects.get_or_create(permission='program kpi schedule manage', role=sector_specialist_role, only_responsible=True)
     
     UserPermission.objects.get_or_create(permission='program kpi remark edit', role=sector_specialist_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program kpi target edit', role=sector_specialist_role, only_responsible=True)
@@ -253,6 +268,9 @@ def after_syncdb(sender, **kwargs):
     UserPermission.objects.get_or_create(permission='program report submission submit', role=program_manager_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program report submission reference edit', role=program_manager_role, only_responsible=True)
     
+    UserPermission.objects.get_or_create(permission='program kpi manage', role=program_manager_role, only_responsible=True)
+    UserPermission.objects.get_or_create(permission='program kpi schedule manage', role=program_manager_role, only_responsible=True)
+    
     UserPermission.objects.get_or_create(permission='program kpi remark edit', role=program_manager_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program kpi target edit', role=program_manager_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program kpi result edit', role=program_manager_role, only_responsible=True)
@@ -279,6 +297,9 @@ def after_syncdb(sender, **kwargs):
     UserPermission.objects.get_or_create(permission='program report submission edit', role=program_manager_assistant_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program report submission submit', role=program_manager_assistant_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program report submission reference edit', role=program_manager_assistant_role, only_responsible=True)
+    
+    UserPermission.objects.get_or_create(permission='program kpi manage', role=program_manager_assistant_role, only_responsible=True)
+    UserPermission.objects.get_or_create(permission='program kpi schedule manage', role=program_manager_assistant_role, only_responsible=True)
     
     UserPermission.objects.get_or_create(permission='program kpi remark edit', role=program_manager_assistant_role, only_responsible=True)
     UserPermission.objects.get_or_create(permission='program kpi target edit', role=program_manager_assistant_role, only_responsible=True)

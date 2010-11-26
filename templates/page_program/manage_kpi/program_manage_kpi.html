@@ -1,0 +1,65 @@
+{% extends 'page_base.html' %}
+{% load helper_tags page_tags core_tags %}
+
+{% block html_head %}
+<script type="text/javascript">
+$(document).ready(function() {
+    $(".delete-kpi").click(function(e) {
+        if(!window.confirm("ยืนยันการลบตัวชี้วัด?")) {
+            e.preventDefault();
+        }
+    });
+});
+</script>
+{% endblock %}
+
+{% block body_title %}{% display_program_header user program %}{% endblock %}
+{% block body_tabs %}{% tabs_for_program page user program %}{% endblock %}
+
+{% block body_content %}
+<div class="ss_breadcrumbs">
+    <div class="breadcrumbs"><a href="{% url view_program_kpi program.id %}">กลับไปหน้าแผนผลลัพธ์</a> &#187; <a href="{% url view_program_manage_kpi_and_schedule program.id %}">จัดการตัวชี้วัดและแผนผลลัพธ์ของแผนงาน</a> &#187;</div>
+    <h2>ตัวชี้วัดของแผนงาน</h2>
+</div>
+
+<div class="ss_control_panel">
+    <ul>
+        <li><img src="{{MEDIA_URL}}/images/icons/create.png" class="icon"/><a href="{% url view_program_manage_kpi_add_kpi program.id %}">เพิ่มตัวชี้วัด</a></li>
+    </ul>
+</div>
+
+<div class="ss_kpi_list_page">
+	{% if kpi_years %}
+	
+	{% for kpi_year in kpi_years %}
+	<h3>ตัวชี้วัดปี {{kpi_year.year|add:543}}</h3>
+	<table class="ss_table">
+        <tr>
+            <th class="controls"></th>
+            <th class="ref_no">รหัส</th>
+            <th class="name">ชื่อตัวชี้วัด</th>
+            <th class="unit_name">หน่วย</th>
+        </tr>
+        {% for kpi in kpi_year.kpis %}
+        <tr>
+            <td class="controls">
+                <a href="{% url view_program_manage_kpi_edit_kpi kpi.id %}" title="แก้ไขตัวชี้วัด"><img src="{{MEDIA_URL}}/images/icons/edit.png" class="icon" /></a>
+                {% if kpi.removable %}
+                <a href="{% url view_program_manage_kpi_delete_kpi kpi.id %}" title="ลบตัวชี้วัด" class="delete-kpi"><img src="{{MEDIA_URL}}/images/icons/delete.png" class="icon" /></a>
+                {% else %}
+                <img src="{{MEDIA_URL}}/images/icons/delete_disabled.png" class="icon" title="ตัวชี้วัดนี้ยังผูกอยู่กับแผนงาน"/>
+                {% endif %}
+            </td>
+            <td class="ref_no">{{kpi.ref_no}}</td>
+            <td class="name">{{kpi.name}}</td>
+            <td class="unit_name">{{kpi.unit_name}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+	{% endfor %}
+	
+    {% else %}
+    <div class="ss_no_information">ไม่มีตัวชี้วัดของแผนงาน</div>
+    {% endif %}
+</div>
+{% endblock %}

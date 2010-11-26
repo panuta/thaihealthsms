@@ -1,0 +1,27 @@
+{% extends 'page_base.html' %}
+{% load helper_tags page_tags core_tags %}
+
+{% block html_head %}
+
+{% endblock %}
+
+{% block body_title %}{% display_program_header user program %}{% endblock %}
+{% block body_tabs %}{% tabs_for_program page user program %}{% endblock %}
+
+{% block body_content %}
+<div class="ss_breadcrumbs">
+    <div class="breadcrumbs"><a href="{% url view_program_kpi program.id %}">กลับไปหน้าแผนผลลัพธ์</a> &#187;</div>
+    <h2>จัดการตัวชี้วัดและแผนผลลัพธ์ของแผนงาน</h2>
+</div>
+
+<ul class="ss_action_list">
+	<li>
+		<a href="{% url view_program_manage_kpi program.id %}">ตัวชี้วัดของแผนงาน</a>
+		<div class="description">สร้าง แก้ไข และลบ ตัวชี้วัดของแผนงาน</div>
+	</li>
+	<li>
+		<a href="{% url view_program_manage_kpi_schedule program.id %}">จัดการแผนผลลัพธ์</a>
+		<div class="description">กำหนดตัวเลขคาดการณ์ของการชี้วัดเป็นรายไตรมาส</div>
+	</li>
+</ul>
+{% endblock %}

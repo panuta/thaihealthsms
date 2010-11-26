@@ -25,15 +25,11 @@ class DomainKPICategoryModifyForm(forms.Form):
 class DomainKPIModifyForm(forms.Form):
     def __init__(self, *args, **kwargs):
         master_plan = kwargs.pop('master_plan', None)
-        program = kwargs.pop('program', None)
         forms.Form.__init__(self, *args, **kwargs)
         
         if master_plan:
             self.fields['category'].queryset = DomainKPICategory.objects.filter(master_plan=master_plan).order_by('name')
         
-        if program:
-            self.fields['category'].queryset = DomainKPICategory.objects.filter(program=program).order_by('name')
-    
     ref_no = forms.CharField(max_length=100, label='รหัส')
     name = forms.CharField(max_length=1000, label='ชื่อตัวชี้วัด')
     abbr_name = forms.CharField(required=False, max_length=200, label='ชื่อย่อตัวชี้วัด')

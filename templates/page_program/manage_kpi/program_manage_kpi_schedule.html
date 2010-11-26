@@ -1,0 +1,188 @@
+{% extends 'page_base.html' %}
+{% load helper_tags page_tags core_tags %}
+
+{% block html_head %}
+<script type="text/javascript">
+$(document).ready(function() {
+    $(".add-schedule").click(function(e) {
+        e.preventDefault();
+        $(".add-schedule").parent().removeClass("adding");
+        $(".kpi-selector input[type='radio']").attr("checked", false);
+        $(this).parent().addClass("adding");
+        $(".kpi-selector").show();
+    });
+    
+    $(".kpi-selector input[type='radio']").click(function(e) {
+        var kpi_id = $(this).attr("id").split("-")[1];
+        var kpi_ref_no = $(this).closest("li").find(".ref_no").text();
+        var kpi_name = $(this).closest("li").find(".name").text();
+        var kpi_unit = $(this).closest("li").find(".unit").text();
+        
+        // Create Schedule Content
+        var new_schedule = $('<div class="schedule"><div class="kpi">ตัวชี้วัดรหัส ' + kpi_ref_no + '</div><div class="target">คาดการณ์ <input type="text" value="" /> ' + kpi_unit + '</div><div class="delete"><a href="#">ลบตัวชี้วัด</a></div></div>');
+        new_schedule.find(".delete a").click(function(e) {
+            e.preventDefault();
+            deleteKPISchedule($(this));
+        });
+        
+        // Find Empty Cell
+        var quarter_no = $("td.adding").attr("id").split("-")[1];
+        $("td.quarter-" + quarter_no + ":empty:first").attr("id", "schedule-"+kpi_id+"-none").append(new_schedule);
+        if($(".quarter-" + quarter_no + ":empty:first").size() == 0) {
+            $("table.kpi_table").append('<tr><td class="quarter-1"></td><td class="quarter-2"></td><td class="quarter-3"></td><td class="quarter-4"></td></tr>');
+        }
+        
+        new_schedule.find("input").focus();
+        
+        $(".add-schedule").parent().removeClass("adding");
+        $(".kpi-selector input[type='radio']").attr("checked", false);
+        $(".kpi-selector").hide();
+    });
+    
+    $(".kpi-selector .cancel button").click(function() {
+        $(".add-schedule").each(function() {
+            $(this).parent().removeClass("adding");
+        });
+        $(".kpi-selector").hide();
+    });
+    
+    $(".kpi_table td .delete a").click(function(e) {
+        e.preventDefault();
+        deleteKPISchedule($(this));
+    });
+    
+    $("form button[type='submit']").click(function() {
+        var is_valid = true;
+        $(".error_message.invalid_input").hide();
+        
+        $(".schedule").each(function() {
+            var kpi_id = $(this).parent().attr("id").split("-")[1];
+            var schedule_id = $(this).parent().attr("id").split("-")[2];
+            
+            // Target
+            var target = $(this).find("input").val();
+            if(target == "") {
+                is_valid = false;
+                $(this).find("input").addClass("invalid");
+                $(".error_message.invalid_input").show();
+            } else {
+                target = to_number(target);
+                if(target == null) {
+                    is_valid = false;
+                    $(this).find("input").addClass("invalid");
+                    $(".error_message.invalid_input").show();
+                } else {
+                    $(this).find("input").removeClass("invalid");
+                }
+            }
+            
+            var quarter = $(this).parent().attr("class").split("-")[1];
+            
+            if(is_valid) {
+                var schedule_text = kpi_id + "," + schedule_id + "," + target + "," + quarter;
+                $("form").append('<input type="hidden" name="schedule" value="' + schedule_text + '" />');
+            }
+        });
+        
+        return is_valid;
+    });
+});
+
+function deleteKPISchedule(linkObject) {
+    if(window.confirm("ยืนยันการลบตัวชี้วัด?")) {
+        linkObject.closest("td").text("");
+    }
+}
+</script>
+{% endblock %}
+
+{% block body_title %}{% display_program_header user program %}{% endblock %}
+{% block body_tabs %}{% tabs_for_program page user program %}{% endblock %}
+
+{% block body_content %}
+<div class="ss_breadcrumbs">
+    <div class="breadcrumbs"><a href="{% url view_program_kpi program.id %}">กลับไปหน้าแผนผลลัพธ์</a> &#187; <a href="{% url view_program_manage_kpi_and_schedule program.id %}">จัดการตัวชี้วัดและแผนผลลัพธ์ของแผนงาน</a> &#187;</div>
+    <h2>จัดการแผนผลลัพธ์</h2>
+</div>
+
+<div class="ss_manage_kpi_schedule_page">
+    <div class="year_selector">
+        <div class="selector">เลือกจัดการตัวชี้วัดสำหรับปี <a href="{% url view_program_manage_kpi_schedule_year program.id current_kpi_year|add:-1 %}">{{current_kpi_year|add:542}}</a> | <span>{{current_kpi_year|add:543}}</span> | <a href="{% url view_program_manage_kpi_schedule_year program.id current_kpi_year|add:1 %}">{{current_kpi_year|add:544}}</a></div>
+        <div class="comment">* กดบันทึกการแก้ไขด้านล่างก่อนเปลี่ยนปี ถ้ามีการแก้ไขข้อมูลในปีนี้</div>
+    </div>
+	
+	{% if not kpi_choices %}
+    <div class="ss_prerequisite">ไม่มีตัวชี้วัดของแผนสำหรับปีนี้ เพิ่มตัวชี้วัดได้จากหน้า <a href="{% url view_program_manage_kpi_add_kpi program.id %}?{% back_to_this request %}">เพิ่มตัวชี้วัดของแผนงาน</a></div>
+    {% else %}
+    <div class="error_message invalid_input" style="display:none;">ข้อมูลไม่ครบถ้วนหรือไม่อยู่ในรูปแบบที่ถูกต้อง</div>
+    
+    <h2>ตัวชี้วัดสำหรับปี {{current_kpi_year|add:543}}</h2>
+    <table class="kpi_table">
+        <tr>
+            <th>
+                <div class="quarter">ไตรมาสที่ 1</div>
+                <div>{% generate_quarter_text 1 current_kpi_year %}</div>
+            </th>
+            <th>
+                <div class="quarter">ไตรมาสที่ 2</div>
+                <div>{% generate_quarter_text 2 current_kpi_year %}</div>
+            </th>
+            <th>
+                <div class="quarter">ไตรมาสที่ 3</div>
+                <div>{% generate_quarter_text 3 current_kpi_year %}</div>
+            </th>
+            <th>
+                <div class="quarter">ไตรมาสที่ 4</div>
+                <div>{% generate_quarter_text 4 current_kpi_year %}</div>
+            </th>
+        </tr>
+        <tr>
+            <td class="action" id="quarter-1"><img src="{{MEDIA_URL}}/images/page/add_kpi_schedule.png" class="icon" /> <a href="#" class="add-schedule">ใส่ตัวชี้วัด</a></td>
+            <td class="action" id="quarter-2"><img src="{{MEDIA_URL}}/images/page/add_kpi_schedule.png" class="icon" /> <a href="#" class="add-schedule">ใส่ตัวชี้วัด</a></td>
+            <td class="action" id="quarter-3"><img src="{{MEDIA_URL}}/images/page/add_kpi_schedule.png" class="icon" /> <a href="#" class="add-schedule">ใส่ตัวชี้วัด</a></td>
+            <td class="action" id="quarter-4"><img src="{{MEDIA_URL}}/images/page/add_kpi_schedule.png" class="icon" /> <a href="#" class="add-schedule">ใส่ตัวชี้วัด</a></td>
+        </tr>
+        <tr class="kpi-selector">
+            <td colspan="4">
+                <ul>
+                    {% for kpi in kpi_choices %}
+                    <li>
+                        <input type="radio" id="kpi-{{kpi.id}}" /> <label for="kpi-{{kpi.id}}">({{kpi.ref_no}}) {{kpi.name}}</label>
+                        <div style="display:none;">
+                            <span class="ref_no">{{kpi.ref_no}}</span>
+                            <span class="name">{{kpi.abbr_name}}</span>
+                            <span class="unit">{{kpi.unit_name}}</span>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <div class="cancel"><button>ยกเลิก</button></div>
+            </td>
+        </tr>
+        
+        {% for row_schedule in row_schedules %}
+        <tr>
+            {% if not row_schedule.1 %}<td class="quarter-1">{% else %}<td class="quarter-1" id="schedule-{{row_schedule.1.kpi.id}}-{{row_schedule.1.id}}"><div class="schedule"><div class="kpi">ตัวชี้วัดรหัส {{row_schedule.1.kpi.ref_no}}</div><div class="target">คาดการณ์ <input type="text" value="{{row_schedule.1.target}}" /> {{row_schedule.1.kpi.unit_name}}</div><div class="delete"><a href="#">ลบตัวชี้วัด</a></div></div>{% endif %}</td>
+            {% if not row_schedule.2 %}<td class="quarter-2">{% else %}<td class="quarter-2" id="schedule-{{row_schedule.2.kpi.id}}-{{row_schedule.2.id}}"><div class="schedule"><div class="kpi">ตัวชี้วัดรหัส {{row_schedule.2.kpi.ref_no}}</div><div class="target">คาดการณ์ <input type="text" value="{{row_schedule.2.target}}" /> {{row_schedule.2.kpi.unit_name}}</div><div class="delete"><a href="#">ลบตัวชี้วัด</a></div></div>{% endif %}</td>
+            {% if not row_schedule.3 %}<td class="quarter-3">{% else %}<td class="quarter-3" id="schedule-{{row_schedule.3.kpi.id}}-{{row_schedule.3.id}}"><div class="schedule"><div class="kpi">ตัวชี้วัดรหัส {{row_schedule.3.kpi.ref_no}}</div><div class="target">คาดการณ์ <input type="text" value="{{row_schedule.3.target}}" /> {{row_schedule.3.kpi.unit_name}}</div><div class="delete"><a href="#">ลบตัวชี้วัด</a></div></div>{% endif %}</td>
+            {% if not row_schedule.4 %}<td class="quarter-4">{% else %}<td class="quarter-4" id="schedule-{{row_schedule.4.kpi.id}}-{{row_schedule.4.id}}"><div class="schedule"><div class="kpi">ตัวชี้วัดรหัส {{row_schedule.4.kpi.ref_no}}</div><div class="target">คาดการณ์ <input type="text" value="{{row_schedule.4.target}}" /> {{row_schedule.4.kpi.unit_name}}</div><div class="delete"><a href="#">ลบตัวชี้วัด</a></div></div>{% endif %}</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td class="quarter-1"></td>
+            <td class="quarter-2"></td>
+            <td class="quarter-3"></td>
+            <td class="quarter-4"></td>
+        </tr>
+        
+    </table>
+    
+    <form action="." method="POST" class="ss_form">
+        {% csrf_token %}
+        {% back_form request %}
+        <div class="button_panel"><button type="submit">บันทึกการแก้ไข</button></div>
+    </form>
+    {% endif %}
+	
+</div>
+{% endblock %}
