@@ -10,7 +10,7 @@ from models import *
 
 from report import functions as report_functions
 
-from domain.models import Sector, MasterPlan, SectorMasterPlan, Program, Project
+from domain.models import Sector, MasterPlan, SectorMasterPlan, Plan, Program, Project
 from report.models import ReportAssignment, ReportSubmission
 
 from helper import utilities, permission
@@ -24,12 +24,27 @@ from helper.shortcuts import render_response, render_page_response, access_denie
 def view_sector_kpi(request, sector_ref_no):
     sector = get_object_or_404(Sector, ref_no=sector_ref_no)
     sector_master_plans = SectorMasterPlan.objects.filter(sector=sector)
-    master_plans = []
-    for sm in sector_master_plans:
-        master_plans.append(sm.master_plan)
     quarter_year = utilities.master_plan_current_year_number()
-    ctx = {'sector': sector, 'master_plans': master_plans, 'quarter_year': quarter_year}
-    return render_page_response(request, 'kpi', 'page_sector/sector_kpi.html', ctx)
+    
+    master_plans = []
+    for smp in sector_master_plans:
+        master_plan = smp.master_plan
+        plans = Plan.objects.filter(master_plan=smp.master_plan)
+        for plan in plans:
+            programs = Program.objects.filter(plan=plan).order_by('ref_no')
+            for program in programs:
+                kpi_schedules = {}
+                kpi_schedules['1'] = DomainKPISchedule.objects.filter(program=program, quarter=1, quarter_year=quarter_year).order_by('kpi__ref_no')
+                kpi_schedules['2'] = DomainKPISchedule.objects.filter(program=program, quarter=2, quarter_year=quarter_year).order_by('kpi__ref_no')
+                kpi_schedules['3'] = DomainKPISchedule.objects.filter(program=program, quarter=3, quarter_year=quarter_year).order_by('kpi__ref_no')
+                kpi_schedules['4'] = DomainKPISchedule.objects.filter(program=program, quarter=4, quarter_year=quarter_year).order_by('kpi__ref_no')
+                program.kpi_schedules = kpi_schedules
+                
+            plan.programs = programs
+        master_plan.plans = plans
+        master_plans.append(master_plan)
+    
+    return render_page_response(request, 'kpi', 'page_sector/sector_kpi.html', {'sector':sector, 'master_plans':master_plans, 'quarter_year':quarter_year})
 
 #
 # MASTER PLAN #######################################################################
@@ -39,8 +54,23 @@ def view_sector_kpi(request, sector_ref_no):
 def view_master_plan_kpi(request, master_plan_ref_no):
     master_plan = get_object_or_404(MasterPlan, ref_no=master_plan_ref_no)
     quarter_year = utilities.master_plan_current_year_number()
-    ctx = {'master_plan': master_plan, 'quarter_year': quarter_year}
-    return render_page_response(request, 'kpi', 'page_sector/master_plan_kpi.html', ctx)
+    
+    plans = Plan.objects.filter(master_plan=master_plan)
+    for plan in plans:
+        programs = Program.objects.filter(plan=plan).order_by('ref_no')
+        for program in programs:
+            kpi_schedules = {}
+            kpi_schedules['1'] = DomainKPISchedule.objects.filter(program=program, quarter=1, quarter_year=quarter_year).order_by('kpi__ref_no')
+            kpi_schedules['2'] = DomainKPISchedule.objects.filter(program=program, quarter=2, quarter_year=quarter_year).order_by('kpi__ref_no')
+            kpi_schedules['3'] = DomainKPISchedule.objects.filter(program=program, quarter=3, quarter_year=quarter_year).order_by('kpi__ref_no')
+            kpi_schedules['4'] = DomainKPISchedule.objects.filter(program=program, quarter=4, quarter_year=quarter_year).order_by('kpi__ref_no')
+            program.kpi_schedules = kpi_schedules
+            
+        plan.programs = programs
+
+    return render_page_response(request, 'kpi', 'page_sector/master_plan_kpi.html', {'master_plan':master_plan, 'plans':plans, 'quarter_year':quarter_year})
+
+
 
 #
 # MASTER PLAN MANAGEMENT #######################################################################

@@ -29,7 +29,7 @@
             {% for program in plan.programs %}
             <tr>
                 <td class="program">
-					<div><a href="{% url view_program_budget program.id %}" title="{{program.name}}">แผนงานเลขที่ {{program.ref_no}}</a></div>
+					<div><a href="{% url view_program_budget program.id %}" title="{{program.name}}">รหัสโครงการ {{program.ref_no}}</a></div>
 					<div class="abbr_name">{% if program.abbr_name %}({{program.abbr_name}}){% endif %}</div>
 				</td>
                 

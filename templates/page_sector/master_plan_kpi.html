@@ -10,40 +10,54 @@
 {% block body_content %}
 <div class="master_plan_kpi_page">
 	<div class="kpi">
-		<table class="ss_table">
-			<th rowspan="2" class="center">แผนงาน</th>
-			{% generate_quarter_table_header quarter_year %}
-			<tr>
-				{% for i in 4|get_range %}
-					<th>คาดการณ์</th>
-					<th>ผลที่เกิด</th>
-				{% endfor %}
-			</tr>
-			{% for plan in master_plan.plan_set.all %}
-				<tr>
-					<td class="plan" colspan="9">
-							กลุ่มแผนงาน: ({{ plan.ref_no }}) {{ plan.name }}
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<ul>
-							{% for program in plan.program_set.all %}
-								<li><a href="{% url view_program_kpi program.id %}" title="{{ program.name }}">แผนงานเลขที่ {{ program.ref_no }}</a> {% print_program_kpis program %}</li>
-							{% endfor %}
-						</ul>
-					</td>
-					{% for quarter_no in 4|get_range %}
-						<td class="target_kpi">
-							{% print_master_plan_quarter_kpi 'target' plan quarter_year quarter_no %}
-						</td>
-						<td class="result_kpi">
-							{% print_master_plan_quarter_kpi 'result' plan quarter_year quarter_no %}
-						</td>
-					{% endfor %}
-				</tr>
-			{% endfor %}
-		</table>
+    <table class="ss_table">
+      <tr>
+         <th rowspan="2">แผนงาน</th>
+        {% generate_quarter_table_header quarter_year %}
+      </tr>
+      <tr>
+        {% for i in 4|get_range %}
+          <th colspan="2">คาดการณ์ / ผลที่เกิด</th>
+        {% endfor %}
+      </tr>
+      
+      {% for plan in plans %}
+        <tr>
+          <td class="plan" colspan="9">กลุ่มแผนงาน: ({{ plan.ref_no }}) {{ plan.name }}</td>
+        </tr>
+        {% for program in plan.programs %}
+        <tr>
+          <td class="program">
+            <div><a href="{% url view_program_kpi program.id %}" title="{{program.name}}">รหัสโครงการ {{ program.ref_no }}</a></div>
+            {% if program.abbr_name %}<div class="abbr_name">({{program.abbr_name}})</div>{% endif %}
+          </td>
+          
+          <td class="schedules" colspan="2">
+            {% for schedule in program.kpi_schedules.1 %}
+              <div class="schedule"><span class="kpi">{{schedule.kpi.ref_no}}</span> ({{schedule.target}} / {{schedule.result}} {{schedule.kpi.unit_name}})</div>
+            {% endfor %}
+          </td>
+          <td class="schedules" colspan="2">
+            {% for schedule in program.kpi_schedules.2 %}
+              <div class="schedule"><span class="kpi">{{schedule.kpi.ref_no}}</span> ({{schedule.target}} / {{schedule.result}} {{schedule.kpi.unit_name}})</div> 
+            {% endfor %}
+          </td>
+          <td class="schedules" colspan="2">
+            {% for schedule in program.kpi_schedules.3 %}
+              <div class="schedule"><span class="kpi">{{schedule.kpi.ref_no}}</span> ({{schedule.target}} / {{schedule.result}} {{schedule.kpi.unit_name}})</div>
+            {% endfor %}
+          </td>
+          <td class="schedules" colspan="2">
+            {% for schedule in program.kpi_schedules.4 %}
+              <div class="schedule"><span class="kpi">{{schedule.kpi.ref_no}}</span> ({{schedule.target}} / {{schedule.result}} {{schedule.kpi.unit_name}})</div>
+            {% endfor %}
+          </td>
+          
+        </tr>
+        {% endfor %}
+      {% endfor %}
+    </table>
+	  
 	</div>
 </div>
 {% endblock %}

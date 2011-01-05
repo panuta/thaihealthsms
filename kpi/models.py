@@ -21,7 +21,7 @@ class DomainKPI(models.Model):
 
 class DomainKPISchedule(models.Model):
     kpi = models.ForeignKey('DomainKPI')
-    program = models.ForeignKey('domain.Program', null=True)
+    program = models.ForeignKey('domain.Program', null=True) # program is null if this schedule is for Program's KPI, program is not null if this schedule is for Master Plan's KPI
     target = models.IntegerField()
     result = models.IntegerField()
     quarter = models.IntegerField() # 1-4

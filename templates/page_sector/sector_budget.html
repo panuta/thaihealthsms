@@ -9,84 +9,65 @@
 
 {% block body_content %}
 <div class="sector_budget_page">
-	<div class="master_plans">
-		<ul>
-		{% for master_plan in master_plans %}
-			<li><a href="{% url view_master_plan_budget master_plan.ref_no %}">แผน {{master_plan.ref_no}} {{master_plan.name}}</a></li>
-		{% endfor %}
-		</ul>
-	</div>
-	
 	<div class="budget">
 		{% if has_programs %}
-		<table class="ss_table">
-			<th rowspan="2">แผนงาน</th>
-			{% generate_quarter_table_header current_year %}
-			<tr>
-			{% for i in 4|get_range %}
-				<th>คาดการณ์</th>
-				<th>เบิกจ่ายจริง</th>
-			{% endfor %}
-			</tr>
-			{% for master_plan in master_plans %}
-				<tr>
-					<td colspan="9" class="master_plan">
-						แผน {{ master_plan.ref_no }} {{ master_plan.name }}
-					</td>
-				</tr>
-				{% for plan in master_plan.plans %}
-					<tr>
-						<td colspan="9" class="plan">กลุ่มแผนงาน: ({{plan.ref_no}}) {{plan.name}}</td>
-					</tr>
-					{% for program in plan.programs %}
-					<tr>
-						<td class="program">
-							<div>
-								<a href="{% url view_program_budget program.id %}" title="{{program.name}}">แผนงานเลขที่ {{program.ref_no}}</a>
-							</div>
-							<div class="abbr_name">{% if program.abbr_name %}({{program.abbr_name}}){% endif %}</div>
-						</td>
-
-						{% if not program.quarters.1.grant and not program.quarters.1.claim %}
-							<td class="grant_budget na"><div class="number">-</div><div class="unit">บาท</div></td> <td class="claim_budget na"><div class="number">-</div><div class="unit">บาท</div></td>
-						{% else %}
-							<td class="grant_budget"><div class="number">{{program.quarters.1.grant|intcomma}}</div><div class="unit">บาท</div></td>
-							{% if program.quarters.1.claim %}
-								<td class="claim_budget"><div class="number">{{program.quarters.1.claim|intcomma}}</div><div class="unit">บาท</div></td>
-							{% else %}
-								<td class="claim_budget na"><div class="number">-</div><div class="unit">บาท</div></td>
-							{% endif %}
-						{% endif %}
-
-						{% if not program.quarters.2.grant and not program.quarters.2.claim %}
-							<td class="grant_budget na"><div class="number">-</div><div class="unit">บาท</div></td><td class="claim_budget na"><div class="number">-</div><div class="unit">บาท</div></td>
-						{% else %}
-							<td class="grant_budget"><div class="number">{{program.quarters.2.grant|intcomma}}</div><div class="unit">บาท</div></td>
-							{% if program.quarters.2.claim %}
-								<td class="claim_budget"><div class="number">{{program.quarters.2.claim|intcomma}}</div><div class="unit">บาท</div></td>
-							{% else %}
-								<td class="claim_budget na"><div class="number">-</div><div class="unit">บาท</div></td>
-							{% endif %}
-						{% endif %}
-						
-						{% if not program.quarters.3.grant and not program.quarters.3.claim %}
-							<td class="grant_budget na"><div class="number">-</div><div class="unit">บาท</div></td><td class="claim_budget na"><div class="number">-</div><div class="unit">บาท</div></td>
-						{% else %}
-		<td class="grant_budget"><div class="number">{{program.quarters.3.grant|intcomma}}</div><div class="unit">บาท</div></td>
-							{% if program.quarters.3.claim %}<td class="claim_budget"><div class="number">{{program.quarters.3.claim|intcomma}}</div><div class="unit">บาท</div></td>{% else %}<td class="claim_budget na"><div class="number">-</div><div class="unit">บาท</div></td>{% endif %}
-						{% endif %}
-						
-						{% if not program.quarters.4.grant and not program.quarters.4.claim %}
-							<td class="grant_budget na"><div class="number">-</div><div class="unit">บาท</div></td><td class="claim_budget na"><div class="number">-</div><div class="unit">บาท</div></td>
-						{% else %}
-		<td class="grant_budget"><div class="number">{{program.quarters.4.grant|intcomma}}</div><div class="unit">บาท</div></td>
-							{% if program.quarters.4.claim %}<td class="claim_budget"><div class="number">{{program.quarters.4.claim|intcomma}}</div><div class="unit">บาท</div></td>{% else %}<td class="claim_budget na"><div class="number">-</div><div class="unit">บาท</div></td>{% endif %}
-						{% endif %}
-					</tr>
-					{% endfor %}
-				{% endfor %}
-			{% endfor %}
-		</table>
+		  {% for master_plan in master_plans %}
+		  <table class="ss_table">
+		    <tr>
+          <td colspan="9" class="master_plan">แผน {{ master_plan.ref_no }} {{ master_plan.name }}</td>
+        </tr>
+        {% for plan in master_plan.plans %}
+          <tr>
+            <td colspan="9" class="plan">กลุ่มแผนงาน: ({{plan.ref_no}}) {{plan.name}}</td>
+          </tr>
+          {% for program in plan.programs %}
+          <tr>
+            <td class="program">
+              <div><a href="{% url view_program_budget program.id %}" title="{{program.name}}">รหัสโครงการ {{program.ref_no}}</a></div>
+              <div class="abbr_name">{% if program.abbr_name %}({{program.abbr_name}}){% endif %}</div>
+            </td>
+            
+            {% if not program.quarters.1.grant and not program.quarters.1.claim %}
+              <td class="grant_budget na"><div class="number">-</div><div class="unit">บาท</div></td> <td class="claim_budget na"><div class="number">-</div><div class="unit">บาท</div></td>
+            {% else %}
+              <td class="grant_budget"><div class="number">{{program.quarters.1.grant|intcomma}}</div><div class="unit">บาท</div></td>
+              {% if program.quarters.1.claim %}
+                <td class="claim_budget"><div class="number">{{program.quarters.1.claim|intcomma}}</div><div class="unit">บาท</div></td>
+              {% else %}
+                <td class="claim_budget na"><div class="number">-</div><div class="unit">บาท</div></td>
+              {% endif %}
+            {% endif %}
+            
+            {% if not program.quarters.2.grant and not program.quarters.2.claim %}
+              <td class="grant_budget na"><div class="number">-</div><div class="unit">บาท</div></td><td class="claim_budget na"><div class="number">-</div><div class="unit">บาท</div></td>
+            {% else %}
+              <td class="grant_budget"><div class="number">{{program.quarters.2.grant|intcomma}}</div><div class="unit">บาท</div></td>
+              {% if program.quarters.2.claim %}
+                <td class="claim_budget"><div class="number">{{program.quarters.2.claim|intcomma}}</div><div class="unit">บาท</div></td>
+              {% else %}
+                <td class="claim_budget na"><div class="number">-</div><div class="unit">บาท</div></td>
+              {% endif %}
+            {% endif %}
+            
+            {% if not program.quarters.3.grant and not program.quarters.3.claim %}
+              <td class="grant_budget na"><div class="number">-</div><div class="unit">บาท</div></td><td class="claim_budget na"><div class="number">-</div><div class="unit">บาท</div></td>
+            {% else %}
+              <td class="grant_budget"><div class="number">{{program.quarters.3.grant|intcomma}}</div><div class="unit">บาท</div></td>
+              {% if program.quarters.3.claim %}<td class="claim_budget"><div class="number">{{program.quarters.3.claim|intcomma}}</div><div class="unit">บาท</div></td>{% else %}<td class="claim_budget na"><div class="number">-</div><div class="unit">บาท</div></td>{% endif %}
+            {% endif %}
+            
+            {% if not program.quarters.4.grant and not program.quarters.4.claim %}
+              <td class="grant_budget na"><div class="number">-</div><div class="unit">บาท</div></td><td class="claim_budget na"><div class="number">-</div><div class="unit">บาท</div></td>
+            {% else %}
+              <td class="grant_budget"><div class="number">{{program.quarters.4.grant|intcomma}}</div><div class="unit">บาท</div></td>
+              {% if program.quarters.4.claim %}<td class="claim_budget"><div class="number">{{program.quarters.4.claim|intcomma}}</div><div class="unit">บาท</div></td>{% else %}<td class="claim_budget na"><div class="number">-</div><div class="unit">บาท</div></td>{% endif %}
+            {% endif %}
+          </tr>
+          {% endfor %}
+        {% endfor %}
+		  </table>
+		  {% endfor %}
+		
 		{% else %}
     	<div class="ss_no_information">ไม่มีข้อมูลแผนการเงิน</div>
 		{% endif %}

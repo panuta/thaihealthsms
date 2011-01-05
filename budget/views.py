@@ -49,10 +49,8 @@ def view_sector_budget(request, sector_ref_no):
             plan.programs = programs
         master_plan.plans = plans
         master_plans.append(master_plan)
-        
-    ctx = {'current_year': current_year, 'sector': sector, 'master_plans': master_plans,
-           'has_programs': has_programs} 
-    return render_page_response(request, 'budget', 'page_sector/sector_budget.html', ctx)
+    
+    return render_page_response(request, 'budget', 'page_sector/sector_budget.html', {'current_year': current_year, 'sector': sector, 'master_plans': master_plans, 'has_programs': has_programs})
 
 #
 # MASTER PLAN #######################################################################

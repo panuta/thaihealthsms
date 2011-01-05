@@ -153,6 +153,9 @@ def display_report_sending_notice(submission):
 def print_program_kpis(program):
     ret = ''
     kpis = DomainKPI.objects.filter(program=program)
+    
+    print kpis
+    
     for kpi in kpis:
         kpi_schedules = DomainKPISchedule.objects.filter(kpi=kpi)
         for kpi_schedule in kpi_schedules:
