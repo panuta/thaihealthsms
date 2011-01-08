@@ -249,7 +249,8 @@ h2.h2 {font-size:146.5%;padding-bottom:5px;margin-bottom:10px;color:#2D8659;bord
 
 .sector_kpi_page .ss_table .schedules {vertical-align:top;text-align:center;}
 .sector_kpi_page .ss_table .schedules .schedule {background-color:#EEE;padding:5px;margin-bottom:8px;border:1px solid #CCC;text-align:left;}
-.sector_kpi_page .ss_table .schedules .schedule .kpi {font-weight:bold;}
+.sector_kpi_page .ss_table .schedules .schedule .kpi {display:block;margin-bottom:3px;}
+.sector_kpi_page .ss_table .schedules .schedule .value {font-weight:bold;}
 
 .sector_kpi_page .ss_table td.target_kpi, .sector_budget_page .ss_table td.grant_budget {background-color:#EEE;vertical-align:top;text-align:center;}
 .sector_kpi_page .ss_table td.result_kpi, .sector_budget_page .ss_table td.claim_budget {text-align:center;vertical-align:top;}
@@ -313,7 +314,8 @@ h2.h2 {font-size:146.5%;padding-bottom:5px;margin-bottom:10px;color:#2D8659;bord
 
 .master_plan_kpi_page .ss_table .schedules {vertical-align:top;text-align:center;}
 .master_plan_kpi_page .ss_table .schedules .schedule {background-color:#EEE;padding:5px;margin-bottom:8px;border:1px solid #CCC;text-align:left;}
-.master_plan_kpi_page .ss_table .schedules .schedule .kpi {font-weight:bold;}
+.master_plan_kpi_page .ss_table .schedules .schedule .kpi {display:block;margin-bottom:3px;}
+.master_plan_kpi_page .ss_table .schedules .schedule .value {font-weight:bold;}
 
 .master_plan_kpi_page .ss_table td.target_kpi, .master_plan_budget_page .ss_table td.grant_budget {background-color:#EEE;vertical-align:top;text-align:center;}
 .master_plan_kpi_page .ss_table td.result_kpi, .master_plan_budget_page .ss_table td.claim_budget {text-align:center;vertical-align:top;}

@@ -34,22 +34,22 @@
           
           <td class="schedules" colspan="2">
             {% for schedule in program.kpi_schedules.1 %}
-              <div class="schedule"><span class="kpi">{{schedule.kpi.ref_no}}</span> ({{schedule.target}} / {{schedule.result}} {{schedule.kpi.unit_name}})</div>
+              <div class="schedule"><span class="kpi">{{schedule.kpi.ref_no}}{% if schedule.kpi.abbr_name %}({{schedule.kpi.abbr_name}}){% endif %}</span><span class="value">{{schedule.target}} / {{schedule.result}} {{schedule.kpi.unit_name}}</span></div>
             {% endfor %}
           </td>
           <td class="schedules" colspan="2">
             {% for schedule in program.kpi_schedules.2 %}
-              <div class="schedule"><span class="kpi">{{schedule.kpi.ref_no}}</span> ({{schedule.target}} / {{schedule.result}} {{schedule.kpi.unit_name}})</div> 
+              <div class="schedule"><span class="kpi">{{schedule.kpi.ref_no}}{% if schedule.kpi.abbr_name %}({{schedule.kpi.abbr_name}}){% endif %}</span><span class="value">{{schedule.target}} / {{schedule.result}} {{schedule.kpi.unit_name}}</span></div> 
             {% endfor %}
           </td>
           <td class="schedules" colspan="2">
             {% for schedule in program.kpi_schedules.3 %}
-              <div class="schedule"><span class="kpi">{{schedule.kpi.ref_no}}</span> ({{schedule.target}} / {{schedule.result}} {{schedule.kpi.unit_name}})</div>
+              <div class="schedule"><span class="kpi">{{schedule.kpi.ref_no}}{% if schedule.kpi.abbr_name %}({{schedule.kpi.abbr_name}}){% endif %}</span><span class="value">{{schedule.target}} / {{schedule.result}} {{schedule.kpi.unit_name}}</span></div>
             {% endfor %}
           </td>
           <td class="schedules" colspan="2">
             {% for schedule in program.kpi_schedules.4 %}
-              <div class="schedule"><span class="kpi">{{schedule.kpi.ref_no}}</span> ({{schedule.target}} / {{schedule.result}} {{schedule.kpi.unit_name}})</div>
+              <div class="schedule"><span class="kpi">{{schedule.kpi.ref_no}}{% if schedule.kpi.abbr_name %}({{schedule.kpi.abbr_name}}){% endif %}</span><span class="value">{{schedule.target}} / {{schedule.result}} {{schedule.kpi.unit_name}}</span></div>
             {% endfor %}
           </td>
           
