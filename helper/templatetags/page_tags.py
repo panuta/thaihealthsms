@@ -202,6 +202,6 @@ def display_comment_object_title(object_name, object_id):
     elif object_name == 'kpi':
         return unicode('<div class="supertitle">แผนงาน %s</div><div class="supertitle">ตัวชี้วัด %s</div><h2>งวดไตรมาสที่ %d ปี %d</h2>', 'utf-8') % (object.program.name, object.kpi.name, object.quarter, object.quarter_year)
     elif object_name == 'budget':
-        return unicode('<div class="supertitle">แผนงาน %s</div><h2>การเบิกจ่ายงวดวันที่ %s</h2>', 'utf-8') % (utilities.format_abbr_date(object.schedule_on))
+        return unicode('<div class="supertitle">แผนงาน %s</div><h2>การเบิกจ่ายงวดวันที่ %s</h2>', 'utf-8') % (object.program.name, utilities.format_abbr_date(object.schedule_on))
     
     return ''
