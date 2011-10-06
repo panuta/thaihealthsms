@@ -45,6 +45,8 @@ urlpatterns = patterns('domain.views',
     url(r'^activity/(?P<activity_id>\d+)/$', 'view_activity_overview', name="view_activity_overview"),
     url(r'^activity/(?P<activity_id>\d+)/edit/$', 'view_activity_edit_activity', name="view_activity_edit_activity"),
     url(r'^activity/(?P<activity_id>\d+)/delete/$', 'view_activity_delete_activity', name="view_activity_delete_activity"),
+
+    url(r'^echo_projects/$', 'echo_projects', name="echo_projects"),    
 )
 
 #urlpatterns += patterns('domain.ajax',

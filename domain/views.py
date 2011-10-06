@@ -24,6 +24,17 @@ from report import functions as report_functions
 from helper import utilities, permission
 from helper.shortcuts import render_response, render_page_response, access_denied
 
+from django.http import HttpResponse
+
+def echo_projects(request):
+    column = ['ProjectCode','ContractNo','ProjectThai','SectionCode','SectionNameShort','BudgetGrant','Co_Title','Co_Fname','Co_Lname','Resp_Title','Resp_Fname','Resp_Lname','Organize','ProjectStatusName','DateStart','DateFinish']
+    row1 = ['5101085','51000501','ประเมินผลแผนงานพัฒนาระบบข้อมูลข่าวสารสุขภาพ','07','สำนัก 7','992335.0','นางสาว','ภัคชุดา','วสุวัต','นพ.','สมศักดิ์','ชุณหรัศมิ์','มูลนิธิสาธารณสุขแห่งชาติ','ปิดโครงการ','2008-06-10 00:00:00.000','2009-02-10 00:00:00.000']
+    row2 = ['4800083','48000589','พัฒนาบุคลากรด้านความปลอดภัยทางถนน','07','สำนัก 7','7412400.0','นางสาว','จิติภัสร์','จิระโชติอนันต์','Dr.','Shinya','Hanaoka','-','ปิดโครงการ','2005-03-01 00:00:00.000','2007-05-30 00:00:00.000']
+
+    from django.utils import simplejson
+
+    return HttpResponse(simplejson.dumps([column, row1, row2]))
+
 #
 # SECTOR #######################################################################
 #

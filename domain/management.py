@@ -52,8 +52,8 @@ def after_syncdb(sender, **kwargs):
             User.objects.get(username=admin[0])
             
         except User.DoesNotExist:
-            random_password = User.objects.make_random_password()
-            #random_password = '1q2w3e4r'
+            #random_password = User.objects.make_random_password()
+            random_password = '1q2w3e4r'
             admin_user = User.objects.create_user(admin[0], admin[1], random_password)
             admin_user.is_superuser = True
             admin_user.is_staff = True
