@@ -1,6 +1,7 @@
 {% load helper_tags page_tags %}
 <form action="." method="post" class="ss_form">
     {% csrf_token %}
+    {{form.errors}}
 	<ul>
         <li>
             <label for="id_ref_no" class="caption">{{form.ref_no.label}}</label>

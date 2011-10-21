@@ -53,11 +53,18 @@ def display_program_header(user, program):
 
 @register.simple_tag
 def display_project_header(user, project):
-    header_html = unicode('<div class="supertitle"><a href="%s">แผนงาน %s - %s</a></div><h1>โครงการ (%s) %s</h1>', 'utf-8') % (reverse('view_program_overview', args=[project.program.id]), project.program.ref_no, project.program.name, project.ref_no, project.name)
-    
-    if permission.access_obj(user, 'program project edit', project.program):
-        header_html = header_html + unicode('<div class="subtitle"><img src="%s/images/icons/edit.png" class="icon"/> <a href="%s">แก้ไขโครงการ</a></div>', 'utf-8') % (settings.MEDIA_URL, reverse('view_project_edit_project', args=[project.id]))
-    
+    if project.plan:
+        header_html = unicode('<div class="supertitle"><a href="%s">แผน %s - %s</a></div><h1>โครงการ (%s) %s</h1>', 'utf-8') % (reverse('view_master_plan_overview', args=[project.plan.master_plan.id]), project.plan.master_plan.ref_no, project.plan.master_plan.name, project.ref_no, project.name)
+
+        if permission.access_obj(user, 'program project edit', project.program):
+            header_html = header_html + unicode('<div class="subtitle"><img src="%s/images/icons/edit.png" class="icon"/> <a href="%s">แก้ไขโครงการ</a></div>', 'utf-8') % (settings.MEDIA_URL, reverse('view_project_edit_project', args=[project.id]))
+
+    else:
+        header_html = unicode('<div class="supertitle"><a href="%s">แผนงาน %s - %s</a></div><h1>โครงการ (%s) %s</h1>', 'utf-8') % (reverse('view_program_overview', args=[project.program.id]), project.program.ref_no, project.program.name, project.ref_no, project.name)
+
+        if permission.access_obj(user, 'program project edit', project.program):
+            header_html = header_html + unicode('<div class="subtitle"><img src="%s/images/icons/edit.png" class="icon"/> <a href="%s">แก้ไขโครงการ</a></div>', 'utf-8') % (settings.MEDIA_URL, reverse('view_project_edit_project', args=[project.id]))
+
     return header_html
 
 @register.simple_tag

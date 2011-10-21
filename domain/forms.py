@@ -125,7 +125,7 @@ class MasterPlanProgramForm(forms.Form):
 		return cleaned_data
 
 class ProjectModifyForm(forms.Form):
-	program_id = forms.IntegerField(widget=forms.HiddenInput())
+	program_id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
 	project_id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
 	ref_no = forms.CharField(required=False, max_length=64, label='รหัสโครงการ')
 	contract_no = forms.CharField(max_length=200, label='เลขที่สัญญา', required=False)
@@ -148,7 +148,7 @@ class ProjectModifyForm(forms.Form):
 		project_id = cleaned_data.get('project_id')
 		ref_no = cleaned_data.get('ref_no')
 		
-		if ref_no:
+		if ref_no and program_id:
 			program = Program.objects.get(pk=program_id)
 			
 			if project_id: existing = Project.objects.filter(ref_no=ref_no, program=program).exclude(id=project_id).count()
@@ -157,7 +157,7 @@ class ProjectModifyForm(forms.Form):
 			if existing:
 				self._errors['ref_no'] = ErrorList(['เลขที่โครงการนี้ซ้ำกับโครงการอื่นในแผนงาน'])
 				del cleaned_data['ref_no']
-			
+		
 		return cleaned_data
 
 class ActivityModifyForm(forms.Form):

@@ -15,7 +15,7 @@ class SectorMasterPlan(models.Model):
 class Plan(models.Model):
     master_plan = models.ForeignKey('MasterPlan')
     ref_no = models.CharField(max_length=100)
-    name = models.CharField(max_length=500)
+    name = models.CharField(max_length=1000)
     created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -24,7 +24,7 @@ class Plan(models.Model):
 class Program(models.Model):
     plan = models.ForeignKey('Plan')
     ref_no = models.CharField(max_length=100)
-    name = models.CharField(max_length=500)
+    name = models.CharField(max_length=1000)
     abbr_name = models.CharField(max_length=200, blank=True)
     manager_name = models.CharField(max_length=300, blank=True)
     description = models.TextField(blank=True)
@@ -46,7 +46,7 @@ class Project(models.Model):
     program = models.ForeignKey('Program', null=True)
     ref_no = models.CharField(max_length=100)
     contract_no = models.CharField(max_length=100, null=True)
-    name = models.CharField(max_length=500)
+    name = models.CharField(max_length=1000)
     abbr_name = models.CharField(max_length=200, blank=True)
     description = models.TextField(blank=True)
     start_date = models.DateField(null=True)
@@ -60,7 +60,7 @@ class Project(models.Model):
 
 class Activity(models.Model):
     project = models.ForeignKey('Project')
-    name = models.CharField(max_length=500)
+    name = models.CharField(max_length=1000)
     description = models.TextField(blank=True)
     start_date = models.DateField(null=True)
     end_date = models.DateField(null=True)

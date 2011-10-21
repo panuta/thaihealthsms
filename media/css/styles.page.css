@@ -291,6 +291,8 @@ h2.h2 {font-size:146.5%;padding-bottom:5px;margin-bottom:10px;color:#2D8659;bord
 .master_plan_programs_page {}
 .master_plan_programs_page h2 {font-size:138.5%;color:#333;border-bottom:1px solid #999;margin:5px 0px 10px;padding-bottom:5px;}
 
+.master_plan_programs_page li.plan .ss_no_information {margin-left:10px;}
+
 .master_plan_programs_page .programs_controls {margin:5px 0px 20px 10px;}
 .master_plan_programs_page .programs_controls span {font-size:116%;margin-right:15px;color:#666;}
 .master_plan_programs_page .programs_controls a {border:1px solid #CCC;padding:3px 10px;text-decoration:none;}

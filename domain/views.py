@@ -128,6 +128,7 @@ def view_master_plan_programs(request, master_plan_ref_no):
     plans = Plan.objects.filter(master_plan=master_plan).order_by('ref_no')
     for plan in plans:
         plan.programs = Program.objects.filter(plan=plan).order_by('ref_no')
+        plan.projects = Project.objects.filter(plan=plan, program=None).order_by('ref_no')
     
     return render_page_response(request, 'programs', 'page_sector/master_plan_programs.html', {'master_plan': master_plan, 'plans':plans})
 
@@ -485,6 +486,7 @@ def view_project_edit_project(request, project_id):
             project.ref_no = form.cleaned_data.get('ref_no')
             project.contract_no = form.cleaned_data.get('contract_no')
             project.name = form.cleaned_data.get('name')
+            project.abbr_name = form.cleaned_data.get('abbr_name')
             project.description = form.cleaned_data.get('description')
             project.start_date = form.cleaned_data.get('start_date')
             project.end_date = form.cleaned_data.get('end_date')
@@ -494,7 +496,10 @@ def view_project_edit_project(request, project_id):
             return redirect('view_project_overview', (project.id))
         
     else:
-        form = ProjectModifyForm(initial={'program_id':program.id, 'project_id':project.id, 'ref_no':project.ref_no, 'contract_no':project.contract_no, 'name':project.name, 'description':project.description, 'start_date':project.start_date, 'end_date':project.end_date})
+        if program:
+            form = ProjectModifyForm(initial={'program_id':program.id, 'project_id':project.id, 'ref_no':project.ref_no, 'contract_no':project.contract_no, 'name':project.name, 'description':project.description, 'start_date':project.start_date, 'end_date':project.end_date})
+        else:
+            form = ProjectModifyForm(initial={'program_id':'', 'project_id':project.id, 'ref_no':project.ref_no, 'contract_no':project.contract_no, 'name':project.name, 'description':project.description, 'start_date':project.start_date, 'end_date':project.end_date})
     
     project.removable = Activity.objects.filter(project=project).count() == 0
     return render_page_response(request, '', 'page_program/project_edit_project.html', {'project':project, 'form':form})

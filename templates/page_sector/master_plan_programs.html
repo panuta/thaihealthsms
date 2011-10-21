@@ -44,8 +44,22 @@ $(document).ready(function() {
 				{% endfor %}
 			</ul>
 			{% else %}
-            <div class="ss_no_information">ไม่มีแผนงานในกลุ่มแผนงานนี้</div>
+        <div class="ss_no_information">ไม่มีแผนงานในกลุ่มแผนงานนี้</div>
 			{% endif %}
+
+			{% if plan.projects %}
+			<div class="programs_controls"><span>{{plan.projects|length}} โครงการ</span><a href="#" class="expand-collapse">แสดง/ซ่อนโครงการ</a></div>
+			<ul class="programs" style="display:none;">
+				{% for project in plan.projects %}
+				<li class="program">
+					<a href="{% url view_project_overview project.id %}">โครงการ ({{project.ref_no}}) {{project.name}}</a>
+				</li>
+				{% endfor %}
+			</ul>
+			{% else %}
+        <div class="ss_no_information">ไม่มีโครงการในกลุ่มแผนงานนี้</div>
+			{% endif %}
+
 		</li>
 		{% endfor %}
 	</ul>
