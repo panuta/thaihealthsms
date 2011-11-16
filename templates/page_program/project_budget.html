@@ -1,0 +1,90 @@
+{% extends 'page_base.html' %}
+{% load helper_tags page_tags core_tags humanize %}
+
+{% block html_head %}
+{% role user 'sector_manager,sector_manager_assistant,sector_specialist' project.plan.master_plan %}
+<script type="text/javascript">
+$(document).ready(function() {
+    $(".edit-number").click(function(e) {
+        e.preventDefault();
+        var number = window.prompt("กรอกตัวเลข");
+        
+        if(number) {
+            if(!is_number(number)) {
+                alert("ตัวเลขไม่อยู่ในรูปแบบที่ถูกต้อง");
+                return;
+            }
+            
+            var tdObject = $(this).closest("td");
+            var numberObject = tdObject.find(".number");
+            numberObject.html('<img src="{{MEDIA_URL}}/images/loading.gif" />');
+            
+            var splitted = tdObject.attr("id").split("-");
+            var number_type = splitted[1];
+            var schedule_id = splitted[2];
+            
+            number = parseInt(number, 10);
+            
+            var grant = '';
+            if(number_type == 'grant') grant = number;
+            
+            var claim = '';
+            if(number_type == 'claim') claim = number;
+            
+            $.post("{% url ajax_update_budget_schedule %}", {'schedule_id':schedule_id, 'grant':grant, 'claim':claim}, function(result) {
+                if(result == 'invalid') {
+                    alert("ข้อมูลไม่อยู่ในรูปแบบที่ถูกต้อง");
+                } else if(result == 'denied') {
+                    alert("คุณไม่มีสิทธิ์เพียงพอที่จะแก้ไขข้อมูลนี้");
+                } else {
+                    numberObject.html(digit_grouping(number));
+                }
+            });
+        }
+    });
+});
+</script>
+{% endrole %}
+{% endblock %}
+
+{% block body_title %}{% display_project_header user project %}{% endblock %}
+{% block body_tabs %}{% tabs_for_project page user project %}{% endblock %}
+
+{% block body_content %}
+<div class="project_budget_page">
+    
+    {% if schedules %}
+    <table class="ss_table">
+        <tr>
+          <th class="link_column"></th>
+            <th class="schedule_on_column">วันที่เบิกจ่าย</th>
+            <th class="grant_column">คาดการณ์</th>
+            <th class="claim_column">เบิกจ่ายจริง</th>
+            <th class="status_column">สถานะ</th>
+        </tr>
+        
+        {% for schedule in schedules %}
+        <tr>
+          <td class="link_column"><img src="{{MEDIA_URL}}/images/icons/link_to.png" class="icon"/> <a href="{% url view_budget_overview schedule.id %}">หน้างวดเบิกจ่าย</a></td>
+            <td class="schedule_on_column">{{schedule.schedule_on|abbr_date}}</td>
+            <td class="grant_column" id="schedule-grant-{{schedule.id}}">
+                <div><span class="number">{{schedule.grant_budget|intcomma}}</span> <span class="unit">บาท</span></div>
+                {% role user 'sector_manager,sector_manager_assistant,sector_specialist' project.plan.master_plan %}
+                <div class="edit"><a href="#" class="edit-number">แก้ไข</a></div>
+                {% endrole %}
+            </td>
+            <td class="claim_column" id="schedule-claim-{{schedule.id}}">
+                <div><span class="number">{{schedule.claim_budget|intcomma}}</span> <span class="unit">บาท</span></div>
+                {% role user 'sector_manager,sector_manager_assistant,sector_specialist' project.plan.master_plan %}
+                <div class="edit"><a href="#" class="edit-number">แก้ไข</a></div>
+                {% endrole %}
+            </td>
+            <td class="status_column">{% display_budget_schedule_status schedule %}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <div class="ss_no_information">ไม่มีข้อมูลแผนการเงิน</div>
+    {% endif %}
+</div>
+{% endblock %}

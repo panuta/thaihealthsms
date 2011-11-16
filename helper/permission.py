@@ -12,6 +12,7 @@ def access_obj(user, permissions, obj, at_least_one_permission=True):
     else:
         permissions = list(permissions)
     
+    """
     if user.is_superuser:
         checked_permission_count = 0
         for permission in permissions:
@@ -25,6 +26,8 @@ def access_obj(user, permissions, obj, at_least_one_permission=True):
             return checked_permission_count > 0
         else:
             return len(permissions) == checked_permission_count
+    """
+    if user.is_superuser: return True
     
     else:
         passed_permissions = []
@@ -101,7 +104,7 @@ def has_role_with_obj(user, roles, obj):
     else:
         roles = list(roles)
     
-    if user.is_superuser: return False
+    if user.is_superuser: return True
     
     has_access = False
     for responsibility in UserRoleResponsibility.objects.filter(user=user.get_profile()):
@@ -122,7 +125,7 @@ def has_role_with_obj(user, roles, obj):
                 else:
                     if obj in responsibility.programs.all():
                         has_access = True
-    
+
     return has_access
 
 def who_program_manager(program):

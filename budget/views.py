@@ -166,14 +166,26 @@ def view_program_budget(request, program_id):
     return render_page_response(request, 'budget', 'page_program/program_budget.html', {'program':program, 'schedules':schedules})
 
 #
+# PROJECT #######################################################################
+#
+
+@login_required
+def view_project_budget(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    schedules = BudgetSchedule.objects.filter(project=project).order_by('-schedule_on')
+    
+    return render_page_response(request, 'budget', 'page_program/project_budget.html', {'project':project, 'schedules':schedules})
+
+#
 # BUDGET SCHEDULE #######################################################################
 #
 
 @login_required
 def view_budget_overview(request, schedule_id):
     schedule = get_object_or_404(BudgetSchedule, pk=schedule_id)
-    
-    if permission.access_obj(request.user, 'program budget remark edit', schedule.program):
+
+    # if permission.access_obj(request.user, 'program budget remark edit', schedule.program):
+    if (schedule.project.plan and has_role_with_obj(request.user, ('sector_manager', 'sector_manager_assistant', 'sector_specialist'), schedule.project.plan.master_plan)) or (not schedule.project.plan and permission.access_obj(request.user, 'program budget remark edit', schedule.program)):
         if request.method == 'POST':
             form = ModifyBudgetRemarkForm(request.POST)
             if form.is_valid():

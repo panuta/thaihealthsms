@@ -475,11 +475,13 @@ def view_project_overview(request, project_id):
 @login_required
 def view_project_edit_project(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-    program = project.program
-    
-    if not permission.access_obj(request.user, 'program project edit', program):
+
+    if project.plan and not permission.has_role_with_obj(request.user, ('sector_manager', 'sector_manager_assistant', 'sector_specialist'), project.plan.master_plan):
         return access_denied(request)
     
+    if project.program and not permission.access_obj(request.user, 'program project edit', program):
+        return access_denied(request)
+
     if request.method == 'POST':
         form = ProjectModifyForm(request.POST)
         if form.is_valid():
@@ -496,8 +498,8 @@ def view_project_edit_project(request, project_id):
             return redirect('view_project_overview', (project.id))
         
     else:
-        if program:
-            form = ProjectModifyForm(initial={'program_id':program.id, 'project_id':project.id, 'ref_no':project.ref_no, 'contract_no':project.contract_no, 'name':project.name, 'description':project.description, 'start_date':project.start_date, 'end_date':project.end_date})
+        if project.program:
+            form = ProjectModifyForm(initial={'program_id':project.program.id, 'project_id':project.id, 'ref_no':project.ref_no, 'contract_no':project.contract_no, 'name':project.name, 'description':project.description, 'start_date':project.start_date, 'end_date':project.end_date})
         else:
             form = ProjectModifyForm(initial={'program_id':'', 'project_id':project.id, 'ref_no':project.ref_no, 'contract_no':project.contract_no, 'name':project.name, 'description':project.description, 'start_date':project.start_date, 'end_date':project.end_date})
     
@@ -507,18 +509,23 @@ def view_project_edit_project(request, project_id):
 @login_required
 def view_project_delete_project(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-    program = project.program
-    
-    if not permission.access_obj(request.user, 'program project delete', program):
+
+    if project.plan and not permission.has_role_with_obj(request.user, ('sector_manager', 'sector_manager_assistant', 'sector_specialist'), project.plan.master_plan):
         return access_denied(request)
     
+    if project.program and not permission.access_obj(request.user, 'program project delete', program):
+        return access_denied(request)
+
     if not Activity.objects.filter(project=project).count():
         project.delete()
         messages.success(request, u'ลบโครงการเรียบร้อย')
     else:
         messages.error(request, 'ไม่สามารถลบโครงการที่มีกิจกรรมอยู่ได้')
     
-    return redirect('view_program_projects', (program.id))
+    if project.plan:
+        return redirect('view_master_plan_programs', (project.plan.master_plan.id))
+    else:
+        return redirect('view_program_projects', (program.id))
 
 @login_required
 def view_project_activities(request, project_id):
@@ -529,8 +536,11 @@ def view_project_activities(request, project_id):
 @login_required
 def view_project_add_activity(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
+
+    if project.plan and not permission.has_role_with_obj(request.user, ('sector_manager', 'sector_manager_assistant', 'sector_specialist'), project.plan.master_plan):
+        return access_denied(request)
     
-    if not permission.access_obj(request.user, 'program activity add', project.program):
+    if project.program and not permission.access_obj(request.user, 'program activity add', program):
         return access_denied(request)
     
     if request.method == 'POST':
@@ -559,8 +569,11 @@ def view_project_add_activity(request, project_id):
 def view_project_edit_activity(request, activity_id):
     activity = get_object_or_404(Activity, pk=activity_id)
     project = activity.project
+
+    if project.plan and not permission.has_role_with_obj(request.user, ('sector_manager', 'sector_manager_assistant', 'sector_specialist'), project.plan.master_plan):
+        return access_denied(request)
     
-    if not permission.access_obj(request.user, 'program activity edit', project.program):
+    if project.program and not permission.access_obj(request.user, 'program activity edit', project.program):
         return access_denied(request)
     
     if request.method == 'POST':
@@ -638,8 +651,11 @@ def view_activity_overview(request, activity_id):
 def view_activity_edit_activity(request, activity_id):
     activity = get_object_or_404(Activity, pk=activity_id)
     project = activity.project
+
+    if project.plan and not permission.has_role_with_obj(request.user, ('sector_manager', 'sector_manager_assistant', 'sector_specialist'), project.plan.master_plan):
+        return access_denied(request)
     
-    if not permission.access_obj(request.user, 'program activity edit', project.program):
+    if project.program and not permission.access_obj(request.user, 'program activity edit', project.program):
         return access_denied(request)
     
     if request.method == 'POST':
@@ -666,8 +682,11 @@ def view_activity_edit_activity(request, activity_id):
 def view_activity_delete_activity(request, activity_id):
     activity = get_object_or_404(Activity, pk=activity_id)
     project = activity.project
+
+    if project.plan and not permission.has_role_with_obj(request.user, ('sector_manager', 'sector_manager_assistant', 'sector_specialist'), project.plan.master_plan):
+        return access_denied(request)
     
-    if not permission.access_obj(request.user, 'program activity delete', project.program):
+    if project.program and not permission.access_obj(request.user, 'program activity delete', project.program):
         return access_denied(request)
     
     activity.delete()

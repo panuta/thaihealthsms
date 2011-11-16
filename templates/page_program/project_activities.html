@@ -12,7 +12,9 @@
 <div class="project_activities_page">
     <div class="ss_control_panel">
         <ul>
-        	{% access user 'program activity add' project.program %}<li><img src="{{MEDIA_URL}}/images/toolbar/create.png" class="icon"/><a href="{% url view_project_add_activity project.id %}">เพิ่มกิจกรรม</a></li>{% endaccess %}
+            {% if project.plan %}{% role user 'sector_manager,sector_manager_assistant,sector_specialist' project.plan.master_plan %}<li><img src="{{MEDIA_URL}}/images/toolbar/create.png" class="icon"/><a href="{% url view_project_add_activity project.id %}">เพิ่มกิจกรรม</a></li>{% endrole %}{% endif %}
+            {% if project.program %}{% access user 'program activity add' project.program %}<li><img src="{{MEDIA_URL}}/images/toolbar/create.png" class="icon"/><a href="{% url view_project_add_activity project.id %}">เพิ่มกิจกรรม</a></li>{% endaccess %}{% endif %}
+
 			<li><img src="{{MEDIA_URL}}/images/toolbar/calendar.png" class="icon"/><a href="{% url view_project_calendar project.id %}">ปฏิทินกิจกรรม</a></li>
         </ul>
     </div>
@@ -20,20 +22,18 @@
     {% if activities %}
     <table class="ss_table">
         <tr>
-        	{% access user 'program activity edit' project.program %}
-        	    <th class="controls"></th>
-			{% endaccess %}
+            {% if project.plan %}{% role user 'sector_manager,sector_manager_assistant,sector_specialist' project.plan.master_plan %}<th class="controls"></th>{% endrole %}{% endif %}
+            {% if project.program %}{% access user 'program activity edit' project.program %}<th class="controls"></th>{% endaccess %}{% endif %}
+
         	<th class="name">ชื่อกิจกรรม</th>
             <th class="start_date">วันที่เริ่ม</th>
             <th class="end_date">วันที่สิ้นสุด</th>
         </tr>
         {% for activity in activities %}
         <tr>
-        	{% access user 'program activity edit' project.program %}
-            <td class="controls">
-                <a href="{% url view_project_edit_activity activity.id %}" title="แก้ไขกิจกรรม"><img src="{{MEDIA_URL}}/images/icons/edit.png" class="icon"/></a>
-            </td>
-			{% endaccess %}
+            {% if project.plan %}{% role user 'sector_manager,sector_manager_assistant,sector_specialist' project.plan.master_plan %}<td class="controls"><a href="{% url view_project_edit_activity activity.id %}" title="แก้ไขกิจกรรม"><img src="{{MEDIA_URL}}/images/icons/edit.png" class="icon"/></a></td>{% endrole %}{% endif %}
+            {% if project.program %}{% access user 'program activity edit' project.program %}<td class="controls"><a href="{% url view_project_edit_activity activity.id %}" title="แก้ไขกิจกรรม"><img src="{{MEDIA_URL}}/images/icons/edit.png" class="icon"/></a></td>{% endaccess %}{% endif %}
+
             <td class="name"><a href="{% url view_activity_overview activity.id %}">{{activity.name}}</a></td>
             <td class="start_date">{% if activity.start_date %}{{activity.start_date|abbr_date}}{% else %}ไม่กำหนด{% endif %}</td>
             <td class="end_date">{% if activity.end_date %}{{activity.end_date|abbr_date}}{% else %}ไม่กำหนด{% endif %}</td>

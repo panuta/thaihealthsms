@@ -7,6 +7,7 @@ urlpatterns = patterns('budget.views',
     url(r'^master_plan/(?P<master_plan_ref_no>\d+)/budget/$', 'view_master_plan_budget', name='view_master_plan_budget'),
     
     url(r'^program/(?P<program_id>\d+)/budget/$', 'view_program_budget', name='view_program_budget'),
+    url(r'^project/(?P<project_id>\d+)/budget/$', 'view_project_budget', name='view_project_budget'),
     
     url(r'^budget/(?P<schedule_id>\d+)/$', 'view_budget_overview', name='view_budget_overview'),
     url(r'^budget/(?P<schedule_id>\d+)/reference/edit/$', 'view_budget_overview_edit_reference', name='view_budget_overview_edit_reference'),

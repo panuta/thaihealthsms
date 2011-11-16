@@ -73,11 +73,18 @@ def display_project_edit_header(user, project):
 
 @register.simple_tag
 def display_activity_header(user, activity):
-    header_html = unicode('<div class="supertitle"><a href="%s">แผนงาน %s</a> &#187; <a href="%s">โครงการ %s - %s</a></div><h1>กิจกรรม %s</h1>', 'utf-8') % (reverse('view_program_overview', args=[activity.project.program.id]), activity.project.program.ref_no, reverse('view_project_overview', args=[activity.project.id]), activity.project.ref_no, activity.project.name, activity.name)
+    if activity.project.plan:
+        header_html = unicode('<div class="supertitle"><a href="%s">โครงการ %s - %s</a></div><h1>กิจกรรม %s</h1>', 'utf-8') % (reverse('view_project_overview', args=[activity.project.id]), activity.project.ref_no, activity.project.name, activity.name)
+
+        if permission.has_role_with_obj(user, ('sector_manager', 'sector_manager_assistant', 'sector_specialist'), activity.project.plan.master_plan):
+            header_html = header_html + unicode('<div class="subtitle"><img src="%s/images/icons/edit.png" class="icon"/> <a href="%s">แก้ไขกิจกรรม</a></div>', 'utf-8') % (settings.MEDIA_URL, reverse('view_activity_edit_activity', args=[activity.id]))
+
+    else:
+        header_html = unicode('<div class="supertitle"><a href="%s">แผนงาน %s</a> &#187; <a href="%s">โครงการ %s - %s</a></div><h1>กิจกรรม %s</h1>', 'utf-8') % (reverse('view_program_overview', args=[activity.project.program.id]), activity.project.program.ref_no, reverse('view_project_overview', args=[activity.project.id]), activity.project.ref_no, activity.project.name, activity.name)
     
-    if permission.access_obj(user, 'program activity edit', activity.project.program):
-        header_html = header_html + unicode('<div class="subtitle"><img src="%s/images/icons/edit.png" class="icon"/> <a href="%s">แก้ไขกิจกรรม</a></div>', 'utf-8') % (settings.MEDIA_URL, reverse('view_activity_edit_activity', args=[activity.id]))
-    
+        if permission.access_obj(user, 'program activity edit', activity.project.program):
+            header_html = header_html + unicode('<div class="subtitle"><img src="%s/images/icons/edit.png" class="icon"/> <a href="%s">แก้ไขกิจกรรม</a></div>', 'utf-8') % (settings.MEDIA_URL, reverse('view_activity_edit_activity', args=[activity.id]))
+
     return header_html
 
 @register.simple_tag
@@ -94,7 +101,23 @@ def display_kpi_header(user, schedule):
 
 @register.simple_tag
 def display_budget_header(user, schedule):
-    return unicode('<div class="supertitle"><a href="%s">แผนงาน %s - %s</a></div><h1>งวดเบิกจ่ายวันที่ %s</h1>', 'utf-8') % (reverse('view_program_overview', args=[schedule.program.id]), schedule.program.ref_no, schedule.program.name, utilities.format_full_date(schedule.schedule_on))
+    if schedule.program:
+        return unicode('<div class="supertitle"><a href="%s">แผนงาน %s - %s</a></div><h1>งวดเบิกจ่ายวันที่ %s</h1>', 'utf-8') % (reverse('view_program_overview', args=[schedule.program.id]), schedule.program.ref_no, schedule.program.name, utilities.format_full_date(schedule.schedule_on))
+
+    elif schedule.project:
+        if schedule.project.plan:
+            header_html = unicode('<div class="supertitle"><a href="%s">แผน %s - %s</a></div><h1>โครงการ (%s) %s</h1>', 'utf-8') % (reverse('view_master_plan_overview', args=[schedule.project.plan.master_plan.id]), schedule.project.plan.master_plan.ref_no, schedule.project.plan.master_plan.name, schedule.project.ref_no, schedule.project.name)
+
+            if permission.has_role_with_obj(user, ('sector_manager', 'sector_manager_assistant', 'sector_specialist'), schedule.project.plan.master_plan):
+                header_html = header_html + unicode('<div class="subtitle"><img src="%s/images/icons/edit.png" class="icon"/> <a href="%s">แก้ไขโครงการ</a></div>', 'utf-8') % (settings.MEDIA_URL, reverse('view_project_edit_project', args=[schedule.project.id]))
+
+        else:
+            header_html = unicode('<div class="supertitle"><a href="%s">แผนงาน %s - %s</a></div><h1>โครงการ (%s) %s</h1>', 'utf-8') % (reverse('view_program_overview', args=[schedule.project.program.id]), schedule.project.program.ref_no, schedule.project.program.name, schedule.project.ref_no, schedule.project.name)
+
+            if permission.access_obj(user, 'program project edit', schedule.project.program):
+                header_html = header_html + unicode('<div class="subtitle"><img src="%s/images/icons/edit.png" class="icon"/> <a href="%s">แก้ไขโครงการ</a></div>', 'utf-8') % (settings.MEDIA_URL, reverse('view_project_edit_project', args=[schedule.project.id]))
+
+    return ''
 
 #
 # TAB
@@ -193,6 +216,10 @@ def tabs_for_project(page, user, project):
     
     if page == 'overview': html = html + '<li class="selected"><a href="%s">ภาพรวม</a></li>' % reverse('view_project_overview', args=[project.id])
     else: html = html + '<li><a href="%s">ภาพรวม</a></li>' % reverse('view_project_overview', args=[project.id])
+
+    if project.plan:
+        if page == 'budget': html = html + '<li class="selected"><a href="%s">แผนการเงิน</a></li>' % reverse('view_project_budget', args=[project.id])
+        else: html = html + '<li><a href="%s">แผนการเงิน</a></li>' % reverse('view_project_budget', args=[project.id])
     
     if page == 'activities': html = html + '<li class="selected"><a href="%s">กิจกรรม</a></li>' % reverse('view_project_activities', args=[project.id])
     else: html = html + '<li><a href="%s">กิจกรรม</a></li>' % reverse('view_project_activities', args=[project.id])

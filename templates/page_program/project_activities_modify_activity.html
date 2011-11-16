@@ -20,7 +20,7 @@ $(document).ready(function() {
 {% block body_content %}
 <div class="ss_breadcrumbs">
     <div class="breadcrumbs"><a href="{% url view_project_activities project.id %}">กิจกรรมของโครงการ</a> &#187;</div>
-    <h2>{% if project %}แก้ไขกิจกรรม{% else %}เพิ่มกิจกรรม{% endif %}</h2>
+    <h2>{% if activity %}แก้ไขกิจกรรม{% else %}เพิ่มกิจกรรม{% endif %}</h2>
 </div>
 {% include 'page_program/components/component_modify_activity.html' %}
 

@@ -520,6 +520,22 @@ h2.h2 {font-size:146.5%;padding-bottom:5px;margin-bottom:10px;color:#2D8659;bord
 .project_activities_page .ss_table .start_date {width:120px;text-align:center;}
 .project_activities_page .ss_table .end_date {width:120px;text-align:center;}
 
+/* PROGRAM - BUDGET */
+.project_budget_page .ss_table .link_column {width:110px;text-align:center;font-size:100%;}
+.project_budget_page .ss_table .schedule_on_column {width:110px;text-align:center;}
+.project_budget_page .ss_table .grant_column {width:130px;text-align:center;}
+.project_budget_page .ss_table .claim_column {width:130px;text-align:center;}
+.project_budget_page .ss_table .status_column {width:180px;text-align:center;}
+
+.project_budget_page .ss_table td {vertical-align:top;}
+.project_budget_page .ss_table td span.unit {color:#555;}
+.project_budget_page .ss_table td .edit {margin-top:5px;font-size:0.9em;}
+
+.project_budget_page .ss_table .status_column .future {color:#999;}
+.project_budget_page .ss_table .status_column .late {color:#C30;}
+
+.project_budget_page .ss_table .no_information {color:#777;}
+
 /*
  * ACTIVITY
  */

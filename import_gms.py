@@ -2,6 +2,7 @@ CURRENT_PB_YEAR = '55'
 
 SMS_PLAN_VIEW_URL = 'http://61.90.139.134/gms/api/?view=plan&format=json&page=0&pbyear=55'
 SMS_CONTRACT_VIEW_URL = 'http://61.90.139.134/gms/api/?view=contract&format=json&page=0'
+SMS_CONTRACT_MONEY_URL = 'http://61.90.139.134/gms/api/?view=money&format=json&page=0'
 
 from django.core.management import setup_environ
 import settings
@@ -15,6 +16,7 @@ from django.utils import simplejson
 
 from accounts.models import UserAccount
 from domain.models import *
+from budget.models import *
 
 def convert_to_date(str):
     (year_str, month_str, date_str) = str.split(' ')[0].split('-')
@@ -33,16 +35,19 @@ startdate = datetime.datetime.today()
 logfile = open('import_gms-%02d-%02d-%02d.log' % (startdate.year, startdate.month, startdate.day), 'w')
 logfile.write('Import operation started on %02d/%02d/%02d %02d:%02d\n' % (startdate.day, startdate.month, startdate.year, startdate.hour, startdate.minute))
 
-# Retrieve plan list in JSON format from GMS
+# Retrieve data JSON format from GMS
 import_url = urllib.urlopen(SMS_PLAN_VIEW_URL)
 raw_plan_list = simplejson.loads(import_url.read())
 
-# Retrieve project list in JSON format from GMS
 import_url = urllib.urlopen(SMS_CONTRACT_VIEW_URL)
 raw_project_list = simplejson.loads(import_url.read())
 
+#import_url = urllib.urlopen(SMS_CONTRACT_MONEY_URL)
+#raw_money_list = simplejson.loads(import_url.read())
+
 stat_plan_created = 0
 stat_project_created = 0
+stat_money_created = 0
 
 # Insert plans and projects to SMS
 for raw_plan in raw_plan_list:
@@ -58,14 +63,11 @@ for raw_plan in raw_plan_list:
     except Plan.DoesNotExist:
         plan = Plan.objects.create(master_plan=master_plan, ref_no=raw_plan['BudgetPlan'], name=raw_plan['BudgetPlanName'])
         stat_plan_created = stat_plan_created + 1
-    else:
-        plan.name = raw_plan['BudgetPlanName']
-        plan.save()
 
     raw_project = find_project(raw_project_list, raw_plan['ProjectCode'])
 
     if not raw_project:
-        logfile.write('ERROR: Project not found [ProjectCode="%s"]\n' % raw_plan['ProjectCode'])
+        logfile.write('ERROR: Project not found in  [ProjectCode="%s"]\n' % raw_plan['ProjectCode'])
     else:
         try:
             project = Project.objects.get(ref_no=raw_plan['ProjectCode'])
@@ -78,17 +80,44 @@ for raw_plan in raw_plan_list:
                 start_date=convert_to_date(raw_project['DateStart']),
                 end_date=convert_to_date(raw_project['DateFinish']),
                 created_by=admin_user,
-                )
+            )
             stat_project_created = stat_project_created + 1
         else:
-            # Update existing record, in case there's a change
+            # Update project name and date, if imported data is different than in SMS database
             project.name = raw_project['ProjectThai']
             start_date=convert_to_date(raw_project['DateStart'])
             end_date=convert_to_date(raw_project['DateFinish'])
 
+"""
+for raw_money in raw_money_list:
+    try:
+        project = Project.objects.get(ref_no=raw_money['ProjectCode'])
+    except Project.DoesNotExist:
+        logfile.write('ERROR: Project not found in SMS_CONTRACT_MONEY_URL [ProjectCode="%s"]\n' % raw_plan['ProjectCode'])
+
+    try:
+        budget_schedule = BudgetSchedule.objects.get(project=project, schedule_on=convert_to_date(raw_money['DateDue']))
+    except BudgetSchedule.DoesNotExist:
+        budget_schedule = BudgetSchedule.objects.create(
+            project=project,
+            schedule_on=convert_to_date(raw_money['DateDue']),
+            grant_budget=int(raw_money['MoneyOperate']),
+        )
+
+        revision = BudgetScheduleRevision.objects.create(
+            schedule=budget_schedule,
+            grant_budget=budget_schedule.grant_budget,
+            claim_budget=budget_schedule.claim_budget,
+            schedule_on=budget_schedule.schedule_on,
+            revised_by=admin_user
+        )
+"""
+
+
+
 enddate = datetime.datetime.today()
-logfile.write('Summary: Created %d plans' % stat_plan_created)
-logfile.write('Summary: Created %d projects' % stat_project_created)
+logfile.write('Summary: Created %d plans\n' % stat_plan_created)
+logfile.write('Summary: Created %d projects\n' % stat_project_created)
 logfile.write('Import operation ended on %02d/%02d/%02d %02d:%02d\n' % (startdate.day, startdate.month, startdate.year, startdate.hour, startdate.minute))
 
 logfile.close()
