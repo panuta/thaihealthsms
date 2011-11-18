@@ -185,7 +185,7 @@ def view_budget_overview(request, schedule_id):
     schedule = get_object_or_404(BudgetSchedule, pk=schedule_id)
 
     # if permission.access_obj(request.user, 'program budget remark edit', schedule.program):
-    if (schedule.project.plan and has_role_with_obj(request.user, ('sector_manager', 'sector_manager_assistant', 'sector_specialist'), schedule.project.plan.master_plan)) or (not schedule.project.plan and permission.access_obj(request.user, 'program budget remark edit', schedule.program)):
+    if (schedule.project.plan and permission.has_role_with_obj(request.user, ('sector_manager', 'sector_manager_assistant', 'sector_specialist'), schedule.project.plan.master_plan)) or (not schedule.project.plan and permission.access_obj(request.user, 'program budget remark edit', schedule.program)):
         if request.method == 'POST':
             form = ModifyBudgetRemarkForm(request.POST)
             if form.is_valid():
