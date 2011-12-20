@@ -3,7 +3,9 @@ CURRENT_PB_YEAR = '55'
 HOST = 'http://61.90.139.134/gms/api/'
 APIKEY = 'WY0sSJA693sZsHRxT7oTwdzVM83mK0XQcffTYPPes1YUklgH6X5oxQ0xjv8WneG'
 
-SMS_PLAN_VIEW_URL = HOST + '?view=SMS_PLAN_VIEW&format=json&page=0&general=1&where=pbyear%3d%2755%27&apikey=' + APIKEY 
+PLAN_YEAR = ('55', '54', '53', '52', '51', '50')
+
+SMS_PLAN_VIEW_URL = HOST + '?view=SMS_PLAN_VIEW&format=json&page=0&general=1&apikey=' + APIKEY
 SMS_CONTRACT_VIEW_URL = HOST + '?view=SMS_CONTRACT_VIEW&format=json&page=0&general=1&apikey=' + APIKEY
 #SMS_CONTRACT_MONEY_URL = HOST + '?view=SMS_Contract_Money&format=json&page=0&general=1&apikey=' + APIKEY
 SMS_PV_PAYMENT_VIEW_URL = HOST + '?view=SMS_PV_PAYMENT_VIEW&format=json&page=0&general=1&apikey=' + APIKEY
@@ -44,10 +46,15 @@ logfile = open('import_gms-%02d-%02d-%02d.log' % (startdate.year, startdate.mont
 logfile.write('Import operation started on %02d/%02d/%02d %02d:%02d\n' % (startdate.day, startdate.month, startdate.year, startdate.hour, startdate.minute))
 
 # Retrieve data JSON format from GMS
-import_url = urllib.urlopen(SMS_PLAN_VIEW_URL)
-raw_plan_list = simplejson.loads(import_url.read())
+raw_plan_list = []
+for year in PLAN_YEAR:
+    import_url = urllib.urlopen(SMS_PLAN_VIEW_URL + '&where=pbyear%3d%27' + year + '%27')
 
-#f = open('sms_plan_view.json', 'r')
+    # Append to raw_plan_list
+    raw_plan_list.append('')
+    raw_plan_list[-1:] = simplejson.loads(import_url.read())
+
+#f = open('sms_plan_view_55.json', 'r')
 #raw_plan_list = simplejson.loads(f.read())
 #f.close()
 
