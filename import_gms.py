@@ -5,7 +5,8 @@ APIKEY = 'WY0sSJA693sZsHRxT7oTwdzVM83mK0XQcffTYPPes1YUklgH6X5oxQ0xjv8WneG'
 
 SMS_PLAN_VIEW_URL = HOST + '?view=SMS_PLAN_VIEW&format=json&page=0&general=1&where=pbyear%3d%2755%27&apikey=' + APIKEY 
 SMS_CONTRACT_VIEW_URL = HOST + '?view=SMS_CONTRACT_VIEW&format=json&page=0&general=1&apikey=' + APIKEY
-SMS_CONTRACT_MONEY_URL = HOST + '?view=SMS_Contract_Money&format=json&page=0&general=1&apikey=' + APIKEY
+#SMS_CONTRACT_MONEY_URL = HOST + '?view=SMS_Contract_Money&format=json&page=0&general=1&apikey=' + APIKEY
+SMS_PV_PAYMENT_VIEW_URL = HOST + '?view=SMS_PV_PAYMENT_VIEW&format=json&page=0&general=1&apikey=' + APIKEY
 
 # SMS_PLAN_VIEW_URL = 'http://61.90.139.134/gms/api/?view=plan&format=json&page=0&pbyear=55'
 # SMS_CONTRACT_VIEW_URL = 'http://61.90.139.134/gms/api/?view=contract&format=json&page=0'
@@ -46,11 +47,23 @@ logfile.write('Import operation started on %02d/%02d/%02d %02d:%02d\n' % (startd
 import_url = urllib.urlopen(SMS_PLAN_VIEW_URL)
 raw_plan_list = simplejson.loads(import_url.read())
 
+#f = open('sms_plan_view.json', 'r')
+#raw_plan_list = simplejson.loads(f.read())
+#f.close()
+
 import_url = urllib.urlopen(SMS_CONTRACT_VIEW_URL)
 raw_project_list = simplejson.loads(import_url.read())
 
-import_url = urllib.urlopen(SMS_CONTRACT_MONEY_URL)
+#f = open('sms_contract_view.json', 'r')
+#raw_project_list = simplejson.loads(f.read())
+#f.close()
+
+import_url = urllib.urlopen(SMS_PV_PAYMENT_VIEW_URL)
 raw_money_list = simplejson.loads(import_url.read())
+
+#f = open('sms_pv_payment.json', 'r')
+#raw_money_list = simplejson.loads(f.read())
+#f.close()
 
 stat_plan_created = 0
 stat_project_created = 0
@@ -99,26 +112,30 @@ for raw_money in raw_money_list:
     try:
         project = Project.objects.get(ref_no=raw_money['ProjectCode'])
     except Project.DoesNotExist:
-        logfile.write('ERROR: Project not found in SMS_CONTRACT_MONEY [ProjectCode="%s"]\n' % raw_plan['ProjectCode'])
+        logfile.write('ERROR: Project not found in SMS_PV_PAYMENT_VIEW_URL [ProjectCode="%s"]\n' % raw_money['ProjectCode'])
+        continue
+    
+    if raw_money['PayDate']:
+        try:
+            budget_schedule = BudgetSchedule.objects.get(project=project, schedule_on=convert_to_date(raw_money['PayDate']))
+        except BudgetSchedule.DoesNotExist:
+            budget_schedule = BudgetSchedule.objects.create(
+                project=project,
+                schedule_on=convert_to_date(raw_money['PayDate']),
+                claimed_on=convert_to_date(raw_money['PayDate']),
+                grant_budget=int(float(raw_money['Pay'])),
+                claim_budget=int(float(raw_money['Pay'])),
+            )
 
-    try:
-        budget_schedule = BudgetSchedule.objects.get(project=project, schedule_on=convert_to_date(raw_money['DateDue']))
-    except BudgetSchedule.DoesNotExist:
-        budget_schedule = BudgetSchedule.objects.create(
-            project=project,
-            schedule_on=convert_to_date(raw_money['DateDue']),
-            grant_budget=int(float(raw_money['MoneyOperate'])),
-        )
+            revision = BudgetScheduleRevision.objects.create(
+                schedule=budget_schedule,
+                grant_budget=budget_schedule.grant_budget,
+                claim_budget=budget_schedule.claim_budget,
+                schedule_on=budget_schedule.schedule_on,
+                revised_by=admin_user
+            )
 
-        revision = BudgetScheduleRevision.objects.create(
-            schedule=budget_schedule,
-            grant_budget=budget_schedule.grant_budget,
-            claim_budget=budget_schedule.claim_budget,
-            schedule_on=budget_schedule.schedule_on,
-            revised_by=admin_user
-        )
-
-        stat_budget_created = stat_budget_created + 1
+            stat_budget_created = stat_budget_created + 1
 
 enddate = datetime.datetime.today()
 logfile.write('Summary: Created %d plans\n' % stat_plan_created)
